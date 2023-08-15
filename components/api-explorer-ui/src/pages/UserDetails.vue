@@ -24,7 +24,7 @@
 
     <div v-else>
       <p>You are not logged in!</p>
-      <p>You could be anyone... that doesn't stop you from browsing the board game stats though!</p>
+      <p>You could be anyone... that doesn't stop you from browsing the available API documentation - but you won't be able to interact with them!</p>
       <p>Have fun :)</p>
     </div>
   </div>
