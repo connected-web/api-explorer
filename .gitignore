@@ -1,0 +1,5 @@
+node_modules
+*.log
+vuepress/docs/.vuepress/dist
+**/*/dist
+**/*/temp
