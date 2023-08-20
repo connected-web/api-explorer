@@ -5,6 +5,9 @@
     <label>User</label>
     <router-link to="/user/details">User Details</router-link>
 
+    <label>Explore</label>
+    <router-link to="/explore/boardgames-api">Board Games API</router-link>
+
     <label>Extras</label>
     <router-link to="/extras/icons">Icon Browser</router-link>
   </div>

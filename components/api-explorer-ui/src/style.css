@@ -179,11 +179,16 @@ a.selected:hover {
 .row.right {
   justify-content: flex-end;
 }
-.row.p5, .buttons.p5 {
+.row.p5, .buttons.p5, .column.p5 {
   gap: 5px;
 }
-.row.p10, .buttons.p10 {
+.row.p10, .buttons.p10, .column.p10 {
   gap: 10px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
 }
 
 div.circle-icon {
