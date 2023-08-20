@@ -9,19 +9,22 @@ export default class EventEmitter<T> {
     this.target = new EventTarget()
   }
 
-  on (eventName: string, listener: Listener) {
-    return this.target.addEventListener(eventName, listener)
+  on (eventName: string, listener: Listener): EventEmitter<T> {
+    this.target.addEventListener(eventName, listener)
+    return this
   }
 
-  once (eventName: string, listener: Listener) {
-    return this.target.addEventListener(eventName, listener, { once: true })
+  once (eventName: string, listener: Listener): EventEmitter<T> {
+    this.target.addEventListener(eventName, listener, { once: true })
+    return this
   }
 
-  off (eventName: string, listener: Listener) {
-    return this.target.removeEventListener(eventName, listener)
+  off (eventName: string, listener: Listener): EventEmitter<T> {
+    this.target.removeEventListener(eventName, listener)
+    return this
   }
 
-  emit (eventName: string, detail?: T) {
+  emit (eventName: string, detail?: T): boolean {
     return this.target.dispatchEvent(
       new CustomEvent(eventName, { detail, cancelable: true })
     )

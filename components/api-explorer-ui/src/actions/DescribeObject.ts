@@ -1,5 +1,5 @@
 const fnRegex = /(async\s)?([A-z][A-z0-9_]+)\((.*)\)/
-function paramsForFunction (signature: string) {
+function paramsForFunction (signature: string): string[] {
   const parts = signature.match(fnRegex) ?? []
   const middle = parts.pop() ?? ''
   const params = middle.split(',').map(n => n.trim()).filter(n => n)

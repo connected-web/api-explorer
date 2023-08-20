@@ -42,19 +42,19 @@ export default class Action<T> extends EventEmitter<Action<T> | T> {
     this.actionFunction = actionFunction
   }
 
-  static get example () {
+  static get example (): Action<string> {
     return new Action<string>(defaultActionFunction)
   }
 
-  get inReadyState () {
+  get inReadyState (): boolean {
     return !this.loading && !this.errored
   }
 
-  get inStartState () {
+  get inStartState (): boolean {
     return !(this.loading || this.finished)
   }
 
-  async activate (...params: any[]) {
+  async activate (...params: any[]): Promise<T | undefined> {
     if (this.loading) {
       return this.actionResult
     }
@@ -70,23 +70,22 @@ export default class Action<T> extends EventEmitter<Action<T> | T> {
       spiedLogs.push(logArgs)
     }
     this.spiedLogs = spiedLogs
-    const action = this
-    const task = async () => {
+    const task = async (): Promise<T | undefined> => {
       let result
       try {
-        result = await action.actionFunction(...params)
+        result = await this.actionFunction(...params)
       } catch (ex) {
         const error = ex as Error
-        action.errored = true
-        action.error = error
-        action.emit('error', this)
+        this.errored = true
+        this.error = error
+        this.emit('error', this)
       }
-      action.actionResult = result
-      action.emit('result', result)
+      this.actionResult = result
+      this.emit('result', result)
       setTimeout(() => {
-        action.loading = false
-        action.finished = true
-        action.emit('updated', action)
+        this.loading = false
+        this.finished = true
+        this.emit('updated', this)
       }, 25)
       console.log = originalLogFn
       return result
@@ -103,7 +102,7 @@ export default class Action<T> extends EventEmitter<Action<T> | T> {
     return await work
   }
 
-  reset () {
+  reset (): void {
     this.actionResult = undefined
     this.finished = false
     this.errored = false

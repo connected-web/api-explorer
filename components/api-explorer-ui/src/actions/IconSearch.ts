@@ -10,7 +10,7 @@ function readFromLocalStorage (): void {
     store.state = JSON.parse(storedData ?? '{}')
   } catch (ex) {
     const error = ex as Error
-    console.warn('Icon Search data in local storage is corrupted; resetting.', { storedData })
+    console.warn('Icon Search data in local storage is corrupted; resetting.', { storedData, error: error.message })
     updateLocalStorage()
   }
 }
@@ -34,11 +34,11 @@ export default class IconSearch {
 
   findIcon (searchString: string): string {
     const existing = store?.state?.icons?.[searchString]
-    if (existing) {
+    if (existing !== undefined) {
       return existing
     }
     let bestMatch = fuse.search(searchString)?.[0]
-    if (!bestMatch) {
+    if (bestMatch === undefined) {
       const alts = searchString.split(' ').map(part => {
         const partMatch = fuse.search(part)?.[0]
         return partMatch
