@@ -23,7 +23,7 @@
             :column="column"
             :column-key="columnKey(column)"
           >
-            <vuesite-smart-type :key="columnKey(column)" :value="contentsOf(cell, column)" />
+            <smart-type :key="columnKey(column)" :value="contentsOf(cell, column)" />
           </slot>
         </td>
       </tr>
@@ -32,15 +32,15 @@
 </template>
 
 <script>
-import flattenObject from './flattenObject'
-import VuesiteSmartType from './SmartType.vue'
+import flattenObject from './FlattenObject'
+import SmartType from './SmartType.vue'
 
 function removeArrayListeners(data) {
   return JSON.parse(JSON.stringify(data))
 }
 
 export default {
-  components: { VuesiteSmartType },
+  components: { SmartType },
   props: {
     items: {
       type: Array,
