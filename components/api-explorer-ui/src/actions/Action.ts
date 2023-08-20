@@ -14,37 +14,35 @@ async function defaultActionFunction (): Promise<string> {
     console.log('Timeout of default actionFunction triggered!')
     succeed('Timed out')
   }, 5000)
-  return future as Promise<string>
+  return await (future)
 }
-
 
 type AsyncFunction<T> = (...args: any[]) => Promise<T>
 
 export default class Action<T> extends EventEmitter<Action<T> | T> {
-
-    id = crypto.randomUUID()
-    icon = 'star'
-    loadingIcon = null
-    loading = false
-    finished = false
-    errored = false
-    error?:Error
-    startLabel = 'Action'
-    loadingLabel = null
-    finishedLabel = null
-    errorLabel = 'Error'
-    actionResult?:T
-    actionFunction: (...args: any[]) => Promise<T>
-    spiedLogs: string[][] = []
-    resetLabelTimeout: number = 0
-    description: string = ''
+  id = crypto.randomUUID()
+  icon = 'star'
+  loadingIcon = null
+  loading = false
+  finished = false
+  errored = false
+  error?: Error
+  startLabel = 'Action'
+  loadingLabel = null
+  finishedLabel = null
+  errorLabel = 'Error'
+  actionResult?: T
+  actionFunction: (...args: any[]) => Promise<T>
+  spiedLogs: string[][] = []
+  resetLabelTimeout: number = 0
+  description: string = ''
 
   constructor (actionFunction: AsyncFunction<T>) {
     super()
     this.actionFunction = actionFunction
   }
 
-  static get example() {
+  static get example () {
     return new Action<string>(defaultActionFunction)
   }
 
@@ -56,7 +54,7 @@ export default class Action<T> extends EventEmitter<Action<T> | T> {
     return !(this.loading || this.finished)
   }
 
-  async activate (...params:any[]) {
+  async activate (...params: any[]) {
     if (this.loading) {
       return this.actionResult
     }
@@ -66,7 +64,7 @@ export default class Action<T> extends EventEmitter<Action<T> | T> {
     this.emit('loading', this)
     this.emit('updated', this)
     const originalLogFn = console.log
-    const spiedLogs:any[] = []
+    const spiedLogs: any[] = []
     console.log = function (...logArgs) {
       originalLogFn(...logArgs)
       spiedLogs.push(logArgs)
@@ -102,7 +100,7 @@ export default class Action<T> extends EventEmitter<Action<T> | T> {
       this.error = error
       this.emit('error', this)
     }
-    return work
+    return await work
   }
 
   reset () {

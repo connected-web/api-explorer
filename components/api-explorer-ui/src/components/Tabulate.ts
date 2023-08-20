@@ -1,4 +1,4 @@
-export default function tabulate (item: any, filter: string[] = []): ({ key: string, value: unknown })[] {
+export default function tabulate (item: any, filter: string[] = []): Array<{ key: string, value: unknown }> {
   item = item ?? {}
   return Object.entries(item).map(([key, value]) => {
     return { key, value }

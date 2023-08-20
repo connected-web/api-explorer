@@ -6,7 +6,7 @@ function paramsForFunction (signature: string) {
   return params
 }
 
-export type ObjectDescription = {
+export interface ObjectDescription {
   prop: string
   type: string
   signature: string
@@ -15,20 +15,20 @@ export type ObjectDescription = {
   value: any
 }
 
-export default function describeObject (obj:any): Array<ObjectDescription> {
+export default function describeObject (obj: any): ObjectDescription[] {
   const signatures = {
-    object: (objProp:string) => objProp,
-    function: (objProp:string) => {
+    object: (objProp: string) => objProp,
+    function: (objProp: string) => {
       const parts = (objProp + '').match(fnRegex)
       return parts?.[0] ?? (objProp + '')
     },
-    string: (objProp:string) => objProp,
-    number: (objProp:string) => objProp,
-    bigint: (objProp:string) => objProp,
-    boolean: (objProp:string) => objProp,
-    symbol: (objProp:string) => objProp,
-    undefined: (objProp:string) => objProp,
-    default: (objProp:string) => objProp + ''
+    string: (objProp: string) => objProp,
+    number: (objProp: string) => objProp,
+    bigint: (objProp: string) => objProp,
+    boolean: (objProp: string) => objProp,
+    symbol: (objProp: string) => objProp,
+    undefined: (objProp: string) => objProp,
+    default: (objProp: string) => objProp + ''
   }
   const ignoreList = ['__defineGetter__', '__defineSetter__']
   const properties = Object.getOwnPropertyNames(Object.getPrototypeOf(obj)).filter(n => n !== 'constructor')
@@ -56,5 +56,5 @@ export default function describeObject (obj:any): Array<ObjectDescription> {
       description,
       value
     }
-  }).filter(n => n) as Array<ObjectDescription>
+  }).filter(n => n) as ObjectDescription[]
 }

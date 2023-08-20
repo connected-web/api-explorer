@@ -3,7 +3,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 
 const store = { state: {} } as any
 
-function readFromLocalStorage():void {
+function readFromLocalStorage (): void {
   let storedData
   try {
     storedData = localStorage.getItem('IconSearch')
@@ -11,11 +11,11 @@ function readFromLocalStorage():void {
   } catch (ex) {
     const error = ex as Error
     console.warn('Icon Search data in local storage is corrupted; resetting.', { storedData })
-    updateLocalStorage() 
+    updateLocalStorage()
   }
 }
 
-function updateLocalStorage():void {
+function updateLocalStorage (): void {
   localStorage.setItem('IconSearch', JSON.stringify(store.state ?? {}))
 }
 
@@ -32,7 +32,7 @@ export default class IconSearch {
     readFromLocalStorage()
   }
 
-  findIcon (searchString:string): string {
+  findIcon (searchString: string): string {
     const existing = store?.state?.icons?.[searchString]
     if (existing) {
       return existing
