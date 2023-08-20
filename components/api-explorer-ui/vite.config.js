@@ -7,5 +7,8 @@ export default defineConfig({
   server: {
     port: 8080
   },
-  base: '/api-explorer/'
+  base: '/api-explorer/',
+  build: {
+    minify: false
+  }
 })
