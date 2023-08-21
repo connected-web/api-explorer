@@ -11,6 +11,7 @@
       </div>
       <div class="row p5">
         <button @click="item?.action.reset()"><icon icon="recycle" />Reset</button>
+        <span class="spacer"></span>
         <ActionButton v-model="item.action" :params="inputParams(item)" />
       </div>
       <pre v-if="item?.action?.loading">Loading...</pre>
@@ -66,8 +67,9 @@ export default {
   data() {
     return {
       iconSearch: new IconSearch(),
-      actions: {} as { [key: string]: Action },
-      results: {} as { [key: string]: any }
+      actions: {} as { [key: string]: Action<unknown> },
+      results: {} as { [key: string]: any },
+      resolved: {} as unknown
     }
   },
   props: {
@@ -80,10 +82,11 @@ export default {
   },
   computed: {
     signatures():Array<ObjectSignature> {
-      const { modelValue } = this
-      const items = describeObject(this.modelValue)
+      const { resolved } = this
+      const items = describeObject(resolved)
+      console.log('Describing', { resolved, items, keys: Object.keys(resolved) })
       return items.map(item => {
-        return { ...item, inputs: {}, action: this.createActionFor(item, modelValue) } as ObjectSignature
+        return { ...item, inputs: {}, action: this.createActionFor(item, resolved) } as ObjectSignature
       })
     }
   },
@@ -114,6 +117,7 @@ export default {
           this.$forceUpdate()
         })
         action.on('error', (error: CustomEvent) => {
+          console.log('Action errored')
           this.$forceUpdate()
         })
       } catch (error) {
@@ -135,10 +139,15 @@ export default {
       })
     }
   },
+  async mounted() {
+    const resolved = await Promise.resolve(this.modelValue)
+    this.resolved = resolved
+  },
   watch: {
-    modelValue() {
+    async modelValue() {
       this.actions = {}
       this.results = {}
+      this.resolved = await Promise.resolve(this.modelValue)
     }
   }
 }

@@ -15,6 +15,8 @@ export interface ObjectDescription {
   value: any
 }
 
+const ignorable = ['length', 'name', 'arguments', 'caller', 'apply', 'bind', 'call', 'toString'].sort()
+
 export default function describeObject (obj: any): ObjectDescription[] {
   const signatures = {
     object: (objProp: string) => objProp,
@@ -31,7 +33,15 @@ export default function describeObject (obj: any): ObjectDescription[] {
     default: (objProp: string) => objProp + ''
   }
   const ignoreList = ['__defineGetter__', '__defineSetter__']
-  const properties = Object.getOwnPropertyNames(Object.getPrototypeOf(obj)).filter(n => n !== 'constructor')
+  const keys = Object.keys(obj)
+  const meta = [...Object.getOwnPropertyNames(Object.getPrototypeOf(obj)).filter(n => n !== 'constructor')].sort()
+  let properties
+  if (JSON.stringify(ignorable) === JSON.stringify(meta)) {
+    console.log('Object matches pattern for wrapped object, switching to keys:', { keys, meta })
+    properties = keys
+  } else {
+    properties = meta
+  }
   return properties.map(prop => {
     if (ignoreList.includes(prop)) {
       return null
