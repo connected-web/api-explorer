@@ -404,7 +404,7 @@ function resetTracking() {
   const last = trackStack.pop();
   shouldTrack = last === void 0 ? true : last;
 }
-function track(target, type, key) {
+function track(target, type2, key) {
   if (shouldTrack && activeEffect) {
     let depsMap = targetMap.get(target);
     if (!depsMap) {
@@ -432,13 +432,13 @@ function trackEffects(dep, debuggerEventExtraInfo) {
     activeEffect.deps.push(dep);
   }
 }
-function trigger(target, type, key, newValue, oldValue, oldTarget) {
+function trigger(target, type2, key, newValue, oldValue, oldTarget) {
   const depsMap = targetMap.get(target);
   if (!depsMap) {
     return;
   }
   let deps = [];
-  if (type === "clear") {
+  if (type2 === "clear") {
     deps = [...depsMap.values()];
   } else if (key === "length" && isArray$4(target)) {
     const newLength = Number(newValue);
@@ -451,7 +451,7 @@ function trigger(target, type, key, newValue, oldValue, oldTarget) {
     if (key !== void 0) {
       deps.push(depsMap.get(key));
     }
-    switch (type) {
+    switch (type2) {
       case "add":
         if (!isArray$4(target)) {
           deps.push(depsMap.get(ITERATE_KEY));
@@ -719,7 +719,7 @@ function add(value2) {
   }
   return this;
 }
-function set(key, value2) {
+function set$2(key, value2) {
   value2 = toRaw(value2);
   const target = toRaw(this);
   const { has: has2, get: get2 } = getProto(target);
@@ -803,9 +803,9 @@ function createIterableMethod(method, isReadonly2, isShallow2) {
     };
   };
 }
-function createReadonlyMethod(type) {
+function createReadonlyMethod(type2) {
   return function(...args) {
-    return type === "delete" ? false : this;
+    return type2 === "delete" ? false : this;
   };
 }
 function createInstrumentations() {
@@ -818,7 +818,7 @@ function createInstrumentations() {
     },
     has,
     add,
-    set,
+    set: set$2,
     delete: deleteEntry,
     clear,
     forEach: createForEach(false, false)
@@ -832,7 +832,7 @@ function createInstrumentations() {
     },
     has,
     add,
-    set,
+    set: set$2,
     delete: deleteEntry,
     clear,
     forEach: createForEach(false, true)
@@ -1148,37 +1148,37 @@ function computed$1(getterOrOptions, debugOptions, isSSR = false) {
 function warn(msg, ...args) {
   return;
 }
-function callWithErrorHandling(fn, instance, type, args) {
+function callWithErrorHandling(fn, instance, type2, args) {
   let res;
   try {
     res = args ? fn(...args) : fn();
   } catch (err) {
-    handleError(err, instance, type);
+    handleError(err, instance, type2);
   }
   return res;
 }
-function callWithAsyncErrorHandling(fn, instance, type, args) {
+function callWithAsyncErrorHandling(fn, instance, type2, args) {
   if (isFunction$3(fn)) {
-    const res = callWithErrorHandling(fn, instance, type, args);
+    const res = callWithErrorHandling(fn, instance, type2, args);
     if (res && isPromise$1(res)) {
       res.catch((err) => {
-        handleError(err, instance, type);
+        handleError(err, instance, type2);
       });
     }
     return res;
   }
   const values = [];
   for (let i = 0; i < fn.length; i++) {
-    values.push(callWithAsyncErrorHandling(fn[i], instance, type, args));
+    values.push(callWithAsyncErrorHandling(fn[i], instance, type2, args));
   }
   return values;
 }
-function handleError(err, instance, type, throwInDev = true) {
+function handleError(err, instance, type2, throwInDev = true) {
   const contextVNode = instance ? instance.vnode : null;
   if (instance) {
     let cur = instance.parent;
     const exposedInstance = instance.proxy;
-    const errorInfo = type;
+    const errorInfo = type2;
     while (cur) {
       const errorCapturedHooks = cur.ec;
       if (errorCapturedHooks) {
@@ -1201,9 +1201,9 @@ function handleError(err, instance, type, throwInDev = true) {
       return;
     }
   }
-  logError(err, type, contextVNode, throwInDev);
+  logError(err, type2, contextVNode, throwInDev);
 }
-function logError(err, type, contextVNode, throwInDev = true) {
+function logError(err, type2, contextVNode, throwInDev = true) {
   {
     console.error(err);
   }
@@ -1646,7 +1646,7 @@ function updateHOCHostEl({ vnode, parent }, el) {
     parent = parent.parent;
   }
 }
-const isSuspense = (type) => type.__isSuspense;
+const isSuspense = (type2) => type2.__isSuspense;
 function queueEffectWithSuspense(fn, suspense) {
   if (suspense && suspense.pendingBranch) {
     if (isArray$4(fn)) {
@@ -1820,8 +1820,8 @@ function instanceWatch(source, value2, options) {
   }
   return res;
 }
-function createPathGetter(ctx, path) {
-  const segments = path.split(".");
+function createPathGetter(ctx, path2) {
+  const segments = path2.split(".");
   return () => {
     let cur = ctx;
     for (let i = 0; i < segments.length && cur; i++) {
@@ -1923,7 +1923,7 @@ function onActivated(hook, target) {
 function onDeactivated(hook, target) {
   registerKeepAliveHook(hook, "da", target);
 }
-function registerKeepAliveHook(hook, type, target = currentInstance) {
+function registerKeepAliveHook(hook, type2, target = currentInstance) {
   const wrappedHook = hook.__wdc || (hook.__wdc = () => {
     let current = target;
     while (current) {
@@ -1934,39 +1934,39 @@ function registerKeepAliveHook(hook, type, target = currentInstance) {
     }
     return hook();
   });
-  injectHook(type, wrappedHook, target);
+  injectHook(type2, wrappedHook, target);
   if (target) {
     let current = target.parent;
     while (current && current.parent) {
       if (isKeepAlive(current.parent.vnode)) {
-        injectToKeepAliveRoot(wrappedHook, type, target, current);
+        injectToKeepAliveRoot(wrappedHook, type2, target, current);
       }
       current = current.parent;
     }
   }
 }
-function injectToKeepAliveRoot(hook, type, target, keepAliveRoot) {
+function injectToKeepAliveRoot(hook, type2, target, keepAliveRoot) {
   const injected = injectHook(
-    type,
+    type2,
     hook,
     keepAliveRoot,
     true
     /* prepend */
   );
   onUnmounted(() => {
-    remove(keepAliveRoot[type], injected);
+    remove(keepAliveRoot[type2], injected);
   }, target);
 }
-function injectHook(type, hook, target = currentInstance, prepend = false) {
+function injectHook(type2, hook, target = currentInstance, prepend = false) {
   if (target) {
-    const hooks = target[type] || (target[type] = []);
+    const hooks = target[type2] || (target[type2] = []);
     const wrappedHook = hook.__weh || (hook.__weh = (...args) => {
       if (target.isUnmounted) {
         return;
       }
       pauseTracking();
       setCurrentInstance(target);
-      const res = callWithAsyncErrorHandling(hook, target, type, args);
+      const res = callWithAsyncErrorHandling(hook, target, type2, args);
       unsetCurrentInstance();
       resetTracking();
       return res;
@@ -2004,11 +2004,11 @@ function resolveComponent(name, maybeSelfReference) {
   return resolveAsset(COMPONENTS, name, true, maybeSelfReference) || name;
 }
 const NULL_DYNAMIC_COMPONENT = Symbol.for("v-ndc");
-function resolveAsset(type, name, warnMissing = true, maybeSelfReference = false) {
+function resolveAsset(type2, name, warnMissing = true, maybeSelfReference = false) {
   const instance = currentRenderingInstance || currentInstance;
   if (instance) {
     const Component = instance.type;
-    if (type === COMPONENTS) {
+    if (type2 === COMPONENTS) {
       const selfName = getComponentName(
         Component,
         false
@@ -2021,8 +2021,8 @@ function resolveAsset(type, name, warnMissing = true, maybeSelfReference = false
     const res = (
       // local registration
       // check instance[type] first which is resolved for options API
-      resolve$1(instance[type] || Component[type], name) || // global registration
-      resolve$1(instance.appContext[type], name)
+      resolve$1(instance[type2] || Component[type2], name) || // global registration
+      resolve$1(instance.appContext[type2], name)
     );
     if (!res && maybeSelfReference) {
       return Component;
@@ -2139,7 +2139,7 @@ const publicPropertiesMap = (
 const hasSetupBinding = (state, key) => state !== EMPTY_OBJ && !state.__isScriptSetup && hasOwn$1(state, key);
 const PublicInstanceProxyHandlers = {
   get({ _: instance }, key) {
-    const { ctx, setupState, data, props, accessCache, type, appContext } = instance;
+    const { ctx, setupState, data, props, accessCache, type: type2, appContext } = instance;
     let normalizedProps;
     if (key[0] !== "$") {
       const n = accessCache[key];
@@ -2183,7 +2183,7 @@ const PublicInstanceProxyHandlers = {
       return publicGetter(instance);
     } else if (
       // css module (injected by vue-loader)
-      (cssModule = type.__cssModules) && (cssModule = cssModule[key])
+      (cssModule = type2.__cssModules) && (cssModule = cssModule[key])
     ) {
       return cssModule;
     } else if (ctx !== EMPTY_OBJ && hasOwn$1(ctx, key)) {
@@ -2278,7 +2278,7 @@ function applyOptions(instance) {
     expose,
     inheritAttrs,
     // assets
-    components,
+    components: components2,
     directives,
     filters
   } = options;
@@ -2374,8 +2374,8 @@ function applyOptions(instance) {
   if (inheritAttrs != null) {
     instance.inheritAttrs = inheritAttrs;
   }
-  if (components)
-    instance.components = components;
+  if (components2)
+    instance.components = components2;
   if (directives)
     instance.directives = directives;
 }
@@ -2412,11 +2412,11 @@ function resolveInjections(injectOptions, ctx, checkDuplicateProperties = NOOP$1
     }
   }
 }
-function callHook(hook, instance, type) {
+function callHook(hook, instance, type2) {
   callWithAsyncErrorHandling(
     isArray$4(hook) ? hook.map((h2) => h2.bind(instance.proxy)) : hook.bind(instance.proxy),
     instance,
-    type
+    type2
   );
 }
 function createWatcher(raw, ctx, publicThis, key) {
@@ -3002,11 +3002,11 @@ function getType(ctor) {
 function isSameType(a, b) {
   return getType(a) === getType(b);
 }
-function getTypeIndex(type, expectedTypes) {
+function getTypeIndex(type2, expectedTypes) {
   if (isArray$4(expectedTypes)) {
-    return expectedTypes.findIndex((t) => isSameType(t, type));
+    return expectedTypes.findIndex((t) => isSameType(t, type2));
   } else if (isFunction$3(expectedTypes)) {
-    return isSameType(expectedTypes, type) ? 0 : -1;
+    return isSameType(expectedTypes, type2) ? 0 : -1;
   }
   return -1;
 }
@@ -3044,10 +3044,10 @@ const normalizeVNodeSlots = (instance, children) => {
 };
 const initSlots = (instance, children) => {
   if (instance.vnode.shapeFlag & 32) {
-    const type = children._;
-    if (type) {
+    const type2 = children._;
+    if (type2) {
       instance.slots = toRaw(children);
-      def(children, "_", type);
+      def(children, "_", type2);
     } else {
       normalizeObjectSlots(
         children,
@@ -3067,13 +3067,13 @@ const updateSlots = (instance, children, optimized) => {
   let needDeletionCheck = true;
   let deletionComparisonTarget = EMPTY_OBJ;
   if (vnode.shapeFlag & 32) {
-    const type = children._;
-    if (type) {
-      if (optimized && type === 1) {
+    const type2 = children._;
+    if (type2) {
+      if (optimized && type2 === 1) {
         needDeletionCheck = false;
       } else {
         extend$1(slots, children);
-        if (!optimized && type === 1) {
+        if (!optimized && type2 === 1) {
           delete slots._;
         }
       }
@@ -3208,8 +3208,8 @@ function baseCreateRenderer(options, createHydrationFns) {
       optimized = false;
       n2.dynamicChildren = null;
     }
-    const { type, ref: ref2, shapeFlag } = n2;
-    switch (type) {
+    const { type: type2, ref: ref2, shapeFlag } = n2;
+    switch (type2) {
       case Text:
         processText(n1, n2, container, anchor);
         break;
@@ -3260,7 +3260,7 @@ function baseCreateRenderer(options, createHydrationFns) {
             optimized
           );
         } else if (shapeFlag & 64) {
-          type.process(
+          type2.process(
             n1,
             n2,
             container,
@@ -3273,7 +3273,7 @@ function baseCreateRenderer(options, createHydrationFns) {
             internals
           );
         } else if (shapeFlag & 128) {
-          type.process(
+          type2.process(
             n1,
             n2,
             container,
@@ -3373,7 +3373,7 @@ function baseCreateRenderer(options, createHydrationFns) {
   const mountElement = (vnode, container, anchor, parentComponent, parentSuspense, isSVG, slotScopeIds, optimized) => {
     let el;
     let vnodeHook;
-    const { type, props, shapeFlag, transition, dirs } = vnode;
+    const { type: type2, props, shapeFlag, transition, dirs } = vnode;
     el = vnode.el = hostCreateElement(
       vnode.type,
       isSVG,
@@ -3389,7 +3389,7 @@ function baseCreateRenderer(options, createHydrationFns) {
         null,
         parentComponent,
         parentSuspense,
-        isSVG && type !== "foreignObject",
+        isSVG && type2 !== "foreignObject",
         slotScopeIds,
         optimized
       );
@@ -4200,7 +4200,7 @@ function baseCreateRenderer(options, createHydrationFns) {
     }
   };
   const move = (vnode, container, anchor, moveType, parentSuspense = null) => {
-    const { el, type, transition, children, shapeFlag } = vnode;
+    const { el, type: type2, transition, children, shapeFlag } = vnode;
     if (shapeFlag & 6) {
       move(vnode.component.subTree, container, anchor, moveType);
       return;
@@ -4210,10 +4210,10 @@ function baseCreateRenderer(options, createHydrationFns) {
       return;
     }
     if (shapeFlag & 64) {
-      type.move(vnode, container, anchor, internals);
+      type2.move(vnode, container, anchor, internals);
       return;
     }
-    if (type === Fragment) {
+    if (type2 === Fragment) {
       hostInsert(el, container, anchor);
       for (let i = 0; i < children.length; i++) {
         move(children[i], container, anchor, moveType);
@@ -4221,7 +4221,7 @@ function baseCreateRenderer(options, createHydrationFns) {
       hostInsert(vnode.anchor, container, anchor);
       return;
     }
-    if (type === Static) {
+    if (type2 === Static) {
       moveStaticNode(vnode, container, anchor);
       return;
     }
@@ -4252,7 +4252,7 @@ function baseCreateRenderer(options, createHydrationFns) {
   };
   const unmount = (vnode, parentComponent, parentSuspense, doRemove = false, optimized = false) => {
     const {
-      type,
+      type: type2,
       props,
       ref: ref2,
       children,
@@ -4294,7 +4294,7 @@ function baseCreateRenderer(options, createHydrationFns) {
           doRemove
         );
       } else if (dynamicChildren && // #1153: fast path should not be taken for non-stable (v-for) fragments
-      (type !== Fragment || patchFlag > 0 && patchFlag & 64)) {
+      (type2 !== Fragment || patchFlag > 0 && patchFlag & 64)) {
         unmountChildren(
           dynamicChildren,
           parentComponent,
@@ -4302,7 +4302,7 @@ function baseCreateRenderer(options, createHydrationFns) {
           false,
           true
         );
-      } else if (type === Fragment && patchFlag & (128 | 256) || !optimized && shapeFlag & 16) {
+      } else if (type2 === Fragment && patchFlag & (128 | 256) || !optimized && shapeFlag & 16) {
         unmountChildren(children, parentComponent, parentSuspense);
       }
       if (doRemove) {
@@ -4317,14 +4317,14 @@ function baseCreateRenderer(options, createHydrationFns) {
     }
   };
   const remove2 = (vnode) => {
-    const { type, el, anchor, transition } = vnode;
-    if (type === Fragment) {
+    const { type: type2, el, anchor, transition } = vnode;
+    if (type2 === Fragment) {
       {
         removeFragment(el, anchor);
       }
       return;
     }
-    if (type === Static) {
+    if (type2 === Static) {
       removeStaticNode(vnode);
       return;
     }
@@ -4493,7 +4493,7 @@ function getSequence(arr) {
   }
   return result;
 }
-const isTeleport = (type) => type.__isTeleport;
+const isTeleport = (type2) => type2.__isTeleport;
 const Fragment = Symbol.for("v-fgt");
 const Text = Symbol.for("v-txt");
 const Comment = Symbol.for("v-cmt");
@@ -4519,10 +4519,10 @@ function setupBlock(vnode) {
   }
   return vnode;
 }
-function createElementBlock(type, props, children, patchFlag, dynamicProps, shapeFlag) {
+function createElementBlock(type2, props, children, patchFlag, dynamicProps, shapeFlag) {
   return setupBlock(
     createBaseVNode(
-      type,
+      type2,
       props,
       children,
       patchFlag,
@@ -4533,10 +4533,10 @@ function createElementBlock(type, props, children, patchFlag, dynamicProps, shap
     )
   );
 }
-function createBlock(type, props, children, patchFlag, dynamicProps) {
+function createBlock(type2, props, children, patchFlag, dynamicProps) {
   return setupBlock(
     createVNode(
-      type,
+      type2,
       props,
       children,
       patchFlag,
@@ -4564,11 +4564,11 @@ const normalizeRef = ({
   }
   return ref2 != null ? isString$3(ref2) || isRef(ref2) || isFunction$3(ref2) ? { i: currentRenderingInstance, r: ref2, k: ref_key, f: !!ref_for } : ref2 : null;
 };
-function createBaseVNode(type, props = null, children = null, patchFlag = 0, dynamicProps = null, shapeFlag = type === Fragment ? 0 : 1, isBlockNode = false, needFullChildrenNormalization = false) {
+function createBaseVNode(type2, props = null, children = null, patchFlag = 0, dynamicProps = null, shapeFlag = type2 === Fragment ? 0 : 1, isBlockNode = false, needFullChildrenNormalization = false) {
   const vnode = {
     __v_isVNode: true,
     __v_skip: true,
-    type,
+    type: type2,
     props,
     key: props && normalizeKey(props),
     ref: props && normalizeRef(props),
@@ -4596,7 +4596,7 @@ function createBaseVNode(type, props = null, children = null, patchFlag = 0, dyn
   if (needFullChildrenNormalization) {
     normalizeChildren(vnode, children);
     if (shapeFlag & 128) {
-      type.normalize(vnode);
+      type2.normalize(vnode);
     }
   } else if (children) {
     vnode.shapeFlag |= isString$3(children) ? 8 : 16;
@@ -4615,13 +4615,13 @@ function createBaseVNode(type, props = null, children = null, patchFlag = 0, dyn
   return vnode;
 }
 const createVNode = _createVNode;
-function _createVNode(type, props = null, children = null, patchFlag = 0, dynamicProps = null, isBlockNode = false) {
-  if (!type || type === NULL_DYNAMIC_COMPONENT) {
-    type = Comment;
+function _createVNode(type2, props = null, children = null, patchFlag = 0, dynamicProps = null, isBlockNode = false) {
+  if (!type2 || type2 === NULL_DYNAMIC_COMPONENT) {
+    type2 = Comment;
   }
-  if (isVNode(type)) {
+  if (isVNode(type2)) {
     const cloned = cloneVNode(
-      type,
+      type2,
       props,
       true
       /* mergeRef: true */
@@ -4631,7 +4631,7 @@ function _createVNode(type, props = null, children = null, patchFlag = 0, dynami
     }
     if (isBlockTreeEnabled > 0 && !isBlockNode && currentBlock) {
       if (cloned.shapeFlag & 6) {
-        currentBlock[currentBlock.indexOf(type)] = cloned;
+        currentBlock[currentBlock.indexOf(type2)] = cloned;
       } else {
         currentBlock.push(cloned);
       }
@@ -4639,8 +4639,8 @@ function _createVNode(type, props = null, children = null, patchFlag = 0, dynami
     cloned.patchFlag |= -2;
     return cloned;
   }
-  if (isClassComponent(type)) {
-    type = type.__vccOpts;
+  if (isClassComponent(type2)) {
+    type2 = type2.__vccOpts;
   }
   if (props) {
     props = guardReactiveProps(props);
@@ -4655,9 +4655,9 @@ function _createVNode(type, props = null, children = null, patchFlag = 0, dynami
       props.style = normalizeStyle(style2);
     }
   }
-  const shapeFlag = isString$3(type) ? 1 : isSuspense(type) ? 128 : isTeleport(type) ? 64 : isObject$4(type) ? 4 : isFunction$3(type) ? 2 : 0;
+  const shapeFlag = isString$3(type2) ? 1 : isSuspense(type2) ? 128 : isTeleport(type2) ? 64 : isObject$4(type2) ? 4 : isFunction$3(type2) ? 2 : 0;
   return createBaseVNode(
-    type,
+    type2,
     props,
     children,
     patchFlag,
@@ -4750,12 +4750,12 @@ function cloneIfMounted(child) {
   return child.el === null && child.patchFlag !== -1 || child.memo ? child : cloneVNode(child);
 }
 function normalizeChildren(vnode, children) {
-  let type = 0;
+  let type2 = 0;
   const { shapeFlag } = vnode;
   if (children == null) {
     children = null;
   } else if (isArray$4(children)) {
-    type = 16;
+    type2 = 16;
   } else if (typeof children === "object") {
     if (shapeFlag & (1 | 64)) {
       const slot = children.default;
@@ -4766,7 +4766,7 @@ function normalizeChildren(vnode, children) {
       }
       return;
     } else {
-      type = 32;
+      type2 = 32;
       const slotFlag = children._;
       if (!slotFlag && !(InternalObjectKey in children)) {
         children._ctx = currentRenderingInstance;
@@ -4781,18 +4781,18 @@ function normalizeChildren(vnode, children) {
     }
   } else if (isFunction$3(children)) {
     children = { default: children, _ctx: currentRenderingInstance };
-    type = 32;
+    type2 = 32;
   } else {
     children = String(children);
     if (shapeFlag & 64) {
-      type = 16;
+      type2 = 16;
       children = [createTextVNode(children)];
     } else {
-      type = 8;
+      type2 = 8;
     }
   }
   vnode.children = children;
-  vnode.shapeFlag |= type;
+  vnode.shapeFlag |= type2;
 }
 function mergeProps(...args) {
   const ret = {};
@@ -4827,12 +4827,12 @@ function invokeVNodeHook(hook, instance, vnode, prevVNode = null) {
 const emptyAppContext = createAppContext();
 let uid = 0;
 function createComponentInstance(vnode, parent, suspense) {
-  const type = vnode.type;
+  const type2 = vnode.type;
   const appContext = (parent ? parent.appContext : vnode.appContext) || emptyAppContext;
   const instance = {
     uid: uid++,
     vnode,
-    type,
+    type: type2,
     parent,
     appContext,
     root: null,
@@ -4859,8 +4859,8 @@ function createComponentInstance(vnode, parent, suspense) {
     components: null,
     directives: null,
     // resolved props and emits options
-    propsOptions: normalizePropsOptions(type, appContext),
-    emitsOptions: normalizeEmitsOptions(type, appContext),
+    propsOptions: normalizePropsOptions(type2, appContext),
+    emitsOptions: normalizeEmitsOptions(type2, appContext),
     // emit
     emit: null,
     // to be set immediately
@@ -4868,7 +4868,7 @@ function createComponentInstance(vnode, parent, suspense) {
     // props default value
     propsDefaults: EMPTY_OBJ,
     // inheritAttrs
-    inheritAttrs: type.inheritAttrs,
+    inheritAttrs: type2.inheritAttrs,
     // state
     ctx: EMPTY_OBJ,
     data: EMPTY_OBJ,
@@ -5085,16 +5085,16 @@ function isClassComponent(value2) {
 const computed = (getterOrOptions, debugOptions) => {
   return computed$1(getterOrOptions, debugOptions, isInSSRComponentSetup);
 };
-function h(type, propsOrChildren, children) {
+function h(type2, propsOrChildren, children) {
   const l = arguments.length;
   if (l === 2) {
     if (isObject$4(propsOrChildren) && !isArray$4(propsOrChildren)) {
       if (isVNode(propsOrChildren)) {
-        return createVNode(type, null, [propsOrChildren]);
+        return createVNode(type2, null, [propsOrChildren]);
       }
-      return createVNode(type, propsOrChildren);
+      return createVNode(type2, propsOrChildren);
     } else {
-      return createVNode(type, null, propsOrChildren);
+      return createVNode(type2, null, propsOrChildren);
     }
   } else {
     if (l > 3) {
@@ -5102,7 +5102,7 @@ function h(type, propsOrChildren, children) {
     } else if (l === 3 && isVNode(children)) {
       children = [children];
     }
-    return createVNode(type, propsOrChildren, children);
+    return createVNode(type2, propsOrChildren, children);
   }
 }
 const ssrContextKey = Symbol.for("v-scx");
@@ -5304,13 +5304,13 @@ function patchDOMProp(el, key, value2, prevChildren, parentComponent, parentSusp
   }
   let needRemove = false;
   if (value2 === "" || value2 == null) {
-    const type = typeof el[key];
-    if (type === "boolean") {
+    const type2 = typeof el[key];
+    if (type2 === "boolean") {
       value2 = includeBooleanAttr(value2);
-    } else if (value2 == null && type === "string") {
+    } else if (value2 == null && type2 === "string") {
       value2 = "";
       needRemove = true;
-    } else if (type === "number") {
+    } else if (type2 === "number") {
       value2 = 0;
       needRemove = true;
     }
@@ -5575,7 +5575,7 @@ const _sfc_main$l = {
 const _withScopeId$7 = (n) => (pushScopeId("data-v-d1ce9c8f"), n = n(), popScopeId(), n);
 const _hoisted_1$l = /* @__PURE__ */ _withScopeId$7(() => /* @__PURE__ */ createBaseVNode("label", null, "User", -1));
 const _hoisted_2$i = /* @__PURE__ */ _withScopeId$7(() => /* @__PURE__ */ createBaseVNode("label", null, "Explore", -1));
-const _hoisted_3$d = /* @__PURE__ */ _withScopeId$7(() => /* @__PURE__ */ createBaseVNode("label", null, "Extras", -1));
+const _hoisted_3$e = /* @__PURE__ */ _withScopeId$7(() => /* @__PURE__ */ createBaseVNode("label", null, "Extras", -1));
 function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_router_link = resolveComponent("router-link");
   return openBlock(), createElementBlock("div", {
@@ -5601,7 +5601,7 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
       ]),
       _: 1
     }),
-    _hoisted_3$d,
+    _hoisted_3$e,
     createVNode(_component_router_link, { to: "/extras/icons" }, {
       default: withCtx(() => [
         createTextVNode("Icon Browser")
@@ -5664,7 +5664,7 @@ const _sfc_main$k = {
 const _withScopeId$6 = (n) => (pushScopeId("data-v-2bb64786"), n = n(), popScopeId(), n);
 const _hoisted_1$k = { class: "user-name" };
 const _hoisted_2$h = { class: "user-initials" };
-const _hoisted_3$c = {
+const _hoisted_3$d = {
   class: "circle-icon",
   title: "View User Details"
 };
@@ -5687,7 +5687,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
       default: withCtx(() => [
         createBaseVNode("label", _hoisted_1$k, toDisplayString($options.userName), 1),
         createBaseVNode("label", _hoisted_2$h, toDisplayString($options.userInitials), 1),
-        createBaseVNode("div", _hoisted_3$c, [
+        createBaseVNode("div", _hoisted_3$d, [
           createVNode(_component_Icon, {
             icon: $options.loggedIn ? "user-shield" : "user-slash"
           }, null, 8, ["icon"])
@@ -5723,11 +5723,11 @@ const _sfc_main$j = {
 const _withScopeId$5 = (n) => (pushScopeId("data-v-9a4a7987"), n = n(), popScopeId(), n);
 const _hoisted_1$j = { class: "header" };
 const _hoisted_2$g = /* @__PURE__ */ _withScopeId$5(() => /* @__PURE__ */ createBaseVNode("span", null, null, -1));
-const _hoisted_3$b = /* @__PURE__ */ _withScopeId$5(() => /* @__PURE__ */ createBaseVNode("span", null, null, -1));
+const _hoisted_3$c = /* @__PURE__ */ _withScopeId$5(() => /* @__PURE__ */ createBaseVNode("span", null, null, -1));
 const _hoisted_4$7 = /* @__PURE__ */ _withScopeId$5(() => /* @__PURE__ */ createBaseVNode("span", null, null, -1));
 const _hoisted_5$6 = [
   _hoisted_2$g,
-  _hoisted_3$b,
+  _hoisted_3$c,
   _hoisted_4$7
 ];
 const _hoisted_6$6 = /* @__PURE__ */ createStaticVNode('<div class="site-logo" data-v-9a4a7987></div><label class="site-title" data-v-9a4a7987><span class="fulltext" data-v-9a4a7987>API Explorer</span><span class="initials" data-v-9a4a7987>APX</span></label><span class="spacer" data-v-9a4a7987></span>', 3);
@@ -5984,7 +5984,7 @@ if (DOCUMENT && typeof DOCUMENT.querySelector === "function") {
     }
   });
 }
-var _default = {
+var _default$1 = {
   familyPrefix: DEFAULT_FAMILY_PREFIX,
   replacementClass: DEFAULT_REPLACEMENT_CLASS,
   autoReplaceSvg: true,
@@ -5997,7 +5997,7 @@ var _default = {
   measurePerformance: false,
   showMissingIcons: true
 };
-var _config = _objectSpread({}, _default, initial);
+var _config = _objectSpread({}, _default$1, initial);
 if (!_config.autoReplaceSvg)
   _config.observeMutations = false;
 var config = _objectSpread({}, _config);
@@ -6317,13 +6317,13 @@ function transformForSvg(_ref2) {
   var inner = {
     transform: "".concat(innerTranslate, " ").concat(innerScale, " ").concat(innerRotate)
   };
-  var path = {
+  var path2 = {
     transform: "translate(".concat(iconWidth / 2 * -1, " -256)")
   };
   return {
     outer,
     inner,
-    path
+    path: path2
   };
 }
 var ALL_SPACE = {
@@ -6479,8 +6479,8 @@ function asSymbol(_ref2) {
     }]
   }];
 }
-function makeInlineSvgAbstract(params) {
-  var _params$icons = params.icons, main = _params$icons.main, mask = _params$icons.mask, prefix = params.prefix, iconName = params.iconName, transform2 = params.transform, symbol = params.symbol, title = params.title, maskId = params.maskId, titleId = params.titleId, extra = params.extra, _params$watchable = params.watchable, watchable = _params$watchable === void 0 ? false : _params$watchable;
+function makeInlineSvgAbstract(params2) {
+  var _params$icons = params2.icons, main = _params$icons.main, mask = _params$icons.mask, prefix = params2.prefix, iconName = params2.iconName, transform2 = params2.transform, symbol = params2.symbol, title = params2.title, maskId = params2.maskId, titleId = params2.titleId, extra = params2.extra, _params$watchable = params2.watchable, watchable = _params$watchable === void 0 ? false : _params$watchable;
   var _ref2 = mask.found ? mask : main, width = _ref2.width, height = _ref2.height;
   var isUploadedIcon = prefix === "fak";
   var widthClass = isUploadedIcon ? "" : "fa-w-".concat(Math.ceil(width / height * 16));
@@ -6560,8 +6560,8 @@ var reduce = function fastReduceObject(subject, fn, initialValue, thisContext) {
   return result;
 };
 function defineIcons(prefix, icons2) {
-  var params = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : {};
-  var _params$skipHooks = params.skipHooks, skipHooks = _params$skipHooks === void 0 ? false : _params$skipHooks;
+  var params2 = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : {};
+  var _params$skipHooks = params2.skipHooks, skipHooks = _params$skipHooks === void 0 ? false : _params$skipHooks;
   var normalized = Object.keys(icons2).reduce(function(acc, iconName) {
     var icon2 = icons2[iconName];
     var expanded = !!icon2.icon;
@@ -6899,13 +6899,13 @@ function findIconDefinition(iconLookup) {
 }
 function resolveIcons(next) {
   return function(maybeIconDefinition) {
-    var params = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
+    var params2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
     var iconDefinition = (maybeIconDefinition || {}).icon ? maybeIconDefinition : findIconDefinition(maybeIconDefinition || {});
-    var mask = params.mask;
+    var mask = params2.mask;
     if (mask) {
       mask = (mask || {}).icon ? mask : findIconDefinition(mask || {});
     }
-    return next(iconDefinition, _objectSpread({}, params, {
+    return next(iconDefinition, _objectSpread({}, params2, {
       mask
     }));
   };
@@ -6918,8 +6918,8 @@ var parse$1 = {
   }
 };
 var icon = resolveIcons(function(iconDefinition) {
-  var params = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
-  var _params$transform = params.transform, transform2 = _params$transform === void 0 ? meaninglessTransform : _params$transform, _params$symbol = params.symbol, symbol = _params$symbol === void 0 ? false : _params$symbol, _params$mask = params.mask, mask = _params$mask === void 0 ? null : _params$mask, _params$maskId = params.maskId, maskId = _params$maskId === void 0 ? null : _params$maskId, _params$title = params.title, title = _params$title === void 0 ? null : _params$title, _params$titleId = params.titleId, titleId = _params$titleId === void 0 ? null : _params$titleId, _params$classes = params.classes, classes = _params$classes === void 0 ? [] : _params$classes, _params$attributes = params.attributes, attributes = _params$attributes === void 0 ? {} : _params$attributes, _params$styles = params.styles, styles2 = _params$styles === void 0 ? {} : _params$styles;
+  var params2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
+  var _params$transform = params2.transform, transform2 = _params$transform === void 0 ? meaninglessTransform : _params$transform, _params$symbol = params2.symbol, symbol = _params$symbol === void 0 ? false : _params$symbol, _params$mask = params2.mask, mask = _params$mask === void 0 ? null : _params$mask, _params$maskId = params2.maskId, maskId = _params$maskId === void 0 ? null : _params$maskId, _params$title = params2.title, title = _params$title === void 0 ? null : _params$title, _params$titleId = params2.titleId, titleId = _params$titleId === void 0 ? null : _params$titleId, _params$classes = params2.classes, classes = _params$classes === void 0 ? [] : _params$classes, _params$attributes = params2.attributes, attributes = _params$attributes === void 0 ? {} : _params$attributes, _params$styles = params2.styles, styles2 = _params$styles === void 0 ? {} : _params$styles;
   if (!iconDefinition)
     return;
   var prefix = iconDefinition.prefix, iconName = iconDefinition.iconName, icon2 = iconDefinition.icon;
@@ -13452,10 +13452,10 @@ function isESModule(obj) {
   return obj.__esModule || obj[Symbol.toStringTag] === "Module";
 }
 const assign$2 = Object.assign;
-function applyToParams(fn, params) {
+function applyToParams(fn, params2) {
   const newParams = {};
-  for (const key in params) {
-    const value2 = params[key];
+  for (const key in params2) {
+    const value2 = params2[key];
     newParams[key] = isArray$3(value2) ? value2.map(fn) : fn(value2);
   }
   return newParams;
@@ -13464,27 +13464,27 @@ const noop$2 = () => {
 };
 const isArray$3 = Array.isArray;
 const TRAILING_SLASH_RE = /\/$/;
-const removeTrailingSlash = (path) => path.replace(TRAILING_SLASH_RE, "");
+const removeTrailingSlash = (path2) => path2.replace(TRAILING_SLASH_RE, "");
 function parseURL(parseQuery2, location2, currentLocation = "/") {
-  let path, query = {}, searchString = "", hash = "";
+  let path2, query = {}, searchString = "", hash = "";
   const hashPos = location2.indexOf("#");
   let searchPos = location2.indexOf("?");
   if (hashPos < searchPos && hashPos >= 0) {
     searchPos = -1;
   }
   if (searchPos > -1) {
-    path = location2.slice(0, searchPos);
+    path2 = location2.slice(0, searchPos);
     searchString = location2.slice(searchPos + 1, hashPos > -1 ? hashPos : location2.length);
     query = parseQuery2(searchString);
   }
   if (hashPos > -1) {
-    path = path || location2.slice(0, hashPos);
+    path2 = path2 || location2.slice(0, hashPos);
     hash = location2.slice(hashPos, location2.length);
   }
-  path = resolveRelativePath(path != null ? path : location2, currentLocation);
+  path2 = resolveRelativePath(path2 != null ? path2 : location2, currentLocation);
   return {
-    fullPath: path + (searchString && "?") + searchString + hash,
-    path,
+    fullPath: path2 + (searchString && "?") + searchString + hash,
+    path: path2,
     query,
     hash
   };
@@ -13608,9 +13608,9 @@ function scrollToPosition(position) {
     window.scrollTo(scrollToOptions.left != null ? scrollToOptions.left : window.pageXOffset, scrollToOptions.top != null ? scrollToOptions.top : window.pageYOffset);
   }
 }
-function getScrollKey(path, delta) {
+function getScrollKey(path2, delta) {
   const position = history.state ? history.state.position - delta : -1;
-  return position + path;
+  return position + path2;
 }
 const scrollPositions = /* @__PURE__ */ new Map();
 function saveScrollPosition(key, scrollPosition) {
@@ -13632,8 +13632,8 @@ function createCurrentLocation(base, location2) {
       pathFromHash = "/" + pathFromHash;
     return stripBase(pathFromHash, "");
   }
-  const path = stripBase(pathname, base);
-  return path + search2 + hash;
+  const path2 = stripBase(pathname, base);
+  return path2 + search2 + hash;
 }
 function useHistoryListeners(base, historyState, currentLocation, replace) {
   let listeners = [];
@@ -13833,16 +13833,16 @@ var NavigationFailureType;
   NavigationFailureType2[NavigationFailureType2["cancelled"] = 8] = "cancelled";
   NavigationFailureType2[NavigationFailureType2["duplicated"] = 16] = "duplicated";
 })(NavigationFailureType || (NavigationFailureType = {}));
-function createRouterError(type, params) {
+function createRouterError(type2, params2) {
   {
     return assign$2(new Error(), {
-      type,
+      type: type2,
       [NavigationFailureSymbol]: true
-    }, params);
+    }, params2);
   }
 }
-function isNavigationFailure(error, type) {
-  return error instanceof Error && NavigationFailureSymbol in error && (type == null || !!(error.type & type));
+function isNavigationFailure(error, type2) {
+  return error instanceof Error && NavigationFailureSymbol in error && (type2 == null || !!(error.type & type2));
 }
 const BASE_PARAM_PATTERN = "[^/]+?";
 const BASE_PATH_PARSER_OPTIONS = {
@@ -13919,31 +13919,31 @@ function tokensToParser(segments, extraOptions) {
   else if (options.strict)
     pattern += "(?:/|$)";
   const re = new RegExp(pattern, options.sensitive ? "" : "i");
-  function parse2(path) {
-    const match = path.match(re);
-    const params = {};
+  function parse2(path2) {
+    const match = path2.match(re);
+    const params2 = {};
     if (!match)
       return null;
     for (let i = 1; i < match.length; i++) {
       const value2 = match[i] || "";
       const key = keys2[i - 1];
-      params[key.name] = value2 && key.repeatable ? value2.split("/") : value2;
+      params2[key.name] = value2 && key.repeatable ? value2.split("/") : value2;
     }
-    return params;
+    return params2;
   }
-  function stringify(params) {
-    let path = "";
+  function stringify(params2) {
+    let path2 = "";
     let avoidDuplicatedSlash = false;
     for (const segment of segments) {
-      if (!avoidDuplicatedSlash || !path.endsWith("/"))
-        path += "/";
+      if (!avoidDuplicatedSlash || !path2.endsWith("/"))
+        path2 += "/";
       avoidDuplicatedSlash = false;
       for (const token of segment) {
         if (token.type === 0) {
-          path += token.value;
+          path2 += token.value;
         } else if (token.type === 1) {
           const { value: value2, repeatable, optional } = token;
-          const param = value2 in params ? params[value2] : "";
+          const param = value2 in params2 ? params2[value2] : "";
           if (isArray$3(param) && !repeatable) {
             throw new Error(`Provided param "${value2}" is an array but it is not repeatable (* or + modifiers)`);
           }
@@ -13951,19 +13951,19 @@ function tokensToParser(segments, extraOptions) {
           if (!text) {
             if (optional) {
               if (segment.length < 2) {
-                if (path.endsWith("/"))
-                  path = path.slice(0, -1);
+                if (path2.endsWith("/"))
+                  path2 = path2.slice(0, -1);
                 else
                   avoidDuplicatedSlash = true;
               }
             } else
               throw new Error(`Missing required param "${value2}"`);
           }
-          path += text;
+          path2 += text;
         }
       }
     }
-    return path || "/";
+    return path2 || "/";
   }
   return {
     re,
@@ -14015,13 +14015,13 @@ const ROOT_TOKEN = {
   value: ""
 };
 const VALID_PARAM_RE = /[a-zA-Z0-9_]/;
-function tokenizePath(path) {
-  if (!path)
+function tokenizePath(path2) {
+  if (!path2)
     return [[]];
-  if (path === "/")
+  if (path2 === "/")
     return [[ROOT_TOKEN]];
-  if (!path.startsWith("/")) {
-    throw new Error(`Invalid path "${path}"`);
+  if (!path2.startsWith("/")) {
+    throw new Error(`Invalid path "${path2}"`);
   }
   function crash(message) {
     throw new Error(`ERR (${state})/"${buffer}": ${message}`);
@@ -14065,8 +14065,8 @@ function tokenizePath(path) {
   function addCharToBuffer() {
     buffer += char;
   }
-  while (i < path.length) {
-    char = path[i++];
+  while (i < path2.length) {
+    char = path2[i++];
     if (char === "\\" && state !== 2) {
       previousState = state;
       state = 4;
@@ -14178,11 +14178,11 @@ function createRouterMatcher(routes2, globalOptions) {
     let matcher;
     let originalMatcher;
     for (const normalizedRecord of normalizedRecords) {
-      const { path } = normalizedRecord;
-      if (parent && path[0] !== "/") {
+      const { path: path2 } = normalizedRecord;
+      if (parent && path2[0] !== "/") {
         const parentPath = parent.record.path;
         const connectingSlash = parentPath[parentPath.length - 1] === "/" ? "" : "/";
-        normalizedRecord.path = parent.record.path + (path && connectingSlash + path);
+        normalizedRecord.path = parent.record.path + (path2 && connectingSlash + path2);
       }
       matcher = createRouteRecordMatcher(normalizedRecord, parent, options);
       if (originalRecord) {
@@ -14244,8 +14244,8 @@ function createRouterMatcher(routes2, globalOptions) {
   }
   function resolve2(location2, currentLocation) {
     let matcher;
-    let params = {};
-    let path;
+    let params2 = {};
+    let path2;
     let name;
     if ("name" in location2 && location2.name) {
       matcher = matcherMap.get(location2.name);
@@ -14254,7 +14254,7 @@ function createRouterMatcher(routes2, globalOptions) {
           location: location2
         });
       name = matcher.record.name;
-      params = assign$2(
+      params2 = assign$2(
         // paramsFromLocation is a new object
         paramsFromLocation(
           currentLocation.params,
@@ -14266,12 +14266,12 @@ function createRouterMatcher(routes2, globalOptions) {
         // #1497 this ensures better active/exact matching
         location2.params && paramsFromLocation(location2.params, matcher.keys.map((k) => k.name))
       );
-      path = matcher.stringify(params);
+      path2 = matcher.stringify(params2);
     } else if ("path" in location2) {
-      path = location2.path;
-      matcher = matchers.find((m) => m.re.test(path));
+      path2 = location2.path;
+      matcher = matchers.find((m) => m.re.test(path2));
       if (matcher) {
-        params = matcher.parse(path);
+        params2 = matcher.parse(path2);
         name = matcher.record.name;
       }
     } else {
@@ -14282,8 +14282,8 @@ function createRouterMatcher(routes2, globalOptions) {
           currentLocation
         });
       name = matcher.record.name;
-      params = assign$2({}, currentLocation.params, location2.params);
-      path = matcher.stringify(params);
+      params2 = assign$2({}, currentLocation.params, location2.params);
+      path2 = matcher.stringify(params2);
     }
     const matched = [];
     let parentMatcher = matcher;
@@ -14293,8 +14293,8 @@ function createRouterMatcher(routes2, globalOptions) {
     }
     return {
       name,
-      path,
-      params,
+      path: path2,
+      params: params2,
       matched,
       meta: mergeMetaFields(matched)
     };
@@ -14302,11 +14302,11 @@ function createRouterMatcher(routes2, globalOptions) {
   routes2.forEach((route) => addRoute(route));
   return { addRoute, resolve: resolve2, removeRoute, getRoutes, getRecordMatcher };
 }
-function paramsFromLocation(params, keys2) {
+function paramsFromLocation(params2, keys2) {
   const newParams = {};
   for (const key of keys2) {
-    if (key in params)
-      newParams[key] = params[key];
+    if (key in params2)
+      newParams[key] = params2[key];
   }
   return newParams;
 }
@@ -15044,7 +15044,7 @@ function createRouter(options) {
   function setupListeners() {
     if (removeHistoryListener)
       return;
-    removeHistoryListener = routerHistory.listen((to, _from, info) => {
+    removeHistoryListener = routerHistory.listen((to, _from, info2) => {
       if (!router2.listening)
         return;
       const toLocation = resolve2(to);
@@ -15056,7 +15056,7 @@ function createRouter(options) {
       pendingLocation = toLocation;
       const from2 = currentRoute.value;
       if (isBrowser) {
-        saveScrollPosition(getScrollKey(from2.fullPath, info.delta), computeScrollPosition());
+        saveScrollPosition(getScrollKey(from2.fullPath, info2.delta), computeScrollPosition());
       }
       navigate(toLocation, from2).catch((error) => {
         if (isNavigationFailure(
@@ -15080,14 +15080,14 @@ function createRouter(options) {
               failure,
               4 | 16
               /* ErrorTypes.NAVIGATION_DUPLICATED */
-            ) && !info.delta && info.type === NavigationType.pop) {
+            ) && !info2.delta && info2.type === NavigationType.pop) {
               routerHistory.go(-1, false);
             }
           }).catch(noop$2);
           return Promise.reject();
         }
-        if (info.delta) {
-          routerHistory.go(-info.delta, false);
+        if (info2.delta) {
+          routerHistory.go(-info2.delta, false);
         }
         return triggerError(error, toLocation, from2);
       }).then((failure) => {
@@ -15098,15 +15098,15 @@ function createRouter(options) {
           false
         );
         if (failure) {
-          if (info.delta && // a new navigation has been triggered, so we do not want to revert, that will change the current history
+          if (info2.delta && // a new navigation has been triggered, so we do not want to revert, that will change the current history
           // entry while a different route is displayed
           !isNavigationFailure(
             failure,
             8
             /* ErrorTypes.NAVIGATION_CANCELLED */
           )) {
-            routerHistory.go(-info.delta, false);
-          } else if (info.type === NavigationType.pop && isNavigationFailure(
+            routerHistory.go(-info2.delta, false);
+          } else if (info2.type === NavigationType.pop && isNavigationFailure(
             failure,
             4 | 16
             /* ErrorTypes.NAVIGATION_DUPLICATED */
@@ -15264,7 +15264,7 @@ const _sfc_main$f = {
 };
 const _hoisted_1$f = { class: "home page" };
 const _hoisted_2$e = /* @__PURE__ */ createBaseVNode("h1", null, "Home", -1);
-const _hoisted_3$a = /* @__PURE__ */ createBaseVNode("p", null, "Welcome to the Connected Web API Explorer!", -1);
+const _hoisted_3$b = /* @__PURE__ */ createBaseVNode("p", null, "Welcome to the Connected Web API Explorer!", -1);
 const _hoisted_4$6 = /* @__PURE__ */ createBaseVNode("h2", null, "About", -1);
 const _hoisted_5$5 = /* @__PURE__ */ createBaseVNode("p", null, [
   /* @__PURE__ */ createTextVNode("This is an API Explorer for Connected Web services hosted on "),
@@ -15277,7 +15277,7 @@ const _hoisted_6$5 = /* @__PURE__ */ createBaseVNode("h2", null, "Source code", 
 const _hoisted_7$4 = /* @__PURE__ */ createBaseVNode("a", { href: "https://github.com/connected-web/api-explorer" }, "connected-web/api-explorer →", -1);
 const _hoisted_8$4 = /* @__PURE__ */ createBaseVNode("h2", null, "Roadmap", -1);
 const _hoisted_9$4 = /* @__PURE__ */ createBaseVNode("h3", null, "2023 August", -1);
-const _hoisted_10$3 = /* @__PURE__ */ createBaseVNode("h3", null, "In development", -1);
+const _hoisted_10$4 = /* @__PURE__ */ createBaseVNode("h3", null, "In development", -1);
 const _hoisted_11$3 = /* @__PURE__ */ createBaseVNode("h3", null, "Future Ideas", -1);
 const _hoisted_13$2 = /* @__PURE__ */ createBaseVNode("div", { style: { "text-align": "center", "filter": "drop-shadow(15px 7px 7px rgb(0 0 0 / 0.3))", "margin-top": "4em" } }, [
   /* @__PURE__ */ createBaseVNode("img", {
@@ -15290,7 +15290,7 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_StatValue = resolveComponent("StatValue");
   return openBlock(), createElementBlock("div", _hoisted_1$f, [
     _hoisted_2$e,
-    _hoisted_3$a,
+    _hoisted_3$b,
     _hoisted_4$6,
     _hoisted_5$5,
     _hoisted_6$5,
@@ -15311,7 +15311,7 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
         _: 1
       })
     ]),
-    _hoisted_10$3,
+    _hoisted_10$4,
     createBaseVNode("p", null, [
       createVNode(_component_StatValue, { label: "Code reflection on JavaScript / TypeScript Classes" }, {
         default: withCtx(() => [
@@ -15441,7 +15441,7 @@ const _hoisted_2$d = {
   key: 0,
   class: "filter-row"
 };
-const _hoisted_3$9 = { class: "hide-on-small-screen" };
+const _hoisted_3$a = { class: "hide-on-small-screen" };
 const _hoisted_4$5 = { key: 1 };
 const _hoisted_5$4 = {
   key: 0,
@@ -15451,7 +15451,7 @@ const _hoisted_6$4 = { class: "pagination-size hide-on-small-screen" };
 const _hoisted_7$3 = { class: "buttons" };
 const _hoisted_8$3 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("label", { class: "right" }, "Prev Page", -1));
 const _hoisted_9$3 = { class: "pagination-numbers" };
-const _hoisted_10$2 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("label", { class: "left" }, "Next Page", -1));
+const _hoisted_10$3 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("label", { class: "left" }, "Next Page", -1));
 const _hoisted_11$2 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("pre", null, [
   /* @__PURE__ */ createTextVNode("Please provide a template to render "),
   /* @__PURE__ */ createBaseVNode("b", null, "paginatedItems")
@@ -15481,7 +15481,7 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
       }, null, 544), [
         [vModelText, $data.filter]
       ]),
-      createBaseVNode("span", _hoisted_3$9, "Found " + toDisplayString($options.filteredItems($props.items).length) + " " + toDisplayString($props.itemTypePlural) + " " + toDisplayString($data.filter ? `containing "${$data.filter}"` : ""), 1)
+      createBaseVNode("span", _hoisted_3$a, "Found " + toDisplayString($options.filteredItems($props.items).length) + " " + toDisplayString($props.itemTypePlural) + " " + toDisplayString($data.filter ? `containing "${$data.filter}"` : ""), 1)
     ])) : createCommentVNode("", true),
     $props.items && $options.filteredItems($props.items).length > 0 ? (openBlock(), createElementBlock("div", _hoisted_4$5, [
       $options.isPaginated($props.items) ? (openBlock(), createElementBlock("div", _hoisted_5$4, [
@@ -15497,7 +15497,7 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
           createBaseVNode("button", {
             onClick: _cache[4] || (_cache[4] = (...args) => $options.nextPage && $options.nextPage(...args))
           }, [
-            _hoisted_10$2,
+            _hoisted_10$3,
             createVNode(_component_Icon, { icon: "angle-right" })
           ])
         ])
@@ -15541,7 +15541,7 @@ const _sfc_main$d = {
 };
 const _hoisted_1$d = { class: "icon browser" };
 const _hoisted_2$c = { class: "row" };
-const _hoisted_3$8 = { class: "column" };
+const _hoisted_3$9 = { class: "column" };
 const _hoisted_4$4 = ["title"];
 const _hoisted_5$3 = { class: "column" };
 const _hoisted_6$3 = ["title"];
@@ -15552,7 +15552,7 @@ function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
     createVNode(_component_PaginatedItems, { items: $options.iconList }, {
       default: withCtx(({ paginatedItems }) => [
         createBaseVNode("div", _hoisted_2$c, [
-          createBaseVNode("div", _hoisted_3$8, [
+          createBaseVNode("div", _hoisted_3$9, [
             (openBlock(true), createElementBlock(Fragment, null, renderList(paginatedItems.slice(0, 10), ([iconKey, icon2]) => {
               return openBlock(), createElementBlock("p", {
                 key: iconKey,
@@ -15630,7 +15630,7 @@ const _sfc_main$b = {
 };
 const _hoisted_1$b = { class: "title" };
 const _hoisted_2$a = { class: "status" };
-const _hoisted_3$7 = {
+const _hoisted_3$8 = {
   key: 0,
   class: "hideable"
 };
@@ -15652,7 +15652,7 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
         createVNode(_component_Icon, { icon: $options.collapseIcon }, null, 8, ["icon"])
       ])
     ]),
-    !$data.collapsed ? (openBlock(), createElementBlock("div", _hoisted_3$7, [
+    !$data.collapsed ? (openBlock(), createElementBlock("div", _hoisted_3$8, [
       renderSlot(_ctx.$slots, "default", {}, () => [
         createTextVNode("No hideable content provided")
       ], true)
@@ -15833,7 +15833,7 @@ const _sfc_main$a = {
 };
 const _hoisted_1$a = ["title"];
 const _hoisted_2$9 = { class: "slot-content" };
-const _hoisted_3$6 = { class: "rd-content" };
+const _hoisted_3$7 = { class: "rd-content" };
 function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("label", {
     class: normalizeClass($options.labelClass),
@@ -15842,7 +15842,7 @@ function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
     createBaseVNode("span", _hoisted_2$9, [
       renderSlot(_ctx.$slots, "default", {}, void 0, true)
     ]),
-    createBaseVNode("span", _hoisted_3$6, toDisplayString($options.label), 1)
+    createBaseVNode("span", _hoisted_3$7, toDisplayString($options.label), 1)
   ], 10, _hoisted_1$a);
 }
 const RelativeDate = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a], ["__scopeId", "data-v-778b053c"]]);
@@ -15915,17 +15915,17 @@ const _sfc_main$9 = {
 const _withScopeId$3 = (n) => (pushScopeId("data-v-aec73286"), n = n(), popScopeId(), n);
 const _hoisted_1$9 = { class: "user-details" };
 const _hoisted_2$8 = /* @__PURE__ */ _withScopeId$3(() => /* @__PURE__ */ createBaseVNode("h1", null, "User Details", -1));
-const _hoisted_3$5 = { key: 0 };
+const _hoisted_3$6 = { key: 0 };
 const _hoisted_4$3 = /* @__PURE__ */ _withScopeId$3(() => /* @__PURE__ */ createBaseVNode("p", null, "Information about you!", -1));
 const _hoisted_6$2 = { class: "row right" };
 const _hoisted_7$2 = /* @__PURE__ */ _withScopeId$3(() => /* @__PURE__ */ createBaseVNode("span", null, "Logout", -1));
 const _hoisted_8$2 = { key: 1 };
 const _hoisted_9$2 = /* @__PURE__ */ _withScopeId$3(() => /* @__PURE__ */ createBaseVNode("p", null, "You are not logged in!", -1));
-const _hoisted_10$1 = /* @__PURE__ */ _withScopeId$3(() => /* @__PURE__ */ createBaseVNode("p", null, "You could be anyone... that doesn't stop you from browsing the available API documentation - but you won't be able to interact with them!", -1));
+const _hoisted_10$2 = /* @__PURE__ */ _withScopeId$3(() => /* @__PURE__ */ createBaseVNode("p", null, "You could be anyone... that doesn't stop you from browsing the available API documentation - but you won't be able to interact with them!", -1));
 const _hoisted_11$1 = /* @__PURE__ */ _withScopeId$3(() => /* @__PURE__ */ createBaseVNode("p", null, "Have fun :)", -1));
 const _hoisted_12$1 = [
   _hoisted_9$2,
-  _hoisted_10$1,
+  _hoisted_10$2,
   _hoisted_11$1
 ];
 function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
@@ -15934,7 +15934,7 @@ function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_Icon = resolveComponent("Icon");
   return openBlock(), createElementBlock("div", _hoisted_1$9, [
     _hoisted_2$8,
-    $options.loggedIn ? (openBlock(), createElementBlock("div", _hoisted_3$5, [
+    $options.loggedIn ? (openBlock(), createElementBlock("div", _hoisted_3$6, [
       _hoisted_4$3,
       createVNode(_component_StatValue, {
         label: "Name",
@@ -15997,2493 +15997,6855 @@ function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
   ]);
 }
 const UserDetails = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$9], ["__scopeId", "data-v-aec73286"]]);
-class EventEmitter {
-  constructor() {
-    __publicField(this, "target");
-    this.target = new EventTarget();
-  }
-  on(eventName, listener3) {
-    this.target.addEventListener(eventName, listener3);
-    return this;
-  }
-  once(eventName, listener3) {
-    this.target.addEventListener(eventName, listener3, { once: true });
-    return this;
-  }
-  off(eventName, listener3) {
-    this.target.removeEventListener(eventName, listener3);
-    return this;
-  }
-  emit(eventName, detail) {
-    return this.target.dispatchEvent(
-      new CustomEvent(eventName, { detail, cancelable: true })
-    );
-  }
+var openapiClientAxios = {};
+var client$1 = {};
+function bind$1(fn, thisArg) {
+  return function wrap() {
+    return fn.apply(thisArg, arguments);
+  };
 }
-async function defaultActionFunction() {
-  const context = { resetLabelTimeout: 0 };
-  let succeed;
-  console.log("Action", { action: context }, "has been activated with the default actionFunction!");
-  const future = new Promise((resolve2, reject2) => {
-    succeed = resolve2;
-  });
-  clearTimeout(context.resetLabelTimeout);
-  context.resetLabelTimeout = setTimeout(() => {
-    console.log("Timeout of default actionFunction triggered!");
-    succeed("Timed out");
-  }, 5e3);
-  return await future;
-}
-class Action extends EventEmitter {
-  constructor(actionFunction) {
-    super();
-    __publicField(this, "id", crypto.randomUUID());
-    __publicField(this, "icon", "star");
-    __publicField(this, "loadingIcon", null);
-    __publicField(this, "loading", false);
-    __publicField(this, "finished", false);
-    __publicField(this, "errored", false);
-    __publicField(this, "error");
-    __publicField(this, "startLabel", "Action");
-    __publicField(this, "loadingLabel", null);
-    __publicField(this, "finishedLabel", null);
-    __publicField(this, "errorLabel", "Error");
-    __publicField(this, "actionResult");
-    __publicField(this, "actionFunction");
-    __publicField(this, "spiedLogs", []);
-    __publicField(this, "resetLabelTimeout", 0);
-    __publicField(this, "description", "");
-    this.actionFunction = actionFunction;
-  }
-  static get example() {
-    return new Action(defaultActionFunction);
-  }
-  get inReadyState() {
-    return !this.loading && !this.errored;
-  }
-  get inStartState() {
-    return !(this.loading || this.finished);
-  }
-  async activate(...params) {
-    if (this.loading) {
-      return this.actionResult;
-    }
-    this.error = void 0;
-    this.errored = false;
-    this.loading = true;
-    this.emit("loading", this);
-    this.emit("updated", this);
-    const originalLogFn = console.log;
-    const spiedLogs = [];
-    console.log = function(...logArgs) {
-      originalLogFn(...logArgs);
-      spiedLogs.push(logArgs);
-    };
-    this.spiedLogs = spiedLogs;
-    const task = async () => {
-      let result;
-      try {
-        result = await this.actionFunction(...params);
-      } catch (ex) {
-        const error = ex;
-        this.errored = true;
-        this.error = error;
-        this.emit("error", this);
-      }
-      this.actionResult = result;
-      this.emit("result", result);
-      setTimeout(() => {
-        this.loading = false;
-        this.finished = true;
-        this.emit("updated", this);
-      }, 25);
-      console.log = originalLogFn;
-      return result;
-    };
-    let work;
-    try {
-      work = task();
-    } catch (ex) {
-      const error = ex;
-      this.errored = true;
-      this.error = error;
-      this.emit("error", this);
-    }
-    return await work;
-  }
-  reset() {
-    this.actionResult = void 0;
-    this.finished = false;
-    this.errored = false;
-    this.error = void 0;
-    this.spiedLogs = [];
-    this.emit("result");
-  }
-}
-const LoadingSpinner_vue_vue_type_style_index_0_scoped_84eb515d_lang = "";
-const _sfc_main$8 = {};
-const _withScopeId$2 = (n) => (pushScopeId("data-v-84eb515d"), n = n(), popScopeId(), n);
-const _hoisted_1$8 = { class: "loading" };
-const _hoisted_2$7 = /* @__PURE__ */ _withScopeId$2(() => /* @__PURE__ */ createBaseVNode("div", { class: "spinner" }, null, -1));
-const _hoisted_3$4 = { class: "label" };
-function _sfc_render$8(_ctx, _cache) {
-  return openBlock(), createElementBlock("div", _hoisted_1$8, [
-    _hoisted_2$7,
-    createBaseVNode("div", _hoisted_3$4, [
-      renderSlot(_ctx.$slots, "default", {}, void 0, true)
-    ])
-  ]);
-}
-const LoadingSpinner = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8], ["__scopeId", "data-v-84eb515d"]]);
-const _sfc_main$7 = {
-  components: { LoadingSpinner },
-  data() {
-    return {
-      internalAction: Action.example
-    };
-  },
-  props: {
-    modelValue: {
-      type: Action,
-      default: null
-    },
-    params: {
-      type: Array,
-      default: () => []
-    }
-  },
-  computed: {
-    action() {
-      return this.modelValue ?? this.internalAction;
-    },
-    activationParams() {
-      const { params } = this;
-      if (!Array.isArray(params)) {
-        console.warn("Activation params for", this, "have not been provided as an array:", { params });
-      }
-      return Array.isArray(params) ? params : [];
-    },
-    disabled() {
-      var _a2;
-      return !((_a2 = this.action) == null ? void 0 : _a2.loading);
-    },
-    showLoadingSpinner() {
-      const { action } = this;
-      return (action == null ? void 0 : action.loading) && !(action == null ? void 0 : action.loadingIcon);
-    },
-    iconToShow() {
-      const { action } = this;
-      return (action == null ? void 0 : action.loading) ? action == null ? void 0 : action.loadingIcon : action == null ? void 0 : action.icon;
-    },
-    labelToShow() {
-      const { action } = this;
-      if (action == null ? void 0 : action.inStartState) {
-        return action == null ? void 0 : action.startLabel;
-      }
-      if (action == null ? void 0 : action.errored) {
-        return (action == null ? void 0 : action.errorLabel) ?? (action == null ? void 0 : action.startLabel);
-      }
-      if (action == null ? void 0 : action.loading) {
-        return (action == null ? void 0 : action.loadingLabel) ?? action.startLabel;
-      }
-      return (action == null ? void 0 : action.finishedLabel) ?? (action == null ? void 0 : action.startLabel);
-    }
-  },
-  mounted() {
-    this.registerAction(this.action);
-  },
-  methods: {
-    activateAction() {
-      const { action, activationParams } = this;
-      action.activate(...activationParams);
-      this.$forceUpdate();
-    },
-    registerAction(action) {
-      const self3 = this;
-      if (action) {
-        action.on("loading", () => {
-          self3.$emit("loading", action);
-          this.$forceUpdate();
-        });
-        action.on("updated", () => {
-          self3.$emit("update:modelValue", action);
-          this.$forceUpdate();
-        });
-        action.on("result", (result) => {
-          self3.$emit("result", result.detail);
-          this.$forceUpdate();
-        });
-        action.on("error", (error) => {
-          self3.$emit("error", error.detail);
-          this.$forceUpdate();
-        });
-      }
-    }
-  },
-  watch: {
-    modelValue(action) {
-      if (action) {
-        this.registerAction(action);
-      }
-    }
-  }
+const { toString: toString$1 } = Object.prototype;
+const { getPrototypeOf } = Object;
+const kindOf = ((cache) => (thing) => {
+  const str2 = toString$1.call(thing);
+  return cache[str2] || (cache[str2] = str2.slice(8, -1).toLowerCase());
+})(/* @__PURE__ */ Object.create(null));
+const kindOfTest = (type2) => {
+  type2 = type2.toLowerCase();
+  return (thing) => kindOf(thing) === type2;
 };
-const ActionButton_vue_vue_type_style_index_0_scoped_5bc37754_lang = "";
-const _hoisted_1$7 = ["disabled", "title"];
-function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
-  var _a2, _b2, _c, _d;
-  const _component_LoadingSpinner = resolveComponent("LoadingSpinner");
-  const _component_Icon = resolveComponent("Icon");
-  return openBlock(), createElementBlock("button", {
-    variant: "tonal",
-    disabled: (_a2 = $options.action) == null ? void 0 : _a2.loading,
-    onClick: _cache[0] || (_cache[0] = (...args) => $options.activateAction && $options.activateAction(...args)),
-    class: "text-none action-button",
-    title: $options.action.errored ? (_b2 = $options.action.error) == null ? void 0 : _b2.message : $options.action.description
-  }, [
-    ((_c = $options.action) == null ? void 0 : _c.loading) && !((_d = $options.action) == null ? void 0 : _d.loadingIcon) ? (openBlock(), createBlock(_component_LoadingSpinner, { key: 0 })) : (openBlock(), createBlock(_component_Icon, {
-      key: 1,
-      icon: $options.iconToShow
-    }, null, 8, ["icon"])),
-    createBaseVNode("label", null, toDisplayString($options.labelToShow), 1)
-  ], 8, _hoisted_1$7);
+const typeOfTest = (type2) => (thing) => typeof thing === type2;
+const { isArray: isArray$2 } = Array;
+const isUndefined = typeOfTest("undefined");
+function isBuffer(val) {
+  return val !== null && !isUndefined(val) && val.constructor !== null && !isUndefined(val.constructor) && isFunction$2(val.constructor.isBuffer) && val.constructor.isBuffer(val);
 }
-const ActionButton = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7], ["__scopeId", "data-v-5bc37754"]]);
-function isArray$2(value2) {
-  return !Array.isArray ? getTag(value2) === "[object Array]" : Array.isArray(value2);
-}
-const INFINITY = 1 / 0;
-function baseToString(value2) {
-  if (typeof value2 == "string") {
-    return value2;
-  }
-  let result = value2 + "";
-  return result == "0" && 1 / value2 == -INFINITY ? "-0" : result;
-}
-function toString$1(value2) {
-  return value2 == null ? "" : baseToString(value2);
-}
-function isString$2(value2) {
-  return typeof value2 === "string";
-}
-function isNumber$1(value2) {
-  return typeof value2 === "number";
-}
-function isBoolean$1(value2) {
-  return value2 === true || value2 === false || isObjectLike(value2) && getTag(value2) == "[object Boolean]";
-}
-function isObject$3(value2) {
-  return typeof value2 === "object";
-}
-function isObjectLike(value2) {
-  return isObject$3(value2) && value2 !== null;
-}
-function isDefined(value2) {
-  return value2 !== void 0 && value2 !== null;
-}
-function isBlank(value2) {
-  return !value2.trim().length;
-}
-function getTag(value2) {
-  return value2 == null ? value2 === void 0 ? "[object Undefined]" : "[object Null]" : Object.prototype.toString.call(value2);
-}
-const EXTENDED_SEARCH_UNAVAILABLE = "Extended search is not available";
-const INCORRECT_INDEX_TYPE = "Incorrect 'index' type";
-const LOGICAL_SEARCH_INVALID_QUERY_FOR_KEY = (key) => `Invalid value for key ${key}`;
-const PATTERN_LENGTH_TOO_LARGE = (max2) => `Pattern length exceeds max of ${max2}.`;
-const MISSING_KEY_PROPERTY = (name) => `Missing ${name} property in key`;
-const INVALID_KEY_WEIGHT_VALUE = (key) => `Property 'weight' in key '${key}' must be a positive integer`;
-const hasOwn = Object.prototype.hasOwnProperty;
-class KeyStore {
-  constructor(keys2) {
-    this._keys = [];
-    this._keyMap = {};
-    let totalWeight = 0;
-    keys2.forEach((key) => {
-      let obj = createKey(key);
-      totalWeight += obj.weight;
-      this._keys.push(obj);
-      this._keyMap[obj.id] = obj;
-      totalWeight += obj.weight;
-    });
-    this._keys.forEach((key) => {
-      key.weight /= totalWeight;
-    });
-  }
-  get(keyId) {
-    return this._keyMap[keyId];
-  }
-  keys() {
-    return this._keys;
-  }
-  toJSON() {
-    return JSON.stringify(this._keys);
-  }
-}
-function createKey(key) {
-  let path = null;
-  let id = null;
-  let src = null;
-  let weight = 1;
-  let getFn = null;
-  if (isString$2(key) || isArray$2(key)) {
-    src = key;
-    path = createKeyPath(key);
-    id = createKeyId(key);
+const isArrayBuffer = kindOfTest("ArrayBuffer");
+function isArrayBufferView(val) {
+  let result;
+  if (typeof ArrayBuffer !== "undefined" && ArrayBuffer.isView) {
+    result = ArrayBuffer.isView(val);
   } else {
-    if (!hasOwn.call(key, "name")) {
-      throw new Error(MISSING_KEY_PROPERTY("name"));
-    }
-    const name = key.name;
-    src = name;
-    if (hasOwn.call(key, "weight")) {
-      weight = key.weight;
-      if (weight <= 0) {
-        throw new Error(INVALID_KEY_WEIGHT_VALUE(name));
-      }
-    }
-    path = createKeyPath(name);
-    id = createKeyId(name);
-    getFn = key.getFn;
-  }
-  return { path, id, weight, src, getFn };
-}
-function createKeyPath(key) {
-  return isArray$2(key) ? key : key.split(".");
-}
-function createKeyId(key) {
-  return isArray$2(key) ? key.join(".") : key;
-}
-function get$1(obj, path) {
-  let list = [];
-  let arr = false;
-  const deepGet = (obj2, path2, index) => {
-    if (!isDefined(obj2)) {
-      return;
-    }
-    if (!path2[index]) {
-      list.push(obj2);
-    } else {
-      let key = path2[index];
-      const value2 = obj2[key];
-      if (!isDefined(value2)) {
-        return;
-      }
-      if (index === path2.length - 1 && (isString$2(value2) || isNumber$1(value2) || isBoolean$1(value2))) {
-        list.push(toString$1(value2));
-      } else if (isArray$2(value2)) {
-        arr = true;
-        for (let i = 0, len = value2.length; i < len; i += 1) {
-          deepGet(value2[i], path2, index + 1);
-        }
-      } else if (path2.length) {
-        deepGet(value2, path2, index + 1);
-      }
-    }
-  };
-  deepGet(obj, isString$2(path) ? path.split(".") : path, 0);
-  return arr ? list : list[0];
-}
-const MatchOptions = {
-  // Whether the matches should be included in the result set. When `true`, each record in the result
-  // set will include the indices of the matched characters.
-  // These can consequently be used for highlighting purposes.
-  includeMatches: false,
-  // When `true`, the matching function will continue to the end of a search pattern even if
-  // a perfect match has already been located in the string.
-  findAllMatches: false,
-  // Minimum number of characters that must be matched before a result is considered a match
-  minMatchCharLength: 1
-};
-const BasicOptions = {
-  // When `true`, the algorithm continues searching to the end of the input even if a perfect
-  // match is found before the end of the same input.
-  isCaseSensitive: false,
-  // When true, the matching function will continue to the end of a search pattern even if
-  includeScore: false,
-  // List of properties that will be searched. This also supports nested properties.
-  keys: [],
-  // Whether to sort the result list, by score
-  shouldSort: true,
-  // Default sort function: sort by ascending score, ascending index
-  sortFn: (a, b) => a.score === b.score ? a.idx < b.idx ? -1 : 1 : a.score < b.score ? -1 : 1
-};
-const FuzzyOptions = {
-  // Approximately where in the text is the pattern expected to be found?
-  location: 0,
-  // At what point does the match algorithm give up. A threshold of '0.0' requires a perfect match
-  // (of both letters and location), a threshold of '1.0' would match anything.
-  threshold: 0.6,
-  // Determines how close the match must be to the fuzzy location (specified above).
-  // An exact letter match which is 'distance' characters away from the fuzzy location
-  // would score as a complete mismatch. A distance of '0' requires the match be at
-  // the exact location specified, a threshold of '1000' would require a perfect match
-  // to be within 800 characters of the fuzzy location to be found using a 0.8 threshold.
-  distance: 100
-};
-const AdvancedOptions = {
-  // When `true`, it enables the use of unix-like search commands
-  useExtendedSearch: false,
-  // The get function to use when fetching an object's properties.
-  // The default will search nested paths *ie foo.bar.baz*
-  getFn: get$1,
-  // When `true`, search will ignore `location` and `distance`, so it won't matter
-  // where in the string the pattern appears.
-  // More info: https://fusejs.io/concepts/scoring-theory.html#fuzziness-score
-  ignoreLocation: false,
-  // When `true`, the calculation for the relevance score (used for sorting) will
-  // ignore the field-length norm.
-  // More info: https://fusejs.io/concepts/scoring-theory.html#field-length-norm
-  ignoreFieldNorm: false,
-  // The weight to determine how much field length norm effects scoring.
-  fieldNormWeight: 1
-};
-var Config = {
-  ...BasicOptions,
-  ...MatchOptions,
-  ...FuzzyOptions,
-  ...AdvancedOptions
-};
-const SPACE = /[^ ]+/g;
-function norm(weight = 1, mantissa = 3) {
-  const cache = /* @__PURE__ */ new Map();
-  const m = Math.pow(10, mantissa);
-  return {
-    get(value2) {
-      const numTokens = value2.match(SPACE).length;
-      if (cache.has(numTokens)) {
-        return cache.get(numTokens);
-      }
-      const norm2 = 1 / Math.pow(numTokens, 0.5 * weight);
-      const n = parseFloat(Math.round(norm2 * m) / m);
-      cache.set(numTokens, n);
-      return n;
-    },
-    clear() {
-      cache.clear();
-    }
-  };
-}
-class FuseIndex {
-  constructor({
-    getFn = Config.getFn,
-    fieldNormWeight = Config.fieldNormWeight
-  } = {}) {
-    this.norm = norm(fieldNormWeight, 3);
-    this.getFn = getFn;
-    this.isCreated = false;
-    this.setIndexRecords();
-  }
-  setSources(docs = []) {
-    this.docs = docs;
-  }
-  setIndexRecords(records = []) {
-    this.records = records;
-  }
-  setKeys(keys2 = []) {
-    this.keys = keys2;
-    this._keysMap = {};
-    keys2.forEach((key, idx) => {
-      this._keysMap[key.id] = idx;
-    });
-  }
-  create() {
-    if (this.isCreated || !this.docs.length) {
-      return;
-    }
-    this.isCreated = true;
-    if (isString$2(this.docs[0])) {
-      this.docs.forEach((doc2, docIndex) => {
-        this._addString(doc2, docIndex);
-      });
-    } else {
-      this.docs.forEach((doc2, docIndex) => {
-        this._addObject(doc2, docIndex);
-      });
-    }
-    this.norm.clear();
-  }
-  // Adds a doc to the end of the index
-  add(doc2) {
-    const idx = this.size();
-    if (isString$2(doc2)) {
-      this._addString(doc2, idx);
-    } else {
-      this._addObject(doc2, idx);
-    }
-  }
-  // Removes the doc at the specified index of the index
-  removeAt(idx) {
-    this.records.splice(idx, 1);
-    for (let i = idx, len = this.size(); i < len; i += 1) {
-      this.records[i].i -= 1;
-    }
-  }
-  getValueForItemAtKeyId(item, keyId) {
-    return item[this._keysMap[keyId]];
-  }
-  size() {
-    return this.records.length;
-  }
-  _addString(doc2, docIndex) {
-    if (!isDefined(doc2) || isBlank(doc2)) {
-      return;
-    }
-    let record = {
-      v: doc2,
-      i: docIndex,
-      n: this.norm.get(doc2)
-    };
-    this.records.push(record);
-  }
-  _addObject(doc2, docIndex) {
-    let record = { i: docIndex, $: {} };
-    this.keys.forEach((key, keyIndex) => {
-      let value2 = key.getFn ? key.getFn(doc2) : this.getFn(doc2, key.path);
-      if (!isDefined(value2)) {
-        return;
-      }
-      if (isArray$2(value2)) {
-        let subRecords = [];
-        const stack = [{ nestedArrIndex: -1, value: value2 }];
-        while (stack.length) {
-          const { nestedArrIndex, value: value3 } = stack.pop();
-          if (!isDefined(value3)) {
-            continue;
-          }
-          if (isString$2(value3) && !isBlank(value3)) {
-            let subRecord = {
-              v: value3,
-              i: nestedArrIndex,
-              n: this.norm.get(value3)
-            };
-            subRecords.push(subRecord);
-          } else if (isArray$2(value3)) {
-            value3.forEach((item, k) => {
-              stack.push({
-                nestedArrIndex: k,
-                value: item
-              });
-            });
-          } else
-            ;
-        }
-        record.$[keyIndex] = subRecords;
-      } else if (isString$2(value2) && !isBlank(value2)) {
-        let subRecord = {
-          v: value2,
-          n: this.norm.get(value2)
-        };
-        record.$[keyIndex] = subRecord;
-      }
-    });
-    this.records.push(record);
-  }
-  toJSON() {
-    return {
-      keys: this.keys,
-      records: this.records
-    };
-  }
-}
-function createIndex(keys2, docs, { getFn = Config.getFn, fieldNormWeight = Config.fieldNormWeight } = {}) {
-  const myIndex = new FuseIndex({ getFn, fieldNormWeight });
-  myIndex.setKeys(keys2.map(createKey));
-  myIndex.setSources(docs);
-  myIndex.create();
-  return myIndex;
-}
-function parseIndex(data, { getFn = Config.getFn, fieldNormWeight = Config.fieldNormWeight } = {}) {
-  const { keys: keys2, records } = data;
-  const myIndex = new FuseIndex({ getFn, fieldNormWeight });
-  myIndex.setKeys(keys2);
-  myIndex.setIndexRecords(records);
-  return myIndex;
-}
-function computeScore$1(pattern, {
-  errors = 0,
-  currentLocation = 0,
-  expectedLocation = 0,
-  distance = Config.distance,
-  ignoreLocation = Config.ignoreLocation
-} = {}) {
-  const accuracy = errors / pattern.length;
-  if (ignoreLocation) {
-    return accuracy;
-  }
-  const proximity = Math.abs(expectedLocation - currentLocation);
-  if (!distance) {
-    return proximity ? 1 : accuracy;
-  }
-  return accuracy + proximity / distance;
-}
-function convertMaskToIndices(matchmask = [], minMatchCharLength = Config.minMatchCharLength) {
-  let indices = [];
-  let start = -1;
-  let end = -1;
-  let i = 0;
-  for (let len = matchmask.length; i < len; i += 1) {
-    let match = matchmask[i];
-    if (match && start === -1) {
-      start = i;
-    } else if (!match && start !== -1) {
-      end = i - 1;
-      if (end - start + 1 >= minMatchCharLength) {
-        indices.push([start, end]);
-      }
-      start = -1;
-    }
-  }
-  if (matchmask[i - 1] && i - start >= minMatchCharLength) {
-    indices.push([start, i - 1]);
-  }
-  return indices;
-}
-const MAX_BITS = 32;
-function search(text, pattern, patternAlphabet, {
-  location: location2 = Config.location,
-  distance = Config.distance,
-  threshold = Config.threshold,
-  findAllMatches = Config.findAllMatches,
-  minMatchCharLength = Config.minMatchCharLength,
-  includeMatches = Config.includeMatches,
-  ignoreLocation = Config.ignoreLocation
-} = {}) {
-  if (pattern.length > MAX_BITS) {
-    throw new Error(PATTERN_LENGTH_TOO_LARGE(MAX_BITS));
-  }
-  const patternLen = pattern.length;
-  const textLen = text.length;
-  const expectedLocation = Math.max(0, Math.min(location2, textLen));
-  let currentThreshold = threshold;
-  let bestLocation = expectedLocation;
-  const computeMatches = minMatchCharLength > 1 || includeMatches;
-  const matchMask = computeMatches ? Array(textLen) : [];
-  let index;
-  while ((index = text.indexOf(pattern, bestLocation)) > -1) {
-    let score = computeScore$1(pattern, {
-      currentLocation: index,
-      expectedLocation,
-      distance,
-      ignoreLocation
-    });
-    currentThreshold = Math.min(score, currentThreshold);
-    bestLocation = index + patternLen;
-    if (computeMatches) {
-      let i = 0;
-      while (i < patternLen) {
-        matchMask[index + i] = 1;
-        i += 1;
-      }
-    }
-  }
-  bestLocation = -1;
-  let lastBitArr = [];
-  let finalScore = 1;
-  let binMax = patternLen + textLen;
-  const mask = 1 << patternLen - 1;
-  for (let i = 0; i < patternLen; i += 1) {
-    let binMin = 0;
-    let binMid = binMax;
-    while (binMin < binMid) {
-      const score2 = computeScore$1(pattern, {
-        errors: i,
-        currentLocation: expectedLocation + binMid,
-        expectedLocation,
-        distance,
-        ignoreLocation
-      });
-      if (score2 <= currentThreshold) {
-        binMin = binMid;
-      } else {
-        binMax = binMid;
-      }
-      binMid = Math.floor((binMax - binMin) / 2 + binMin);
-    }
-    binMax = binMid;
-    let start = Math.max(1, expectedLocation - binMid + 1);
-    let finish = findAllMatches ? textLen : Math.min(expectedLocation + binMid, textLen) + patternLen;
-    let bitArr = Array(finish + 2);
-    bitArr[finish + 1] = (1 << i) - 1;
-    for (let j = finish; j >= start; j -= 1) {
-      let currentLocation = j - 1;
-      let charMatch = patternAlphabet[text.charAt(currentLocation)];
-      if (computeMatches) {
-        matchMask[currentLocation] = +!!charMatch;
-      }
-      bitArr[j] = (bitArr[j + 1] << 1 | 1) & charMatch;
-      if (i) {
-        bitArr[j] |= (lastBitArr[j + 1] | lastBitArr[j]) << 1 | 1 | lastBitArr[j + 1];
-      }
-      if (bitArr[j] & mask) {
-        finalScore = computeScore$1(pattern, {
-          errors: i,
-          currentLocation,
-          expectedLocation,
-          distance,
-          ignoreLocation
-        });
-        if (finalScore <= currentThreshold) {
-          currentThreshold = finalScore;
-          bestLocation = currentLocation;
-          if (bestLocation <= expectedLocation) {
-            break;
-          }
-          start = Math.max(1, 2 * expectedLocation - bestLocation);
-        }
-      }
-    }
-    const score = computeScore$1(pattern, {
-      errors: i + 1,
-      currentLocation: expectedLocation,
-      expectedLocation,
-      distance,
-      ignoreLocation
-    });
-    if (score > currentThreshold) {
-      break;
-    }
-    lastBitArr = bitArr;
-  }
-  const result = {
-    isMatch: bestLocation >= 0,
-    // Count exact matches (those with a score of 0) to be "almost" exact
-    score: Math.max(1e-3, finalScore)
-  };
-  if (computeMatches) {
-    const indices = convertMaskToIndices(matchMask, minMatchCharLength);
-    if (!indices.length) {
-      result.isMatch = false;
-    } else if (includeMatches) {
-      result.indices = indices;
-    }
+    result = val && val.buffer && isArrayBuffer(val.buffer);
   }
   return result;
 }
-function createPatternAlphabet(pattern) {
-  let mask = {};
-  for (let i = 0, len = pattern.length; i < len; i += 1) {
-    const char = pattern.charAt(i);
-    mask[char] = (mask[char] || 0) | 1 << len - i - 1;
+const isString$2 = typeOfTest("string");
+const isFunction$2 = typeOfTest("function");
+const isNumber$1 = typeOfTest("number");
+const isObject$3 = (thing) => thing !== null && typeof thing === "object";
+const isBoolean$1 = (thing) => thing === true || thing === false;
+const isPlainObject = (val) => {
+  if (kindOf(val) !== "object") {
+    return false;
   }
-  return mask;
+  const prototype2 = getPrototypeOf(val);
+  return (prototype2 === null || prototype2 === Object.prototype || Object.getPrototypeOf(prototype2) === null) && !(Symbol.toStringTag in val) && !(Symbol.iterator in val);
+};
+const isDate = kindOfTest("Date");
+const isFile = kindOfTest("File");
+const isBlob = kindOfTest("Blob");
+const isFileList = kindOfTest("FileList");
+const isStream = (val) => isObject$3(val) && isFunction$2(val.pipe);
+const isFormData = (thing) => {
+  let kind;
+  return thing && (typeof FormData === "function" && thing instanceof FormData || isFunction$2(thing.append) && ((kind = kindOf(thing)) === "formdata" || // detect form-data instance
+  kind === "object" && isFunction$2(thing.toString) && thing.toString() === "[object FormData]"));
+};
+const isURLSearchParams = kindOfTest("URLSearchParams");
+const trim = (str2) => str2.trim ? str2.trim() : str2.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
+function forEach$3(obj, fn, { allOwnKeys = false } = {}) {
+  if (obj === null || typeof obj === "undefined") {
+    return;
+  }
+  let i;
+  let l;
+  if (typeof obj !== "object") {
+    obj = [obj];
+  }
+  if (isArray$2(obj)) {
+    for (i = 0, l = obj.length; i < l; i++) {
+      fn.call(null, obj[i], i, obj);
+    }
+  } else {
+    const keys2 = allOwnKeys ? Object.getOwnPropertyNames(obj) : Object.keys(obj);
+    const len = keys2.length;
+    let key;
+    for (i = 0; i < len; i++) {
+      key = keys2[i];
+      fn.call(null, obj[key], key, obj);
+    }
+  }
 }
-class BitapSearch {
-  constructor(pattern, {
-    location: location2 = Config.location,
-    threshold = Config.threshold,
-    distance = Config.distance,
-    includeMatches = Config.includeMatches,
-    findAllMatches = Config.findAllMatches,
-    minMatchCharLength = Config.minMatchCharLength,
-    isCaseSensitive = Config.isCaseSensitive,
-    ignoreLocation = Config.ignoreLocation
-  } = {}) {
-    this.options = {
-      location: location2,
-      threshold,
-      distance,
-      includeMatches,
-      findAllMatches,
-      minMatchCharLength,
-      isCaseSensitive,
-      ignoreLocation
-    };
-    this.pattern = isCaseSensitive ? pattern : pattern.toLowerCase();
-    this.chunks = [];
-    if (!this.pattern.length) {
+function findKey(obj, key) {
+  key = key.toLowerCase();
+  const keys2 = Object.keys(obj);
+  let i = keys2.length;
+  let _key;
+  while (i-- > 0) {
+    _key = keys2[i];
+    if (key === _key.toLowerCase()) {
+      return _key;
+    }
+  }
+  return null;
+}
+const _global = (() => {
+  if (typeof globalThis !== "undefined")
+    return globalThis;
+  return typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : global;
+})();
+const isContextDefined = (context) => !isUndefined(context) && context !== _global;
+function merge$1() {
+  const { caseless } = isContextDefined(this) && this || {};
+  const result = {};
+  const assignValue = (val, key) => {
+    const targetKey = caseless && findKey(result, key) || key;
+    if (isPlainObject(result[targetKey]) && isPlainObject(val)) {
+      result[targetKey] = merge$1(result[targetKey], val);
+    } else if (isPlainObject(val)) {
+      result[targetKey] = merge$1({}, val);
+    } else if (isArray$2(val)) {
+      result[targetKey] = val.slice();
+    } else {
+      result[targetKey] = val;
+    }
+  };
+  for (let i = 0, l = arguments.length; i < l; i++) {
+    arguments[i] && forEach$3(arguments[i], assignValue);
+  }
+  return result;
+}
+const extend = (a, b, thisArg, { allOwnKeys } = {}) => {
+  forEach$3(b, (val, key) => {
+    if (thisArg && isFunction$2(val)) {
+      a[key] = bind$1(val, thisArg);
+    } else {
+      a[key] = val;
+    }
+  }, { allOwnKeys });
+  return a;
+};
+const stripBOM = (content) => {
+  if (content.charCodeAt(0) === 65279) {
+    content = content.slice(1);
+  }
+  return content;
+};
+const inherits = (constructor, superConstructor, props, descriptors2) => {
+  constructor.prototype = Object.create(superConstructor.prototype, descriptors2);
+  constructor.prototype.constructor = constructor;
+  Object.defineProperty(constructor, "super", {
+    value: superConstructor.prototype
+  });
+  props && Object.assign(constructor.prototype, props);
+};
+const toFlatObject = (sourceObj, destObj, filter2, propFilter) => {
+  let props;
+  let i;
+  let prop;
+  const merged = {};
+  destObj = destObj || {};
+  if (sourceObj == null)
+    return destObj;
+  do {
+    props = Object.getOwnPropertyNames(sourceObj);
+    i = props.length;
+    while (i-- > 0) {
+      prop = props[i];
+      if ((!propFilter || propFilter(prop, sourceObj, destObj)) && !merged[prop]) {
+        destObj[prop] = sourceObj[prop];
+        merged[prop] = true;
+      }
+    }
+    sourceObj = filter2 !== false && getPrototypeOf(sourceObj);
+  } while (sourceObj && (!filter2 || filter2(sourceObj, destObj)) && sourceObj !== Object.prototype);
+  return destObj;
+};
+const endsWith = (str2, searchString, position) => {
+  str2 = String(str2);
+  if (position === void 0 || position > str2.length) {
+    position = str2.length;
+  }
+  position -= searchString.length;
+  const lastIndex = str2.indexOf(searchString, position);
+  return lastIndex !== -1 && lastIndex === position;
+};
+const toArray$2 = (thing) => {
+  if (!thing)
+    return null;
+  if (isArray$2(thing))
+    return thing;
+  let i = thing.length;
+  if (!isNumber$1(i))
+    return null;
+  const arr = new Array(i);
+  while (i-- > 0) {
+    arr[i] = thing[i];
+  }
+  return arr;
+};
+const isTypedArray = ((TypedArray) => {
+  return (thing) => {
+    return TypedArray && thing instanceof TypedArray;
+  };
+})(typeof Uint8Array !== "undefined" && getPrototypeOf(Uint8Array));
+const forEachEntry = (obj, fn) => {
+  const generator = obj && obj[Symbol.iterator];
+  const iterator = generator.call(obj);
+  let result;
+  while ((result = iterator.next()) && !result.done) {
+    const pair = result.value;
+    fn.call(obj, pair[0], pair[1]);
+  }
+};
+const matchAll = (regExp, str2) => {
+  let matches;
+  const arr = [];
+  while ((matches = regExp.exec(str2)) !== null) {
+    arr.push(matches);
+  }
+  return arr;
+};
+const isHTMLForm = kindOfTest("HTMLFormElement");
+const toCamelCase = (str2) => {
+  return str2.toLowerCase().replace(
+    /[-_\s]([a-z\d])(\w*)/g,
+    function replacer2(m, p1, p2) {
+      return p1.toUpperCase() + p2;
+    }
+  );
+};
+const hasOwnProperty$1 = (({ hasOwnProperty: hasOwnProperty2 }) => (obj, prop) => hasOwnProperty2.call(obj, prop))(Object.prototype);
+const isRegExp = kindOfTest("RegExp");
+const reduceDescriptors = (obj, reducer) => {
+  const descriptors2 = Object.getOwnPropertyDescriptors(obj);
+  const reducedDescriptors = {};
+  forEach$3(descriptors2, (descriptor, name) => {
+    if (reducer(descriptor, name, obj) !== false) {
+      reducedDescriptors[name] = descriptor;
+    }
+  });
+  Object.defineProperties(obj, reducedDescriptors);
+};
+const freezeMethods = (obj) => {
+  reduceDescriptors(obj, (descriptor, name) => {
+    if (isFunction$2(obj) && ["arguments", "caller", "callee"].indexOf(name) !== -1) {
+      return false;
+    }
+    const value2 = obj[name];
+    if (!isFunction$2(value2))
+      return;
+    descriptor.enumerable = false;
+    if ("writable" in descriptor) {
+      descriptor.writable = false;
       return;
     }
-    const addChunk = (pattern2, startIndex) => {
-      this.chunks.push({
-        pattern: pattern2,
-        alphabet: createPatternAlphabet(pattern2),
-        startIndex
-      });
-    };
-    const len = this.pattern.length;
-    if (len > MAX_BITS) {
-      let i = 0;
-      const remainder = len % MAX_BITS;
-      const end = len - remainder;
-      while (i < end) {
-        addChunk(this.pattern.substr(i, MAX_BITS), i);
-        i += MAX_BITS;
-      }
-      if (remainder) {
-        const startIndex = len - MAX_BITS;
-        addChunk(this.pattern.substr(startIndex), startIndex);
-      }
-    } else {
-      addChunk(this.pattern, 0);
-    }
-  }
-  searchIn(text) {
-    const { isCaseSensitive, includeMatches } = this.options;
-    if (!isCaseSensitive) {
-      text = text.toLowerCase();
-    }
-    if (this.pattern === text) {
-      let result2 = {
-        isMatch: true,
-        score: 0
+    if (!descriptor.set) {
+      descriptor.set = () => {
+        throw Error("Can not rewrite read-only method '" + name + "'");
       };
-      if (includeMatches) {
-        result2.indices = [[0, text.length - 1]];
-      }
-      return result2;
     }
-    const {
-      location: location2,
-      distance,
-      threshold,
-      findAllMatches,
-      minMatchCharLength,
-      ignoreLocation
-    } = this.options;
-    let allIndices = [];
-    let totalScore = 0;
-    let hasMatches = false;
-    this.chunks.forEach(({ pattern, alphabet, startIndex }) => {
-      const { isMatch, score, indices } = search(text, pattern, alphabet, {
-        location: location2 + startIndex,
-        distance,
-        threshold,
-        findAllMatches,
-        minMatchCharLength,
-        includeMatches,
-        ignoreLocation
-      });
-      if (isMatch) {
-        hasMatches = true;
+  });
+};
+const toObjectSet = (arrayOrString, delimiter) => {
+  const obj = {};
+  const define = (arr) => {
+    arr.forEach((value2) => {
+      obj[value2] = true;
+    });
+  };
+  isArray$2(arrayOrString) ? define(arrayOrString) : define(String(arrayOrString).split(delimiter));
+  return obj;
+};
+const noop$1 = () => {
+};
+const toFiniteNumber = (value2, defaultValue) => {
+  value2 = +value2;
+  return Number.isFinite(value2) ? value2 : defaultValue;
+};
+const ALPHA = "abcdefghijklmnopqrstuvwxyz";
+const DIGIT = "0123456789";
+const ALPHABET = {
+  DIGIT,
+  ALPHA,
+  ALPHA_DIGIT: ALPHA + ALPHA.toUpperCase() + DIGIT
+};
+const generateString = (size2 = 16, alphabet = ALPHABET.ALPHA_DIGIT) => {
+  let str2 = "";
+  const { length } = alphabet;
+  while (size2--) {
+    str2 += alphabet[Math.random() * length | 0];
+  }
+  return str2;
+};
+function isSpecCompliantForm(thing) {
+  return !!(thing && isFunction$2(thing.append) && thing[Symbol.toStringTag] === "FormData" && thing[Symbol.iterator]);
+}
+const toJSONObject = (obj) => {
+  const stack = new Array(10);
+  const visit = (source, i) => {
+    if (isObject$3(source)) {
+      if (stack.indexOf(source) >= 0) {
+        return;
       }
-      totalScore += score;
-      if (isMatch && indices) {
-        allIndices = [...allIndices, ...indices];
+      if (!("toJSON" in source)) {
+        stack[i] = source;
+        const target = isArray$2(source) ? [] : {};
+        forEach$3(source, (value2, key) => {
+          const reducedValue = visit(value2, i + 1);
+          !isUndefined(reducedValue) && (target[key] = reducedValue);
+        });
+        stack[i] = void 0;
+        return target;
+      }
+    }
+    return source;
+  };
+  return visit(obj, 0);
+};
+const isAsyncFn = kindOfTest("AsyncFunction");
+const isThenable = (thing) => thing && (isObject$3(thing) || isFunction$2(thing)) && isFunction$2(thing.then) && isFunction$2(thing.catch);
+const utils = {
+  isArray: isArray$2,
+  isArrayBuffer,
+  isBuffer,
+  isFormData,
+  isArrayBufferView,
+  isString: isString$2,
+  isNumber: isNumber$1,
+  isBoolean: isBoolean$1,
+  isObject: isObject$3,
+  isPlainObject,
+  isUndefined,
+  isDate,
+  isFile,
+  isBlob,
+  isRegExp,
+  isFunction: isFunction$2,
+  isStream,
+  isURLSearchParams,
+  isTypedArray,
+  isFileList,
+  forEach: forEach$3,
+  merge: merge$1,
+  extend,
+  trim,
+  stripBOM,
+  inherits,
+  toFlatObject,
+  kindOf,
+  kindOfTest,
+  endsWith,
+  toArray: toArray$2,
+  forEachEntry,
+  matchAll,
+  isHTMLForm,
+  hasOwnProperty: hasOwnProperty$1,
+  hasOwnProp: hasOwnProperty$1,
+  // an alias to avoid ESLint no-prototype-builtins detection
+  reduceDescriptors,
+  freezeMethods,
+  toObjectSet,
+  toCamelCase,
+  noop: noop$1,
+  toFiniteNumber,
+  findKey,
+  global: _global,
+  isContextDefined,
+  ALPHABET,
+  generateString,
+  isSpecCompliantForm,
+  toJSONObject,
+  isAsyncFn,
+  isThenable
+};
+function AxiosError$1(message, code, config2, request, response) {
+  Error.call(this);
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(this, this.constructor);
+  } else {
+    this.stack = new Error().stack;
+  }
+  this.message = message;
+  this.name = "AxiosError";
+  code && (this.code = code);
+  config2 && (this.config = config2);
+  request && (this.request = request);
+  response && (this.response = response);
+}
+utils.inherits(AxiosError$1, Error, {
+  toJSON: function toJSON() {
+    return {
+      // Standard
+      message: this.message,
+      name: this.name,
+      // Microsoft
+      description: this.description,
+      number: this.number,
+      // Mozilla
+      fileName: this.fileName,
+      lineNumber: this.lineNumber,
+      columnNumber: this.columnNumber,
+      stack: this.stack,
+      // Axios
+      config: utils.toJSONObject(this.config),
+      code: this.code,
+      status: this.response && this.response.status ? this.response.status : null
+    };
+  }
+});
+const prototype$1 = AxiosError$1.prototype;
+const descriptors = {};
+[
+  "ERR_BAD_OPTION_VALUE",
+  "ERR_BAD_OPTION",
+  "ECONNABORTED",
+  "ETIMEDOUT",
+  "ERR_NETWORK",
+  "ERR_FR_TOO_MANY_REDIRECTS",
+  "ERR_DEPRECATED",
+  "ERR_BAD_RESPONSE",
+  "ERR_BAD_REQUEST",
+  "ERR_CANCELED",
+  "ERR_NOT_SUPPORT",
+  "ERR_INVALID_URL"
+  // eslint-disable-next-line func-names
+].forEach((code) => {
+  descriptors[code] = { value: code };
+});
+Object.defineProperties(AxiosError$1, descriptors);
+Object.defineProperty(prototype$1, "isAxiosError", { value: true });
+AxiosError$1.from = (error, code, config2, request, response, customProps) => {
+  const axiosError = Object.create(prototype$1);
+  utils.toFlatObject(error, axiosError, function filter2(obj) {
+    return obj !== Error.prototype;
+  }, (prop) => {
+    return prop !== "isAxiosError";
+  });
+  AxiosError$1.call(axiosError, error.message, code, config2, request, response);
+  axiosError.cause = error;
+  axiosError.name = error.name;
+  customProps && Object.assign(axiosError, customProps);
+  return axiosError;
+};
+const httpAdapter = null;
+function isVisitable(thing) {
+  return utils.isPlainObject(thing) || utils.isArray(thing);
+}
+function removeBrackets(key) {
+  return utils.endsWith(key, "[]") ? key.slice(0, -2) : key;
+}
+function renderKey(path2, key, dots) {
+  if (!path2)
+    return key;
+  return path2.concat(key).map(function each(token, i) {
+    token = removeBrackets(token);
+    return !dots && i ? "[" + token + "]" : token;
+  }).join(dots ? "." : "");
+}
+function isFlatArray(arr) {
+  return utils.isArray(arr) && !arr.some(isVisitable);
+}
+const predicates = utils.toFlatObject(utils, {}, null, function filter(prop) {
+  return /^is[A-Z]/.test(prop);
+});
+function toFormData$1(obj, formData, options) {
+  if (!utils.isObject(obj)) {
+    throw new TypeError("target must be an object");
+  }
+  formData = formData || new FormData();
+  options = utils.toFlatObject(options, {
+    metaTokens: true,
+    dots: false,
+    indexes: false
+  }, false, function defined(option, source) {
+    return !utils.isUndefined(source[option]);
+  });
+  const metaTokens = options.metaTokens;
+  const visitor = options.visitor || defaultVisitor;
+  const dots = options.dots;
+  const indexes = options.indexes;
+  const _Blob = options.Blob || typeof Blob !== "undefined" && Blob;
+  const useBlob = _Blob && utils.isSpecCompliantForm(formData);
+  if (!utils.isFunction(visitor)) {
+    throw new TypeError("visitor must be a function");
+  }
+  function convertValue(value2) {
+    if (value2 === null)
+      return "";
+    if (utils.isDate(value2)) {
+      return value2.toISOString();
+    }
+    if (!useBlob && utils.isBlob(value2)) {
+      throw new AxiosError$1("Blob is not supported. Use a Buffer instead.");
+    }
+    if (utils.isArrayBuffer(value2) || utils.isTypedArray(value2)) {
+      return useBlob && typeof Blob === "function" ? new Blob([value2]) : Buffer.from(value2);
+    }
+    return value2;
+  }
+  function defaultVisitor(value2, key, path2) {
+    let arr = value2;
+    if (value2 && !path2 && typeof value2 === "object") {
+      if (utils.endsWith(key, "{}")) {
+        key = metaTokens ? key : key.slice(0, -2);
+        value2 = JSON.stringify(value2);
+      } else if (utils.isArray(value2) && isFlatArray(value2) || (utils.isFileList(value2) || utils.endsWith(key, "[]")) && (arr = utils.toArray(value2))) {
+        key = removeBrackets(key);
+        arr.forEach(function each(el, index) {
+          !(utils.isUndefined(el) || el === null) && formData.append(
+            // eslint-disable-next-line no-nested-ternary
+            indexes === true ? renderKey([key], index, dots) : indexes === null ? key : key + "[]",
+            convertValue(el)
+          );
+        });
+        return false;
+      }
+    }
+    if (isVisitable(value2)) {
+      return true;
+    }
+    formData.append(renderKey(path2, key, dots), convertValue(value2));
+    return false;
+  }
+  const stack = [];
+  const exposedHelpers = Object.assign(predicates, {
+    defaultVisitor,
+    convertValue,
+    isVisitable
+  });
+  function build3(value2, path2) {
+    if (utils.isUndefined(value2))
+      return;
+    if (stack.indexOf(value2) !== -1) {
+      throw Error("Circular reference detected in " + path2.join("."));
+    }
+    stack.push(value2);
+    utils.forEach(value2, function each(el, key) {
+      const result = !(utils.isUndefined(el) || el === null) && visitor.call(
+        formData,
+        el,
+        utils.isString(key) ? key.trim() : key,
+        path2,
+        exposedHelpers
+      );
+      if (result === true) {
+        build3(el, path2 ? path2.concat(key) : [key]);
       }
     });
-    let result = {
-      isMatch: hasMatches,
-      score: hasMatches ? totalScore / this.chunks.length : 1
+    stack.pop();
+  }
+  if (!utils.isObject(obj)) {
+    throw new TypeError("data must be an object");
+  }
+  build3(obj);
+  return formData;
+}
+function encode$1(str2) {
+  const charMap = {
+    "!": "%21",
+    "'": "%27",
+    "(": "%28",
+    ")": "%29",
+    "~": "%7E",
+    "%20": "+",
+    "%00": "\0"
+  };
+  return encodeURIComponent(str2).replace(/[!'()~]|%20|%00/g, function replacer2(match) {
+    return charMap[match];
+  });
+}
+function AxiosURLSearchParams(params2, options) {
+  this._pairs = [];
+  params2 && toFormData$1(params2, this, options);
+}
+const prototype = AxiosURLSearchParams.prototype;
+prototype.append = function append(name, value2) {
+  this._pairs.push([name, value2]);
+};
+prototype.toString = function toString(encoder2) {
+  const _encode = encoder2 ? function(value2) {
+    return encoder2.call(this, value2, encode$1);
+  } : encode$1;
+  return this._pairs.map(function each(pair) {
+    return _encode(pair[0]) + "=" + _encode(pair[1]);
+  }, "").join("&");
+};
+function encode(val) {
+  return encodeURIComponent(val).replace(/%3A/gi, ":").replace(/%24/g, "$").replace(/%2C/gi, ",").replace(/%20/g, "+").replace(/%5B/gi, "[").replace(/%5D/gi, "]");
+}
+function buildURL(url, params2, options) {
+  if (!params2) {
+    return url;
+  }
+  const _encode = options && options.encode || encode;
+  const serializeFn = options && options.serialize;
+  let serializedParams;
+  if (serializeFn) {
+    serializedParams = serializeFn(params2, options);
+  } else {
+    serializedParams = utils.isURLSearchParams(params2) ? params2.toString() : new AxiosURLSearchParams(params2, options).toString(_encode);
+  }
+  if (serializedParams) {
+    const hashmarkIndex = url.indexOf("#");
+    if (hashmarkIndex !== -1) {
+      url = url.slice(0, hashmarkIndex);
+    }
+    url += (url.indexOf("?") === -1 ? "?" : "&") + serializedParams;
+  }
+  return url;
+}
+class InterceptorManager {
+  constructor() {
+    this.handlers = [];
+  }
+  /**
+   * Add a new interceptor to the stack
+   *
+   * @param {Function} fulfilled The function to handle `then` for a `Promise`
+   * @param {Function} rejected The function to handle `reject` for a `Promise`
+   *
+   * @return {Number} An ID used to remove interceptor later
+   */
+  use(fulfilled, rejected, options) {
+    this.handlers.push({
+      fulfilled,
+      rejected,
+      synchronous: options ? options.synchronous : false,
+      runWhen: options ? options.runWhen : null
+    });
+    return this.handlers.length - 1;
+  }
+  /**
+   * Remove an interceptor from the stack
+   *
+   * @param {Number} id The ID that was returned by `use`
+   *
+   * @returns {Boolean} `true` if the interceptor was removed, `false` otherwise
+   */
+  eject(id) {
+    if (this.handlers[id]) {
+      this.handlers[id] = null;
+    }
+  }
+  /**
+   * Clear all interceptors from the stack
+   *
+   * @returns {void}
+   */
+  clear() {
+    if (this.handlers) {
+      this.handlers = [];
+    }
+  }
+  /**
+   * Iterate over all the registered interceptors
+   *
+   * This method is particularly useful for skipping over any
+   * interceptors that may have become `null` calling `eject`.
+   *
+   * @param {Function} fn The function to call for each interceptor
+   *
+   * @returns {void}
+   */
+  forEach(fn) {
+    utils.forEach(this.handlers, function forEachHandler(h2) {
+      if (h2 !== null) {
+        fn(h2);
+      }
+    });
+  }
+}
+const InterceptorManager$1 = InterceptorManager;
+const transitionalDefaults = {
+  silentJSONParsing: true,
+  forcedJSONParsing: true,
+  clarifyTimeoutError: false
+};
+const URLSearchParams$1 = typeof URLSearchParams !== "undefined" ? URLSearchParams : AxiosURLSearchParams;
+const FormData$1 = typeof FormData !== "undefined" ? FormData : null;
+const Blob$1 = typeof Blob !== "undefined" ? Blob : null;
+const isStandardBrowserEnv = (() => {
+  let product;
+  if (typeof navigator !== "undefined" && ((product = navigator.product) === "ReactNative" || product === "NativeScript" || product === "NS")) {
+    return false;
+  }
+  return typeof window !== "undefined" && typeof document !== "undefined";
+})();
+const isStandardBrowserWebWorkerEnv = (() => {
+  return typeof WorkerGlobalScope !== "undefined" && // eslint-disable-next-line no-undef
+  self instanceof WorkerGlobalScope && typeof self.importScripts === "function";
+})();
+const platform = {
+  isBrowser: true,
+  classes: {
+    URLSearchParams: URLSearchParams$1,
+    FormData: FormData$1,
+    Blob: Blob$1
+  },
+  isStandardBrowserEnv,
+  isStandardBrowserWebWorkerEnv,
+  protocols: ["http", "https", "file", "blob", "url", "data"]
+};
+function toURLEncodedForm(data, options) {
+  return toFormData$1(data, new platform.classes.URLSearchParams(), Object.assign({
+    visitor: function(value2, key, path2, helpers) {
+      if (platform.isNode && utils.isBuffer(value2)) {
+        this.append(key, value2.toString("base64"));
+        return false;
+      }
+      return helpers.defaultVisitor.apply(this, arguments);
+    }
+  }, options));
+}
+function parsePropPath(name) {
+  return utils.matchAll(/\w+|\[(\w*)]/g, name).map((match) => {
+    return match[0] === "[]" ? "" : match[1] || match[0];
+  });
+}
+function arrayToObject(arr) {
+  const obj = {};
+  const keys2 = Object.keys(arr);
+  let i;
+  const len = keys2.length;
+  let key;
+  for (i = 0; i < len; i++) {
+    key = keys2[i];
+    obj[key] = arr[key];
+  }
+  return obj;
+}
+function formDataToJSON(formData) {
+  function buildPath(path2, value2, target, index) {
+    let name = path2[index++];
+    const isNumericKey = Number.isFinite(+name);
+    const isLast = index >= path2.length;
+    name = !name && utils.isArray(target) ? target.length : name;
+    if (isLast) {
+      if (utils.hasOwnProp(target, name)) {
+        target[name] = [target[name], value2];
+      } else {
+        target[name] = value2;
+      }
+      return !isNumericKey;
+    }
+    if (!target[name] || !utils.isObject(target[name])) {
+      target[name] = [];
+    }
+    const result = buildPath(path2, value2, target[name], index);
+    if (result && utils.isArray(target[name])) {
+      target[name] = arrayToObject(target[name]);
+    }
+    return !isNumericKey;
+  }
+  if (utils.isFormData(formData) && utils.isFunction(formData.entries)) {
+    const obj = {};
+    utils.forEachEntry(formData, (name, value2) => {
+      buildPath(parsePropPath(name), value2, obj, 0);
+    });
+    return obj;
+  }
+  return null;
+}
+const DEFAULT_CONTENT_TYPE = {
+  "Content-Type": void 0
+};
+function stringifySafely(rawValue, parser, encoder2) {
+  if (utils.isString(rawValue)) {
+    try {
+      (parser || JSON.parse)(rawValue);
+      return utils.trim(rawValue);
+    } catch (e) {
+      if (e.name !== "SyntaxError") {
+        throw e;
+      }
+    }
+  }
+  return (encoder2 || JSON.stringify)(rawValue);
+}
+const defaults = {
+  transitional: transitionalDefaults,
+  adapter: ["xhr", "http"],
+  transformRequest: [function transformRequest(data, headers) {
+    const contentType = headers.getContentType() || "";
+    const hasJSONContentType = contentType.indexOf("application/json") > -1;
+    const isObjectPayload = utils.isObject(data);
+    if (isObjectPayload && utils.isHTMLForm(data)) {
+      data = new FormData(data);
+    }
+    const isFormData2 = utils.isFormData(data);
+    if (isFormData2) {
+      if (!hasJSONContentType) {
+        return data;
+      }
+      return hasJSONContentType ? JSON.stringify(formDataToJSON(data)) : data;
+    }
+    if (utils.isArrayBuffer(data) || utils.isBuffer(data) || utils.isStream(data) || utils.isFile(data) || utils.isBlob(data)) {
+      return data;
+    }
+    if (utils.isArrayBufferView(data)) {
+      return data.buffer;
+    }
+    if (utils.isURLSearchParams(data)) {
+      headers.setContentType("application/x-www-form-urlencoded;charset=utf-8", false);
+      return data.toString();
+    }
+    let isFileList2;
+    if (isObjectPayload) {
+      if (contentType.indexOf("application/x-www-form-urlencoded") > -1) {
+        return toURLEncodedForm(data, this.formSerializer).toString();
+      }
+      if ((isFileList2 = utils.isFileList(data)) || contentType.indexOf("multipart/form-data") > -1) {
+        const _FormData = this.env && this.env.FormData;
+        return toFormData$1(
+          isFileList2 ? { "files[]": data } : data,
+          _FormData && new _FormData(),
+          this.formSerializer
+        );
+      }
+    }
+    if (isObjectPayload || hasJSONContentType) {
+      headers.setContentType("application/json", false);
+      return stringifySafely(data);
+    }
+    return data;
+  }],
+  transformResponse: [function transformResponse(data) {
+    const transitional2 = this.transitional || defaults.transitional;
+    const forcedJSONParsing = transitional2 && transitional2.forcedJSONParsing;
+    const JSONRequested = this.responseType === "json";
+    if (data && utils.isString(data) && (forcedJSONParsing && !this.responseType || JSONRequested)) {
+      const silentJSONParsing = transitional2 && transitional2.silentJSONParsing;
+      const strictJSONParsing = !silentJSONParsing && JSONRequested;
+      try {
+        return JSON.parse(data);
+      } catch (e) {
+        if (strictJSONParsing) {
+          if (e.name === "SyntaxError") {
+            throw AxiosError$1.from(e, AxiosError$1.ERR_BAD_RESPONSE, this, null, this.response);
+          }
+          throw e;
+        }
+      }
+    }
+    return data;
+  }],
+  /**
+   * A timeout in milliseconds to abort a request. If set to 0 (default) a
+   * timeout is not created.
+   */
+  timeout: 0,
+  xsrfCookieName: "XSRF-TOKEN",
+  xsrfHeaderName: "X-XSRF-TOKEN",
+  maxContentLength: -1,
+  maxBodyLength: -1,
+  env: {
+    FormData: platform.classes.FormData,
+    Blob: platform.classes.Blob
+  },
+  validateStatus: function validateStatus(status) {
+    return status >= 200 && status < 300;
+  },
+  headers: {
+    common: {
+      "Accept": "application/json, text/plain, */*"
+    }
+  }
+};
+utils.forEach(["delete", "get", "head"], function forEachMethodNoData(method) {
+  defaults.headers[method] = {};
+});
+utils.forEach(["post", "put", "patch"], function forEachMethodWithData(method) {
+  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
+});
+const defaults$1 = defaults;
+const ignoreDuplicateOf = utils.toObjectSet([
+  "age",
+  "authorization",
+  "content-length",
+  "content-type",
+  "etag",
+  "expires",
+  "from",
+  "host",
+  "if-modified-since",
+  "if-unmodified-since",
+  "last-modified",
+  "location",
+  "max-forwards",
+  "proxy-authorization",
+  "referer",
+  "retry-after",
+  "user-agent"
+]);
+const parseHeaders = (rawHeaders) => {
+  const parsed = {};
+  let key;
+  let val;
+  let i;
+  rawHeaders && rawHeaders.split("\n").forEach(function parser(line) {
+    i = line.indexOf(":");
+    key = line.substring(0, i).trim().toLowerCase();
+    val = line.substring(i + 1).trim();
+    if (!key || parsed[key] && ignoreDuplicateOf[key]) {
+      return;
+    }
+    if (key === "set-cookie") {
+      if (parsed[key]) {
+        parsed[key].push(val);
+      } else {
+        parsed[key] = [val];
+      }
+    } else {
+      parsed[key] = parsed[key] ? parsed[key] + ", " + val : val;
+    }
+  });
+  return parsed;
+};
+const $internals = Symbol("internals");
+function normalizeHeader(header) {
+  return header && String(header).trim().toLowerCase();
+}
+function normalizeValue(value2) {
+  if (value2 === false || value2 == null) {
+    return value2;
+  }
+  return utils.isArray(value2) ? value2.map(normalizeValue) : String(value2);
+}
+function parseTokens(str2) {
+  const tokens = /* @__PURE__ */ Object.create(null);
+  const tokensRE = /([^\s,;=]+)\s*(?:=\s*([^,;]+))?/g;
+  let match;
+  while (match = tokensRE.exec(str2)) {
+    tokens[match[1]] = match[2];
+  }
+  return tokens;
+}
+const isValidHeaderName = (str2) => /^[-_a-zA-Z0-9^`|~,!#$%&'*+.]+$/.test(str2.trim());
+function matchHeaderValue(context, value2, header, filter2, isHeaderNameFilter) {
+  if (utils.isFunction(filter2)) {
+    return filter2.call(this, value2, header);
+  }
+  if (isHeaderNameFilter) {
+    value2 = header;
+  }
+  if (!utils.isString(value2))
+    return;
+  if (utils.isString(filter2)) {
+    return value2.indexOf(filter2) !== -1;
+  }
+  if (utils.isRegExp(filter2)) {
+    return filter2.test(value2);
+  }
+}
+function formatHeader(header) {
+  return header.trim().toLowerCase().replace(/([a-z\d])(\w*)/g, (w2, char, str2) => {
+    return char.toUpperCase() + str2;
+  });
+}
+function buildAccessors(obj, header) {
+  const accessorName = utils.toCamelCase(" " + header);
+  ["get", "set", "has"].forEach((methodName) => {
+    Object.defineProperty(obj, methodName + accessorName, {
+      value: function(arg1, arg2, arg3) {
+        return this[methodName].call(this, header, arg1, arg2, arg3);
+      },
+      configurable: true
+    });
+  });
+}
+let AxiosHeaders$1 = class AxiosHeaders {
+  constructor(headers) {
+    headers && this.set(headers);
+  }
+  set(header, valueOrRewrite, rewrite) {
+    const self3 = this;
+    function setHeader(_value, _header, _rewrite) {
+      const lHeader = normalizeHeader(_header);
+      if (!lHeader) {
+        throw new Error("header name must be a non-empty string");
+      }
+      const key = utils.findKey(self3, lHeader);
+      if (!key || self3[key] === void 0 || _rewrite === true || _rewrite === void 0 && self3[key] !== false) {
+        self3[key || _header] = normalizeValue(_value);
+      }
+    }
+    const setHeaders = (headers, _rewrite) => utils.forEach(headers, (_value, _header) => setHeader(_value, _header, _rewrite));
+    if (utils.isPlainObject(header) || header instanceof this.constructor) {
+      setHeaders(header, valueOrRewrite);
+    } else if (utils.isString(header) && (header = header.trim()) && !isValidHeaderName(header)) {
+      setHeaders(parseHeaders(header), valueOrRewrite);
+    } else {
+      header != null && setHeader(valueOrRewrite, header, rewrite);
+    }
+    return this;
+  }
+  get(header, parser) {
+    header = normalizeHeader(header);
+    if (header) {
+      const key = utils.findKey(this, header);
+      if (key) {
+        const value2 = this[key];
+        if (!parser) {
+          return value2;
+        }
+        if (parser === true) {
+          return parseTokens(value2);
+        }
+        if (utils.isFunction(parser)) {
+          return parser.call(this, value2, key);
+        }
+        if (utils.isRegExp(parser)) {
+          return parser.exec(value2);
+        }
+        throw new TypeError("parser must be boolean|regexp|function");
+      }
+    }
+  }
+  has(header, matcher) {
+    header = normalizeHeader(header);
+    if (header) {
+      const key = utils.findKey(this, header);
+      return !!(key && this[key] !== void 0 && (!matcher || matchHeaderValue(this, this[key], key, matcher)));
+    }
+    return false;
+  }
+  delete(header, matcher) {
+    const self3 = this;
+    let deleted = false;
+    function deleteHeader(_header) {
+      _header = normalizeHeader(_header);
+      if (_header) {
+        const key = utils.findKey(self3, _header);
+        if (key && (!matcher || matchHeaderValue(self3, self3[key], key, matcher))) {
+          delete self3[key];
+          deleted = true;
+        }
+      }
+    }
+    if (utils.isArray(header)) {
+      header.forEach(deleteHeader);
+    } else {
+      deleteHeader(header);
+    }
+    return deleted;
+  }
+  clear(matcher) {
+    const keys2 = Object.keys(this);
+    let i = keys2.length;
+    let deleted = false;
+    while (i--) {
+      const key = keys2[i];
+      if (!matcher || matchHeaderValue(this, this[key], key, matcher, true)) {
+        delete this[key];
+        deleted = true;
+      }
+    }
+    return deleted;
+  }
+  normalize(format2) {
+    const self3 = this;
+    const headers = {};
+    utils.forEach(this, (value2, header) => {
+      const key = utils.findKey(headers, header);
+      if (key) {
+        self3[key] = normalizeValue(value2);
+        delete self3[header];
+        return;
+      }
+      const normalized = format2 ? formatHeader(header) : String(header).trim();
+      if (normalized !== header) {
+        delete self3[header];
+      }
+      self3[normalized] = normalizeValue(value2);
+      headers[normalized] = true;
+    });
+    return this;
+  }
+  concat(...targets) {
+    return this.constructor.concat(this, ...targets);
+  }
+  toJSON(asStrings) {
+    const obj = /* @__PURE__ */ Object.create(null);
+    utils.forEach(this, (value2, header) => {
+      value2 != null && value2 !== false && (obj[header] = asStrings && utils.isArray(value2) ? value2.join(", ") : value2);
+    });
+    return obj;
+  }
+  [Symbol.iterator]() {
+    return Object.entries(this.toJSON())[Symbol.iterator]();
+  }
+  toString() {
+    return Object.entries(this.toJSON()).map(([header, value2]) => header + ": " + value2).join("\n");
+  }
+  get [Symbol.toStringTag]() {
+    return "AxiosHeaders";
+  }
+  static from(thing) {
+    return thing instanceof this ? thing : new this(thing);
+  }
+  static concat(first, ...targets) {
+    const computed2 = new this(first);
+    targets.forEach((target) => computed2.set(target));
+    return computed2;
+  }
+  static accessor(header) {
+    const internals = this[$internals] = this[$internals] = {
+      accessors: {}
     };
-    if (hasMatches && includeMatches) {
-      result.indices = allIndices;
+    const accessors = internals.accessors;
+    const prototype2 = this.prototype;
+    function defineAccessor(_header) {
+      const lHeader = normalizeHeader(_header);
+      if (!accessors[lHeader]) {
+        buildAccessors(prototype2, _header);
+        accessors[lHeader] = true;
+      }
+    }
+    utils.isArray(header) ? header.forEach(defineAccessor) : defineAccessor(header);
+    return this;
+  }
+};
+AxiosHeaders$1.accessor(["Content-Type", "Content-Length", "Accept", "Accept-Encoding", "User-Agent", "Authorization"]);
+utils.freezeMethods(AxiosHeaders$1.prototype);
+utils.freezeMethods(AxiosHeaders$1);
+const AxiosHeaders$2 = AxiosHeaders$1;
+function transformData(fns, response) {
+  const config2 = this || defaults$1;
+  const context = response || config2;
+  const headers = AxiosHeaders$2.from(context.headers);
+  let data = context.data;
+  utils.forEach(fns, function transform2(fn) {
+    data = fn.call(config2, data, headers.normalize(), response ? response.status : void 0);
+  });
+  headers.normalize();
+  return data;
+}
+function isCancel$1(value2) {
+  return !!(value2 && value2.__CANCEL__);
+}
+function CanceledError$1(message, config2, request) {
+  AxiosError$1.call(this, message == null ? "canceled" : message, AxiosError$1.ERR_CANCELED, config2, request);
+  this.name = "CanceledError";
+}
+utils.inherits(CanceledError$1, AxiosError$1, {
+  __CANCEL__: true
+});
+function settle(resolve2, reject2, response) {
+  const validateStatus2 = response.config.validateStatus;
+  if (!response.status || !validateStatus2 || validateStatus2(response.status)) {
+    resolve2(response);
+  } else {
+    reject2(new AxiosError$1(
+      "Request failed with status code " + response.status,
+      [AxiosError$1.ERR_BAD_REQUEST, AxiosError$1.ERR_BAD_RESPONSE][Math.floor(response.status / 100) - 4],
+      response.config,
+      response.request,
+      response
+    ));
+  }
+}
+const cookies = platform.isStandardBrowserEnv ? (
+  // Standard browser envs support document.cookie
+  function standardBrowserEnv() {
+    return {
+      write: function write(name, value2, expires, path2, domain, secure) {
+        const cookie = [];
+        cookie.push(name + "=" + encodeURIComponent(value2));
+        if (utils.isNumber(expires)) {
+          cookie.push("expires=" + new Date(expires).toGMTString());
+        }
+        if (utils.isString(path2)) {
+          cookie.push("path=" + path2);
+        }
+        if (utils.isString(domain)) {
+          cookie.push("domain=" + domain);
+        }
+        if (secure === true) {
+          cookie.push("secure");
+        }
+        document.cookie = cookie.join("; ");
+      },
+      read: function read(name) {
+        const match = document.cookie.match(new RegExp("(^|;\\s*)(" + name + ")=([^;]*)"));
+        return match ? decodeURIComponent(match[3]) : null;
+      },
+      remove: function remove2(name) {
+        this.write(name, "", Date.now() - 864e5);
+      }
+    };
+  }()
+) : (
+  // Non standard browser env (web workers, react-native) lack needed support.
+  function nonStandardBrowserEnv() {
+    return {
+      write: function write() {
+      },
+      read: function read() {
+        return null;
+      },
+      remove: function remove2() {
+      }
+    };
+  }()
+);
+function isAbsoluteURL(url) {
+  return /^([a-z][a-z\d+\-.]*:)?\/\//i.test(url);
+}
+function combineURLs(baseURL, relativeURL) {
+  return relativeURL ? baseURL.replace(/\/+$/, "") + "/" + relativeURL.replace(/^\/+/, "") : baseURL;
+}
+function buildFullPath(baseURL, requestedURL) {
+  if (baseURL && !isAbsoluteURL(requestedURL)) {
+    return combineURLs(baseURL, requestedURL);
+  }
+  return requestedURL;
+}
+const isURLSameOrigin = platform.isStandardBrowserEnv ? (
+  // Standard browser envs have full support of the APIs needed to test
+  // whether the request URL is of the same origin as current location.
+  function standardBrowserEnv2() {
+    const msie = /(msie|trident)/i.test(navigator.userAgent);
+    const urlParsingNode = document.createElement("a");
+    let originURL;
+    function resolveURL(url) {
+      let href = url;
+      if (msie) {
+        urlParsingNode.setAttribute("href", href);
+        href = urlParsingNode.href;
+      }
+      urlParsingNode.setAttribute("href", href);
+      return {
+        href: urlParsingNode.href,
+        protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, "") : "",
+        host: urlParsingNode.host,
+        search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, "") : "",
+        hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, "") : "",
+        hostname: urlParsingNode.hostname,
+        port: urlParsingNode.port,
+        pathname: urlParsingNode.pathname.charAt(0) === "/" ? urlParsingNode.pathname : "/" + urlParsingNode.pathname
+      };
+    }
+    originURL = resolveURL(window.location.href);
+    return function isURLSameOrigin2(requestURL) {
+      const parsed = utils.isString(requestURL) ? resolveURL(requestURL) : requestURL;
+      return parsed.protocol === originURL.protocol && parsed.host === originURL.host;
+    };
+  }()
+) : (
+  // Non standard browser envs (web workers, react-native) lack needed support.
+  function nonStandardBrowserEnv2() {
+    return function isURLSameOrigin2() {
+      return true;
+    };
+  }()
+);
+function parseProtocol(url) {
+  const match = /^([-+\w]{1,25})(:?\/\/|:)/.exec(url);
+  return match && match[1] || "";
+}
+function speedometer(samplesCount, min) {
+  samplesCount = samplesCount || 10;
+  const bytes = new Array(samplesCount);
+  const timestamps = new Array(samplesCount);
+  let head = 0;
+  let tail = 0;
+  let firstSampleTS;
+  min = min !== void 0 ? min : 1e3;
+  return function push(chunkLength) {
+    const now = Date.now();
+    const startedAt = timestamps[tail];
+    if (!firstSampleTS) {
+      firstSampleTS = now;
+    }
+    bytes[head] = chunkLength;
+    timestamps[head] = now;
+    let i = tail;
+    let bytesCount = 0;
+    while (i !== head) {
+      bytesCount += bytes[i++];
+      i = i % samplesCount;
+    }
+    head = (head + 1) % samplesCount;
+    if (head === tail) {
+      tail = (tail + 1) % samplesCount;
+    }
+    if (now - firstSampleTS < min) {
+      return;
+    }
+    const passed = startedAt && now - startedAt;
+    return passed ? Math.round(bytesCount * 1e3 / passed) : void 0;
+  };
+}
+function progressEventReducer(listener3, isDownloadStream) {
+  let bytesNotified = 0;
+  const _speedometer = speedometer(50, 250);
+  return (e) => {
+    const loaded2 = e.loaded;
+    const total = e.lengthComputable ? e.total : void 0;
+    const progressBytes = loaded2 - bytesNotified;
+    const rate = _speedometer(progressBytes);
+    const inRange = loaded2 <= total;
+    bytesNotified = loaded2;
+    const data = {
+      loaded: loaded2,
+      total,
+      progress: total ? loaded2 / total : void 0,
+      bytes: progressBytes,
+      rate: rate ? rate : void 0,
+      estimated: rate && total && inRange ? (total - loaded2) / rate : void 0,
+      event: e
+    };
+    data[isDownloadStream ? "download" : "upload"] = true;
+    listener3(data);
+  };
+}
+const isXHRAdapterSupported = typeof XMLHttpRequest !== "undefined";
+const xhrAdapter = isXHRAdapterSupported && function(config2) {
+  return new Promise(function dispatchXhrRequest(resolve2, reject2) {
+    let requestData = config2.data;
+    const requestHeaders = AxiosHeaders$2.from(config2.headers).normalize();
+    const responseType = config2.responseType;
+    let onCanceled;
+    function done() {
+      if (config2.cancelToken) {
+        config2.cancelToken.unsubscribe(onCanceled);
+      }
+      if (config2.signal) {
+        config2.signal.removeEventListener("abort", onCanceled);
+      }
+    }
+    if (utils.isFormData(requestData)) {
+      if (platform.isStandardBrowserEnv || platform.isStandardBrowserWebWorkerEnv) {
+        requestHeaders.setContentType(false);
+      } else {
+        requestHeaders.setContentType("multipart/form-data;", false);
+      }
+    }
+    let request = new XMLHttpRequest();
+    if (config2.auth) {
+      const username = config2.auth.username || "";
+      const password = config2.auth.password ? unescape(encodeURIComponent(config2.auth.password)) : "";
+      requestHeaders.set("Authorization", "Basic " + btoa(username + ":" + password));
+    }
+    const fullPath = buildFullPath(config2.baseURL, config2.url);
+    request.open(config2.method.toUpperCase(), buildURL(fullPath, config2.params, config2.paramsSerializer), true);
+    request.timeout = config2.timeout;
+    function onloadend() {
+      if (!request) {
+        return;
+      }
+      const responseHeaders = AxiosHeaders$2.from(
+        "getAllResponseHeaders" in request && request.getAllResponseHeaders()
+      );
+      const responseData = !responseType || responseType === "text" || responseType === "json" ? request.responseText : request.response;
+      const response = {
+        data: responseData,
+        status: request.status,
+        statusText: request.statusText,
+        headers: responseHeaders,
+        config: config2,
+        request
+      };
+      settle(function _resolve(value2) {
+        resolve2(value2);
+        done();
+      }, function _reject(err) {
+        reject2(err);
+        done();
+      }, response);
+      request = null;
+    }
+    if ("onloadend" in request) {
+      request.onloadend = onloadend;
+    } else {
+      request.onreadystatechange = function handleLoad() {
+        if (!request || request.readyState !== 4) {
+          return;
+        }
+        if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf("file:") === 0)) {
+          return;
+        }
+        setTimeout(onloadend);
+      };
+    }
+    request.onabort = function handleAbort() {
+      if (!request) {
+        return;
+      }
+      reject2(new AxiosError$1("Request aborted", AxiosError$1.ECONNABORTED, config2, request));
+      request = null;
+    };
+    request.onerror = function handleError2() {
+      reject2(new AxiosError$1("Network Error", AxiosError$1.ERR_NETWORK, config2, request));
+      request = null;
+    };
+    request.ontimeout = function handleTimeout() {
+      let timeoutErrorMessage = config2.timeout ? "timeout of " + config2.timeout + "ms exceeded" : "timeout exceeded";
+      const transitional2 = config2.transitional || transitionalDefaults;
+      if (config2.timeoutErrorMessage) {
+        timeoutErrorMessage = config2.timeoutErrorMessage;
+      }
+      reject2(new AxiosError$1(
+        timeoutErrorMessage,
+        transitional2.clarifyTimeoutError ? AxiosError$1.ETIMEDOUT : AxiosError$1.ECONNABORTED,
+        config2,
+        request
+      ));
+      request = null;
+    };
+    if (platform.isStandardBrowserEnv) {
+      const xsrfValue = (config2.withCredentials || isURLSameOrigin(fullPath)) && config2.xsrfCookieName && cookies.read(config2.xsrfCookieName);
+      if (xsrfValue) {
+        requestHeaders.set(config2.xsrfHeaderName, xsrfValue);
+      }
+    }
+    requestData === void 0 && requestHeaders.setContentType(null);
+    if ("setRequestHeader" in request) {
+      utils.forEach(requestHeaders.toJSON(), function setRequestHeader(val, key) {
+        request.setRequestHeader(key, val);
+      });
+    }
+    if (!utils.isUndefined(config2.withCredentials)) {
+      request.withCredentials = !!config2.withCredentials;
+    }
+    if (responseType && responseType !== "json") {
+      request.responseType = config2.responseType;
+    }
+    if (typeof config2.onDownloadProgress === "function") {
+      request.addEventListener("progress", progressEventReducer(config2.onDownloadProgress, true));
+    }
+    if (typeof config2.onUploadProgress === "function" && request.upload) {
+      request.upload.addEventListener("progress", progressEventReducer(config2.onUploadProgress));
+    }
+    if (config2.cancelToken || config2.signal) {
+      onCanceled = (cancel) => {
+        if (!request) {
+          return;
+        }
+        reject2(!cancel || cancel.type ? new CanceledError$1(null, config2, request) : cancel);
+        request.abort();
+        request = null;
+      };
+      config2.cancelToken && config2.cancelToken.subscribe(onCanceled);
+      if (config2.signal) {
+        config2.signal.aborted ? onCanceled() : config2.signal.addEventListener("abort", onCanceled);
+      }
+    }
+    const protocol = parseProtocol(fullPath);
+    if (protocol && platform.protocols.indexOf(protocol) === -1) {
+      reject2(new AxiosError$1("Unsupported protocol " + protocol + ":", AxiosError$1.ERR_BAD_REQUEST, config2));
+      return;
+    }
+    request.send(requestData || null);
+  });
+};
+const knownAdapters = {
+  http: httpAdapter,
+  xhr: xhrAdapter
+};
+utils.forEach(knownAdapters, (fn, value2) => {
+  if (fn) {
+    try {
+      Object.defineProperty(fn, "name", { value: value2 });
+    } catch (e) {
+    }
+    Object.defineProperty(fn, "adapterName", { value: value2 });
+  }
+});
+const adapters = {
+  getAdapter: (adapters2) => {
+    adapters2 = utils.isArray(adapters2) ? adapters2 : [adapters2];
+    const { length } = adapters2;
+    let nameOrAdapter;
+    let adapter;
+    for (let i = 0; i < length; i++) {
+      nameOrAdapter = adapters2[i];
+      if (adapter = utils.isString(nameOrAdapter) ? knownAdapters[nameOrAdapter.toLowerCase()] : nameOrAdapter) {
+        break;
+      }
+    }
+    if (!adapter) {
+      if (adapter === false) {
+        throw new AxiosError$1(
+          `Adapter ${nameOrAdapter} is not supported by the environment`,
+          "ERR_NOT_SUPPORT"
+        );
+      }
+      throw new Error(
+        utils.hasOwnProp(knownAdapters, nameOrAdapter) ? `Adapter '${nameOrAdapter}' is not available in the build` : `Unknown adapter '${nameOrAdapter}'`
+      );
+    }
+    if (!utils.isFunction(adapter)) {
+      throw new TypeError("adapter is not a function");
+    }
+    return adapter;
+  },
+  adapters: knownAdapters
+};
+function throwIfCancellationRequested(config2) {
+  if (config2.cancelToken) {
+    config2.cancelToken.throwIfRequested();
+  }
+  if (config2.signal && config2.signal.aborted) {
+    throw new CanceledError$1(null, config2);
+  }
+}
+function dispatchRequest(config2) {
+  throwIfCancellationRequested(config2);
+  config2.headers = AxiosHeaders$2.from(config2.headers);
+  config2.data = transformData.call(
+    config2,
+    config2.transformRequest
+  );
+  if (["post", "put", "patch"].indexOf(config2.method) !== -1) {
+    config2.headers.setContentType("application/x-www-form-urlencoded", false);
+  }
+  const adapter = adapters.getAdapter(config2.adapter || defaults$1.adapter);
+  return adapter(config2).then(function onAdapterResolution(response) {
+    throwIfCancellationRequested(config2);
+    response.data = transformData.call(
+      config2,
+      config2.transformResponse,
+      response
+    );
+    response.headers = AxiosHeaders$2.from(response.headers);
+    return response;
+  }, function onAdapterRejection(reason) {
+    if (!isCancel$1(reason)) {
+      throwIfCancellationRequested(config2);
+      if (reason && reason.response) {
+        reason.response.data = transformData.call(
+          config2,
+          config2.transformResponse,
+          reason.response
+        );
+        reason.response.headers = AxiosHeaders$2.from(reason.response.headers);
+      }
+    }
+    return Promise.reject(reason);
+  });
+}
+const headersToObject = (thing) => thing instanceof AxiosHeaders$2 ? thing.toJSON() : thing;
+function mergeConfig$1(config1, config2) {
+  config2 = config2 || {};
+  const config3 = {};
+  function getMergedValue(target, source, caseless) {
+    if (utils.isPlainObject(target) && utils.isPlainObject(source)) {
+      return utils.merge.call({ caseless }, target, source);
+    } else if (utils.isPlainObject(source)) {
+      return utils.merge({}, source);
+    } else if (utils.isArray(source)) {
+      return source.slice();
+    }
+    return source;
+  }
+  function mergeDeepProperties(a, b, caseless) {
+    if (!utils.isUndefined(b)) {
+      return getMergedValue(a, b, caseless);
+    } else if (!utils.isUndefined(a)) {
+      return getMergedValue(void 0, a, caseless);
+    }
+  }
+  function valueFromConfig2(a, b) {
+    if (!utils.isUndefined(b)) {
+      return getMergedValue(void 0, b);
+    }
+  }
+  function defaultToConfig2(a, b) {
+    if (!utils.isUndefined(b)) {
+      return getMergedValue(void 0, b);
+    } else if (!utils.isUndefined(a)) {
+      return getMergedValue(void 0, a);
+    }
+  }
+  function mergeDirectKeys(a, b, prop) {
+    if (prop in config2) {
+      return getMergedValue(a, b);
+    } else if (prop in config1) {
+      return getMergedValue(void 0, a);
+    }
+  }
+  const mergeMap = {
+    url: valueFromConfig2,
+    method: valueFromConfig2,
+    data: valueFromConfig2,
+    baseURL: defaultToConfig2,
+    transformRequest: defaultToConfig2,
+    transformResponse: defaultToConfig2,
+    paramsSerializer: defaultToConfig2,
+    timeout: defaultToConfig2,
+    timeoutMessage: defaultToConfig2,
+    withCredentials: defaultToConfig2,
+    adapter: defaultToConfig2,
+    responseType: defaultToConfig2,
+    xsrfCookieName: defaultToConfig2,
+    xsrfHeaderName: defaultToConfig2,
+    onUploadProgress: defaultToConfig2,
+    onDownloadProgress: defaultToConfig2,
+    decompress: defaultToConfig2,
+    maxContentLength: defaultToConfig2,
+    maxBodyLength: defaultToConfig2,
+    beforeRedirect: defaultToConfig2,
+    transport: defaultToConfig2,
+    httpAgent: defaultToConfig2,
+    httpsAgent: defaultToConfig2,
+    cancelToken: defaultToConfig2,
+    socketPath: defaultToConfig2,
+    responseEncoding: defaultToConfig2,
+    validateStatus: mergeDirectKeys,
+    headers: (a, b) => mergeDeepProperties(headersToObject(a), headersToObject(b), true)
+  };
+  utils.forEach(Object.keys(Object.assign({}, config1, config2)), function computeConfigValue(prop) {
+    const merge2 = mergeMap[prop] || mergeDeepProperties;
+    const configValue = merge2(config1[prop], config2[prop], prop);
+    utils.isUndefined(configValue) && merge2 !== mergeDirectKeys || (config3[prop] = configValue);
+  });
+  return config3;
+}
+const VERSION$1 = "1.4.0";
+const validators$1 = {};
+["object", "boolean", "number", "function", "string", "symbol"].forEach((type2, i) => {
+  validators$1[type2] = function validator6(thing) {
+    return typeof thing === type2 || "a" + (i < 1 ? "n " : " ") + type2;
+  };
+});
+const deprecatedWarnings = {};
+validators$1.transitional = function transitional(validator6, version2, message) {
+  function formatMessage(opt, desc2) {
+    return "[Axios v" + VERSION$1 + "] Transitional option '" + opt + "'" + desc2 + (message ? ". " + message : "");
+  }
+  return (value2, opt, opts) => {
+    if (validator6 === false) {
+      throw new AxiosError$1(
+        formatMessage(opt, " has been removed" + (version2 ? " in " + version2 : "")),
+        AxiosError$1.ERR_DEPRECATED
+      );
+    }
+    if (version2 && !deprecatedWarnings[opt]) {
+      deprecatedWarnings[opt] = true;
+      console.warn(
+        formatMessage(
+          opt,
+          " has been deprecated since v" + version2 + " and will be removed in the near future"
+        )
+      );
+    }
+    return validator6 ? validator6(value2, opt, opts) : true;
+  };
+};
+function assertOptions(options, schema2, allowUnknown) {
+  if (typeof options !== "object") {
+    throw new AxiosError$1("options must be an object", AxiosError$1.ERR_BAD_OPTION_VALUE);
+  }
+  const keys2 = Object.keys(options);
+  let i = keys2.length;
+  while (i-- > 0) {
+    const opt = keys2[i];
+    const validator6 = schema2[opt];
+    if (validator6) {
+      const value2 = options[opt];
+      const result = value2 === void 0 || validator6(value2, opt, options);
+      if (result !== true) {
+        throw new AxiosError$1("option " + opt + " must be " + result, AxiosError$1.ERR_BAD_OPTION_VALUE);
+      }
+      continue;
+    }
+    if (allowUnknown !== true) {
+      throw new AxiosError$1("Unknown option " + opt, AxiosError$1.ERR_BAD_OPTION);
+    }
+  }
+}
+const validator5 = {
+  assertOptions,
+  validators: validators$1
+};
+const validators = validator5.validators;
+let Axios$1 = class Axios {
+  constructor(instanceConfig) {
+    this.defaults = instanceConfig;
+    this.interceptors = {
+      request: new InterceptorManager$1(),
+      response: new InterceptorManager$1()
+    };
+  }
+  /**
+   * Dispatch a request
+   *
+   * @param {String|Object} configOrUrl The config specific for this request (merged with this.defaults)
+   * @param {?Object} config
+   *
+   * @returns {Promise} The Promise to be fulfilled
+   */
+  request(configOrUrl, config2) {
+    if (typeof configOrUrl === "string") {
+      config2 = config2 || {};
+      config2.url = configOrUrl;
+    } else {
+      config2 = configOrUrl || {};
+    }
+    config2 = mergeConfig$1(this.defaults, config2);
+    const { transitional: transitional2, paramsSerializer, headers } = config2;
+    if (transitional2 !== void 0) {
+      validator5.assertOptions(transitional2, {
+        silentJSONParsing: validators.transitional(validators.boolean),
+        forcedJSONParsing: validators.transitional(validators.boolean),
+        clarifyTimeoutError: validators.transitional(validators.boolean)
+      }, false);
+    }
+    if (paramsSerializer != null) {
+      if (utils.isFunction(paramsSerializer)) {
+        config2.paramsSerializer = {
+          serialize: paramsSerializer
+        };
+      } else {
+        validator5.assertOptions(paramsSerializer, {
+          encode: validators.function,
+          serialize: validators.function
+        }, true);
+      }
+    }
+    config2.method = (config2.method || this.defaults.method || "get").toLowerCase();
+    let contextHeaders;
+    contextHeaders = headers && utils.merge(
+      headers.common,
+      headers[config2.method]
+    );
+    contextHeaders && utils.forEach(
+      ["delete", "get", "head", "post", "put", "patch", "common"],
+      (method) => {
+        delete headers[method];
+      }
+    );
+    config2.headers = AxiosHeaders$2.concat(contextHeaders, headers);
+    const requestInterceptorChain = [];
+    let synchronousRequestInterceptors = true;
+    this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
+      if (typeof interceptor.runWhen === "function" && interceptor.runWhen(config2) === false) {
+        return;
+      }
+      synchronousRequestInterceptors = synchronousRequestInterceptors && interceptor.synchronous;
+      requestInterceptorChain.unshift(interceptor.fulfilled, interceptor.rejected);
+    });
+    const responseInterceptorChain = [];
+    this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
+      responseInterceptorChain.push(interceptor.fulfilled, interceptor.rejected);
+    });
+    let promise2;
+    let i = 0;
+    let len;
+    if (!synchronousRequestInterceptors) {
+      const chain = [dispatchRequest.bind(this), void 0];
+      chain.unshift.apply(chain, requestInterceptorChain);
+      chain.push.apply(chain, responseInterceptorChain);
+      len = chain.length;
+      promise2 = Promise.resolve(config2);
+      while (i < len) {
+        promise2 = promise2.then(chain[i++], chain[i++]);
+      }
+      return promise2;
+    }
+    len = requestInterceptorChain.length;
+    let newConfig = config2;
+    i = 0;
+    while (i < len) {
+      const onFulfilled = requestInterceptorChain[i++];
+      const onRejected = requestInterceptorChain[i++];
+      try {
+        newConfig = onFulfilled(newConfig);
+      } catch (error) {
+        onRejected.call(this, error);
+        break;
+      }
+    }
+    try {
+      promise2 = dispatchRequest.call(this, newConfig);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+    i = 0;
+    len = responseInterceptorChain.length;
+    while (i < len) {
+      promise2 = promise2.then(responseInterceptorChain[i++], responseInterceptorChain[i++]);
+    }
+    return promise2;
+  }
+  getUri(config2) {
+    config2 = mergeConfig$1(this.defaults, config2);
+    const fullPath = buildFullPath(config2.baseURL, config2.url);
+    return buildURL(fullPath, config2.params, config2.paramsSerializer);
+  }
+};
+utils.forEach(["delete", "get", "head", "options"], function forEachMethodNoData2(method) {
+  Axios$1.prototype[method] = function(url, config2) {
+    return this.request(mergeConfig$1(config2 || {}, {
+      method,
+      url,
+      data: (config2 || {}).data
+    }));
+  };
+});
+utils.forEach(["post", "put", "patch"], function forEachMethodWithData2(method) {
+  function generateHTTPMethod(isForm) {
+    return function httpMethod(url, data, config2) {
+      return this.request(mergeConfig$1(config2 || {}, {
+        method,
+        headers: isForm ? {
+          "Content-Type": "multipart/form-data"
+        } : {},
+        url,
+        data
+      }));
+    };
+  }
+  Axios$1.prototype[method] = generateHTTPMethod();
+  Axios$1.prototype[method + "Form"] = generateHTTPMethod(true);
+});
+const Axios$2 = Axios$1;
+let CancelToken$1 = class CancelToken {
+  constructor(executor) {
+    if (typeof executor !== "function") {
+      throw new TypeError("executor must be a function.");
+    }
+    let resolvePromise;
+    this.promise = new Promise(function promiseExecutor(resolve2) {
+      resolvePromise = resolve2;
+    });
+    const token = this;
+    this.promise.then((cancel) => {
+      if (!token._listeners)
+        return;
+      let i = token._listeners.length;
+      while (i-- > 0) {
+        token._listeners[i](cancel);
+      }
+      token._listeners = null;
+    });
+    this.promise.then = (onfulfilled) => {
+      let _resolve;
+      const promise2 = new Promise((resolve2) => {
+        token.subscribe(resolve2);
+        _resolve = resolve2;
+      }).then(onfulfilled);
+      promise2.cancel = function reject2() {
+        token.unsubscribe(_resolve);
+      };
+      return promise2;
+    };
+    executor(function cancel(message, config2, request) {
+      if (token.reason) {
+        return;
+      }
+      token.reason = new CanceledError$1(message, config2, request);
+      resolvePromise(token.reason);
+    });
+  }
+  /**
+   * Throws a `CanceledError` if cancellation has been requested.
+   */
+  throwIfRequested() {
+    if (this.reason) {
+      throw this.reason;
+    }
+  }
+  /**
+   * Subscribe to the cancel signal
+   */
+  subscribe(listener3) {
+    if (this.reason) {
+      listener3(this.reason);
+      return;
+    }
+    if (this._listeners) {
+      this._listeners.push(listener3);
+    } else {
+      this._listeners = [listener3];
+    }
+  }
+  /**
+   * Unsubscribe from the cancel signal
+   */
+  unsubscribe(listener3) {
+    if (!this._listeners) {
+      return;
+    }
+    const index = this._listeners.indexOf(listener3);
+    if (index !== -1) {
+      this._listeners.splice(index, 1);
+    }
+  }
+  /**
+   * Returns an object that contains a new `CancelToken` and a function that, when called,
+   * cancels the `CancelToken`.
+   */
+  static source() {
+    let cancel;
+    const token = new CancelToken(function executor(c) {
+      cancel = c;
+    });
+    return {
+      token,
+      cancel
+    };
+  }
+};
+const CancelToken$2 = CancelToken$1;
+function spread$1(callback) {
+  return function wrap(arr) {
+    return callback.apply(null, arr);
+  };
+}
+function isAxiosError$1(payload) {
+  return utils.isObject(payload) && payload.isAxiosError === true;
+}
+const HttpStatusCode$1 = {
+  Continue: 100,
+  SwitchingProtocols: 101,
+  Processing: 102,
+  EarlyHints: 103,
+  Ok: 200,
+  Created: 201,
+  Accepted: 202,
+  NonAuthoritativeInformation: 203,
+  NoContent: 204,
+  ResetContent: 205,
+  PartialContent: 206,
+  MultiStatus: 207,
+  AlreadyReported: 208,
+  ImUsed: 226,
+  MultipleChoices: 300,
+  MovedPermanently: 301,
+  Found: 302,
+  SeeOther: 303,
+  NotModified: 304,
+  UseProxy: 305,
+  Unused: 306,
+  TemporaryRedirect: 307,
+  PermanentRedirect: 308,
+  BadRequest: 400,
+  Unauthorized: 401,
+  PaymentRequired: 402,
+  Forbidden: 403,
+  NotFound: 404,
+  MethodNotAllowed: 405,
+  NotAcceptable: 406,
+  ProxyAuthenticationRequired: 407,
+  RequestTimeout: 408,
+  Conflict: 409,
+  Gone: 410,
+  LengthRequired: 411,
+  PreconditionFailed: 412,
+  PayloadTooLarge: 413,
+  UriTooLong: 414,
+  UnsupportedMediaType: 415,
+  RangeNotSatisfiable: 416,
+  ExpectationFailed: 417,
+  ImATeapot: 418,
+  MisdirectedRequest: 421,
+  UnprocessableEntity: 422,
+  Locked: 423,
+  FailedDependency: 424,
+  TooEarly: 425,
+  UpgradeRequired: 426,
+  PreconditionRequired: 428,
+  TooManyRequests: 429,
+  RequestHeaderFieldsTooLarge: 431,
+  UnavailableForLegalReasons: 451,
+  InternalServerError: 500,
+  NotImplemented: 501,
+  BadGateway: 502,
+  ServiceUnavailable: 503,
+  GatewayTimeout: 504,
+  HttpVersionNotSupported: 505,
+  VariantAlsoNegotiates: 506,
+  InsufficientStorage: 507,
+  LoopDetected: 508,
+  NotExtended: 510,
+  NetworkAuthenticationRequired: 511
+};
+Object.entries(HttpStatusCode$1).forEach(([key, value2]) => {
+  HttpStatusCode$1[value2] = key;
+});
+const HttpStatusCode$2 = HttpStatusCode$1;
+function createInstance(defaultConfig) {
+  const context = new Axios$2(defaultConfig);
+  const instance = bind$1(Axios$2.prototype.request, context);
+  utils.extend(instance, Axios$2.prototype, context, { allOwnKeys: true });
+  utils.extend(instance, context, null, { allOwnKeys: true });
+  instance.create = function create2(instanceConfig) {
+    return createInstance(mergeConfig$1(defaultConfig, instanceConfig));
+  };
+  return instance;
+}
+const axios$1 = createInstance(defaults$1);
+axios$1.Axios = Axios$2;
+axios$1.CanceledError = CanceledError$1;
+axios$1.CancelToken = CancelToken$2;
+axios$1.isCancel = isCancel$1;
+axios$1.VERSION = VERSION$1;
+axios$1.toFormData = toFormData$1;
+axios$1.AxiosError = AxiosError$1;
+axios$1.Cancel = axios$1.CanceledError;
+axios$1.all = function all(promises) {
+  return Promise.all(promises);
+};
+axios$1.spread = spread$1;
+axios$1.isAxiosError = isAxiosError$1;
+axios$1.mergeConfig = mergeConfig$1;
+axios$1.AxiosHeaders = AxiosHeaders$2;
+axios$1.formToJSON = (thing) => formDataToJSON(utils.isHTMLForm(thing) ? new FormData(thing) : thing);
+axios$1.HttpStatusCode = HttpStatusCode$2;
+axios$1.default = axios$1;
+const axios$2 = axios$1;
+const {
+  Axios: Axios2,
+  AxiosError,
+  CanceledError,
+  isCancel,
+  CancelToken: CancelToken2,
+  VERSION,
+  all: all2,
+  Cancel,
+  isAxiosError,
+  spread,
+  toFormData,
+  AxiosHeaders: AxiosHeaders2,
+  HttpStatusCode,
+  formToJSON,
+  mergeConfig
+} = axios$2;
+const axios = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  Axios: Axios2,
+  AxiosError,
+  AxiosHeaders: AxiosHeaders2,
+  Cancel,
+  CancelToken: CancelToken2,
+  CanceledError,
+  HttpStatusCode,
+  VERSION,
+  all: all2,
+  default: axios$2,
+  formToJSON,
+  isAxiosError,
+  isCancel,
+  mergeConfig,
+  spread,
+  toFormData
+}, Symbol.toStringTag, { value: "Module" }));
+const require$$1 = /* @__PURE__ */ getAugmentedNamespace(axios);
+var bathEs5 = {};
+var names$1 = {};
+var pathTemplateToParameterNames = {};
+Object.defineProperty(pathTemplateToParameterNames, "__esModule", {
+  value: true
+});
+pathTemplateToParameterNames.pathTempalteToParameterNames = void 0;
+const pathTempalteToParameterNames = (template) => {
+  const nameMatcher = template.match(/\{[A-Za-z0-9_-]+\}/g);
+  return nameMatcher === null ? [] : nameMatcher.map((x) => x.substring(1, x.length - 1));
+};
+pathTemplateToParameterNames.pathTempalteToParameterNames = pathTempalteToParameterNames;
+Object.defineProperty(names$1, "__esModule", {
+  value: true
+});
+names$1.names = void 0;
+var _pathTemplateToParameterNames$2 = pathTemplateToParameterNames;
+const names = (template) => {
+  const ns = (0, _pathTemplateToParameterNames$2.pathTempalteToParameterNames)(template);
+  return ns.filter((i, index, array) => array.indexOf(i) === index);
+};
+names$1.names = names;
+var params$1 = {};
+var toParameterPattern$1 = {};
+Object.defineProperty(toParameterPattern$1, "__esModule", {
+  value: true
+});
+toParameterPattern$1.toParameterPattern = void 0;
+var _pathTemplateToParameterNames$1 = pathTemplateToParameterNames;
+const toParameterPattern = (template, patterns) => {
+  const userParameterPatterns = typeof patterns === "undefined" ? [] : Object.keys(patterns).map((name) => {
+    const patternOrUndefined = patterns[name];
+    const pattern = typeof patternOrUndefined === "undefined" ? null : patternOrUndefined;
+    return {
+      name,
+      pattern
+    };
+  });
+  const parameterNames = (0, _pathTemplateToParameterNames$1.pathTempalteToParameterNames)(template);
+  const parameters = parameterNames.map((name) => {
+    const userPattern = userParameterPatterns.find(({
+      name: n
+    }) => n === name);
+    const pattern = typeof userPattern === "undefined" ? null : userPattern.pattern;
+    return {
+      name,
+      pattern
+    };
+  });
+  return parameters;
+};
+toParameterPattern$1.toParameterPattern = toParameterPattern;
+Object.defineProperty(params$1, "__esModule", {
+  value: true
+});
+params$1.params = void 0;
+var _toParameterPattern$1 = toParameterPattern$1;
+const params = (template, patterns) => {
+  const notFound = null;
+  const pathPattern = toPathPattern(template);
+  const parameterPattern = (0, _toParameterPattern$1.toParameterPattern)(template, patterns);
+  return (pathname) => {
+    const vs = matchPathPattern(pathname, pathPattern);
+    if (vs === null)
+      return notFound;
+    const npvs = matchParameterPattern(vs, parameterPattern);
+    if (npvs === null)
+      return notFound;
+    return toParameters(npvs);
+  };
+};
+params$1.params = params;
+const toParameters = (npvs) => {
+  return npvs.map(({
+    name,
+    value: value2
+  }) => ({
+    [name]: value2
+  })).reduce((a, x) => Object.assign(a, x), {});
+};
+const matchParameterPattern = (parameterValues, parameterPattern) => {
+  const npvs = parameterValues.map(({
+    value: value2
+  }) => decodeURIComponent(value2)).map((value2, i) => {
+    const {
+      name,
+      pattern
+    } = parameterPattern[i];
+    return {
+      name,
+      pattern,
+      value: value2
+    };
+  });
+  const hasUnmatchParameter = npvs.some(({
+    pattern,
+    value: value2
+  }) => {
+    return pattern !== null && value2.match(pattern) === null;
+  });
+  if (hasUnmatchParameter)
+    return null;
+  const hasInvalidDuplicatedParameter = npvs.some(({
+    name,
+    value: value2
+  }) => {
+    return npvs.some(({
+      name: n,
+      value: v
+    }) => n === name && v !== value2);
+  });
+  if (hasInvalidDuplicatedParameter)
+    return null;
+  return npvs;
+};
+const matchPathPattern = (pathname, pathPattern) => {
+  const m = pathname.match(pathPattern);
+  if (m === null)
+    return null;
+  const vs = m.slice(1).map((value2) => ({
+    value: value2
+  }));
+  return vs;
+};
+const toPathPattern = (template) => {
+  return new RegExp("^" + template.replace(/\{[A-Za-z0-9_-]+\}/g, "([^\\/]*)") + "$");
+};
+var path$1 = {};
+Object.defineProperty(path$1, "__esModule", {
+  value: true
+});
+path$1.path = void 0;
+var _pathTemplateToParameterNames = pathTemplateToParameterNames;
+var _toParameterPattern = toParameterPattern$1;
+const path = (template, patterns) => {
+  const parameterNames = (0, _pathTemplateToParameterNames.pathTempalteToParameterNames)(template);
+  return (params2) => {
+    if (parameterNames.some((name) => typeof params2[name] !== "string")) {
+      return null;
+    }
+    const parameterPattern = (0, _toParameterPattern.toParameterPattern)(template, patterns);
+    if (parameterPattern.some(({
+      name,
+      pattern
+    }) => {
+      return pattern !== null && params2[name].match(pattern) === null;
+    })) {
+      return null;
+    }
+    return parameterNames.reduce((a, name) => {
+      return a.split("{" + name + "}").join(encodeURIComponent(params2[name]));
+    }, template);
+  };
+};
+path$1.path = path;
+(function(exports) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, "names", {
+    enumerable: true,
+    get: function() {
+      return _names.names;
+    }
+  });
+  Object.defineProperty(exports, "params", {
+    enumerable: true,
+    get: function() {
+      return _params.params;
+    }
+  });
+  Object.defineProperty(exports, "path", {
+    enumerable: true,
+    get: function() {
+      return _path.path;
+    }
+  });
+  exports.bath = exports.default = void 0;
+  var _names = names$1;
+  var _params = params$1;
+  var _path = path$1;
+  const bath = (template, patterns) => {
+    const names2 = (0, _names.names)(template);
+    const path2 = (0, _path.path)(template, patterns);
+    const params2 = (0, _params.params)(template, patterns);
+    return {
+      names: names2,
+      path: path2,
+      params: params2
+    };
+  };
+  exports.bath = bath;
+  var _default2 = bath;
+  exports.default = _default2;
+})(bathEs5);
+var dereferenceJsonSchema = {};
+var types = {};
+Object.defineProperty(types, "__esModule", {
+  value: true
+});
+var dereference = {};
+var klona = {};
+(function(exports) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, "klona", {
+    enumerable: true,
+    get: function() {
+      return klona2;
+    }
+  });
+  function klona2(val) {
+    var index, out, tmp;
+    if (Array.isArray(val)) {
+      out = Array(index = val.length);
+      while (index--)
+        out[index] = (tmp = val[index]) && typeof tmp === "object" ? klona2(tmp) : tmp;
+      return out;
+    }
+    if (Object.prototype.toString.call(val) === "[object Object]") {
+      out = {};
+      for (index in val) {
+        if (index === "__proto__") {
+          Object.defineProperty(out, index, {
+            value: klona2(val[index]),
+            configurable: true,
+            enumerable: true,
+            writable: true
+          });
+        } else {
+          out[index] = (tmp = val[index]) && typeof tmp === "object" ? klona2(tmp) : tmp;
+        }
+      }
+      return out;
+    }
+    return val;
+  }
+})(klona);
+var resolveRef = {};
+(function(exports) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, "resolveRefSync", {
+    enumerable: true,
+    get: function() {
+      return resolveRefSync;
+    }
+  });
+  var cache = /* @__PURE__ */ new Map();
+  var resolveRefSync = function(schema2, ref2) {
+    if (!cache.has(schema2)) {
+      cache.set(schema2, /* @__PURE__ */ new Map());
+    }
+    var schemaCache = cache.get(schema2);
+    if (schemaCache.has(ref2)) {
+      return schemaCache.get(ref2);
+    }
+    var path2 = ref2.split("/").slice(1);
+    var current = schema2;
+    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = void 0;
+    try {
+      for (var _iterator = path2[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var segment = _step.value;
+        if (!current || typeof current !== "object") {
+          current = null;
+        }
+        var _current_segment;
+        current = (_current_segment = current[segment]) !== null && _current_segment !== void 0 ? _current_segment : null;
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return != null) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+    schemaCache.set(ref2, current);
+    return current;
+  };
+})(resolveRef);
+(function(exports) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, "dereferenceSync", {
+    enumerable: true,
+    get: function() {
+      return dereferenceSync;
+    }
+  });
+  var _klona = klona;
+  var _resolveRef = resolveRef;
+  var cache = /* @__PURE__ */ new Map();
+  var dereferenceSync = function(schema2) {
+    if (cache.has(schema2)) {
+      return cache.get(schema2);
+    }
+    var visitedNodes = /* @__PURE__ */ new Set();
+    var cloned = (0, _klona.klona)(schema2);
+    var resolve2 = function(current, path2) {
+      if (typeof current === "object" && current !== null) {
+        if (visitedNodes.has(current)) {
+          return current;
+        }
+        visitedNodes.add(current);
+        if (Array.isArray(current)) {
+          for (var index = 0; index < current.length; index++) {
+            current[index] = resolve2(current[index]);
+          }
+        } else {
+          if ("$ref" in current && typeof current["$ref"] === "string") {
+            return (0, _resolveRef.resolveRefSync)(cloned, current["$ref"]);
+          }
+          for (var key in current) {
+            current[key] = resolve2(current[key]);
+          }
+        }
+      }
+      return current;
+    };
+    var result = resolve2(cloned);
+    cache.set(schema2, result);
+    return result;
+  };
+})(dereference);
+(function(exports) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  _exportStar(types, exports);
+  _exportStar(dereference, exports);
+  _exportStar(resolveRef, exports);
+  function _exportStar(from2, to) {
+    Object.keys(from2).forEach(function(k) {
+      if (k !== "default" && !Object.prototype.hasOwnProperty.call(to, k))
+        Object.defineProperty(to, k, {
+          enumerable: true,
+          get: function() {
+            return from2[k];
+          }
+        });
+    });
+    return from2;
+  }
+})(dereferenceJsonSchema);
+var client = {};
+(function(exports) {
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports.ParamType = exports.HttpMethod = void 0;
+  (function(HttpMethod) {
+    HttpMethod["Get"] = "get";
+    HttpMethod["Put"] = "put";
+    HttpMethod["Post"] = "post";
+    HttpMethod["Patch"] = "patch";
+    HttpMethod["Delete"] = "delete";
+    HttpMethod["Options"] = "options";
+    HttpMethod["Head"] = "head";
+    HttpMethod["Trace"] = "trace";
+  })(exports.HttpMethod || (exports.HttpMethod = {}));
+  (function(ParamType) {
+    ParamType["Query"] = "query";
+    ParamType["Header"] = "header";
+    ParamType["Path"] = "path";
+    ParamType["Cookie"] = "cookie";
+  })(exports.ParamType || (exports.ParamType = {}));
+})(client);
+var jsYaml = {};
+var loader = {};
+var common = {};
+var hasRequiredCommon;
+function requireCommon() {
+  if (hasRequiredCommon)
+    return common;
+  hasRequiredCommon = 1;
+  function isNothing(subject) {
+    return typeof subject === "undefined" || subject === null;
+  }
+  function isObject2(subject) {
+    return typeof subject === "object" && subject !== null;
+  }
+  function toArray2(sequence) {
+    if (Array.isArray(sequence))
+      return sequence;
+    else if (isNothing(sequence))
+      return [];
+    return [sequence];
+  }
+  function extend2(target, source) {
+    var index, length, key, sourceKeys;
+    if (source) {
+      sourceKeys = Object.keys(source);
+      for (index = 0, length = sourceKeys.length; index < length; index += 1) {
+        key = sourceKeys[index];
+        target[key] = source[key];
+      }
+    }
+    return target;
+  }
+  function repeat(string, count) {
+    var result = "", cycle;
+    for (cycle = 0; cycle < count; cycle += 1) {
+      result += string;
     }
     return result;
   }
+  function isNegativeZero(number) {
+    return number === 0 && Number.NEGATIVE_INFINITY === 1 / number;
+  }
+  common.isNothing = isNothing;
+  common.isObject = isObject2;
+  common.toArray = toArray2;
+  common.repeat = repeat;
+  common.isNegativeZero = isNegativeZero;
+  common.extend = extend2;
+  return common;
 }
-class BaseMatch {
-  constructor(pattern) {
-    this.pattern = pattern;
-  }
-  static isMultiMatch(pattern) {
-    return getMatch(pattern, this.multiRegex);
-  }
-  static isSingleMatch(pattern) {
-    return getMatch(pattern, this.singleRegex);
-  }
-  search() {
-  }
-}
-function getMatch(pattern, exp) {
-  const matches = pattern.match(exp);
-  return matches ? matches[1] : null;
-}
-class ExactMatch extends BaseMatch {
-  constructor(pattern) {
-    super(pattern);
-  }
-  static get type() {
-    return "exact";
-  }
-  static get multiRegex() {
-    return /^="(.*)"$/;
-  }
-  static get singleRegex() {
-    return /^=(.*)$/;
-  }
-  search(text) {
-    const isMatch = text === this.pattern;
-    return {
-      isMatch,
-      score: isMatch ? 0 : 1,
-      indices: [0, this.pattern.length - 1]
-    };
-  }
-}
-class InverseExactMatch extends BaseMatch {
-  constructor(pattern) {
-    super(pattern);
-  }
-  static get type() {
-    return "inverse-exact";
-  }
-  static get multiRegex() {
-    return /^!"(.*)"$/;
-  }
-  static get singleRegex() {
-    return /^!(.*)$/;
-  }
-  search(text) {
-    const index = text.indexOf(this.pattern);
-    const isMatch = index === -1;
-    return {
-      isMatch,
-      score: isMatch ? 0 : 1,
-      indices: [0, text.length - 1]
-    };
-  }
-}
-class PrefixExactMatch extends BaseMatch {
-  constructor(pattern) {
-    super(pattern);
-  }
-  static get type() {
-    return "prefix-exact";
-  }
-  static get multiRegex() {
-    return /^\^"(.*)"$/;
-  }
-  static get singleRegex() {
-    return /^\^(.*)$/;
-  }
-  search(text) {
-    const isMatch = text.startsWith(this.pattern);
-    return {
-      isMatch,
-      score: isMatch ? 0 : 1,
-      indices: [0, this.pattern.length - 1]
-    };
-  }
-}
-class InversePrefixExactMatch extends BaseMatch {
-  constructor(pattern) {
-    super(pattern);
-  }
-  static get type() {
-    return "inverse-prefix-exact";
-  }
-  static get multiRegex() {
-    return /^!\^"(.*)"$/;
-  }
-  static get singleRegex() {
-    return /^!\^(.*)$/;
-  }
-  search(text) {
-    const isMatch = !text.startsWith(this.pattern);
-    return {
-      isMatch,
-      score: isMatch ? 0 : 1,
-      indices: [0, text.length - 1]
-    };
-  }
-}
-class SuffixExactMatch extends BaseMatch {
-  constructor(pattern) {
-    super(pattern);
-  }
-  static get type() {
-    return "suffix-exact";
-  }
-  static get multiRegex() {
-    return /^"(.*)"\$$/;
-  }
-  static get singleRegex() {
-    return /^(.*)\$$/;
-  }
-  search(text) {
-    const isMatch = text.endsWith(this.pattern);
-    return {
-      isMatch,
-      score: isMatch ? 0 : 1,
-      indices: [text.length - this.pattern.length, text.length - 1]
-    };
-  }
-}
-class InverseSuffixExactMatch extends BaseMatch {
-  constructor(pattern) {
-    super(pattern);
-  }
-  static get type() {
-    return "inverse-suffix-exact";
-  }
-  static get multiRegex() {
-    return /^!"(.*)"\$$/;
-  }
-  static get singleRegex() {
-    return /^!(.*)\$$/;
-  }
-  search(text) {
-    const isMatch = !text.endsWith(this.pattern);
-    return {
-      isMatch,
-      score: isMatch ? 0 : 1,
-      indices: [0, text.length - 1]
-    };
-  }
-}
-class FuzzyMatch extends BaseMatch {
-  constructor(pattern, {
-    location: location2 = Config.location,
-    threshold = Config.threshold,
-    distance = Config.distance,
-    includeMatches = Config.includeMatches,
-    findAllMatches = Config.findAllMatches,
-    minMatchCharLength = Config.minMatchCharLength,
-    isCaseSensitive = Config.isCaseSensitive,
-    ignoreLocation = Config.ignoreLocation
-  } = {}) {
-    super(pattern);
-    this._bitapSearch = new BitapSearch(pattern, {
-      location: location2,
-      threshold,
-      distance,
-      includeMatches,
-      findAllMatches,
-      minMatchCharLength,
-      isCaseSensitive,
-      ignoreLocation
-    });
-  }
-  static get type() {
-    return "fuzzy";
-  }
-  static get multiRegex() {
-    return /^"(.*)"$/;
-  }
-  static get singleRegex() {
-    return /^(.*)$/;
-  }
-  search(text) {
-    return this._bitapSearch.searchIn(text);
-  }
-}
-class IncludeMatch extends BaseMatch {
-  constructor(pattern) {
-    super(pattern);
-  }
-  static get type() {
-    return "include";
-  }
-  static get multiRegex() {
-    return /^'"(.*)"$/;
-  }
-  static get singleRegex() {
-    return /^'(.*)$/;
-  }
-  search(text) {
-    let location2 = 0;
-    let index;
-    const indices = [];
-    const patternLen = this.pattern.length;
-    while ((index = text.indexOf(this.pattern, location2)) > -1) {
-      location2 = index + patternLen;
-      indices.push([index, location2 - 1]);
+var exception;
+var hasRequiredException;
+function requireException() {
+  if (hasRequiredException)
+    return exception;
+  hasRequiredException = 1;
+  function formatError(exception2, compact) {
+    var where = "", message = exception2.reason || "(unknown reason)";
+    if (!exception2.mark)
+      return message;
+    if (exception2.mark.name) {
+      where += 'in "' + exception2.mark.name + '" ';
     }
-    const isMatch = !!indices.length;
-    return {
-      isMatch,
-      score: isMatch ? 0 : 1,
-      indices
-    };
-  }
-}
-const searchers = [
-  ExactMatch,
-  IncludeMatch,
-  PrefixExactMatch,
-  InversePrefixExactMatch,
-  InverseSuffixExactMatch,
-  SuffixExactMatch,
-  InverseExactMatch,
-  FuzzyMatch
-];
-const searchersLen = searchers.length;
-const SPACE_RE = / +(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/;
-const OR_TOKEN = "|";
-function parseQuery(pattern, options = {}) {
-  return pattern.split(OR_TOKEN).map((item) => {
-    let query = item.trim().split(SPACE_RE).filter((item2) => item2 && !!item2.trim());
-    let results = [];
-    for (let i = 0, len = query.length; i < len; i += 1) {
-      const queryItem = query[i];
-      let found = false;
-      let idx = -1;
-      while (!found && ++idx < searchersLen) {
-        const searcher = searchers[idx];
-        let token = searcher.isMultiMatch(queryItem);
-        if (token) {
-          results.push(new searcher(token, options));
-          found = true;
-        }
-      }
-      if (found) {
-        continue;
-      }
-      idx = -1;
-      while (++idx < searchersLen) {
-        const searcher = searchers[idx];
-        let token = searcher.isSingleMatch(queryItem);
-        if (token) {
-          results.push(new searcher(token, options));
-          break;
-        }
-      }
+    where += "(" + (exception2.mark.line + 1) + ":" + (exception2.mark.column + 1) + ")";
+    if (!compact && exception2.mark.snippet) {
+      where += "\n\n" + exception2.mark.snippet;
     }
-    return results;
-  });
-}
-const MultiMatchSet = /* @__PURE__ */ new Set([FuzzyMatch.type, IncludeMatch.type]);
-class ExtendedSearch {
-  constructor(pattern, {
-    isCaseSensitive = Config.isCaseSensitive,
-    includeMatches = Config.includeMatches,
-    minMatchCharLength = Config.minMatchCharLength,
-    ignoreLocation = Config.ignoreLocation,
-    findAllMatches = Config.findAllMatches,
-    location: location2 = Config.location,
-    threshold = Config.threshold,
-    distance = Config.distance
-  } = {}) {
-    this.query = null;
-    this.options = {
-      isCaseSensitive,
-      includeMatches,
-      minMatchCharLength,
-      findAllMatches,
-      ignoreLocation,
-      location: location2,
-      threshold,
-      distance
-    };
-    this.pattern = isCaseSensitive ? pattern : pattern.toLowerCase();
-    this.query = parseQuery(this.pattern, this.options);
+    return message + " " + where;
   }
-  static condition(_, options) {
-    return options.useExtendedSearch;
-  }
-  searchIn(text) {
-    const query = this.query;
-    if (!query) {
-      return {
-        isMatch: false,
-        score: 1
-      };
-    }
-    const { includeMatches, isCaseSensitive } = this.options;
-    text = isCaseSensitive ? text : text.toLowerCase();
-    let numMatches = 0;
-    let allIndices = [];
-    let totalScore = 0;
-    for (let i = 0, qLen = query.length; i < qLen; i += 1) {
-      const searchers2 = query[i];
-      allIndices.length = 0;
-      numMatches = 0;
-      for (let j = 0, pLen = searchers2.length; j < pLen; j += 1) {
-        const searcher = searchers2[j];
-        const { isMatch, indices, score } = searcher.search(text);
-        if (isMatch) {
-          numMatches += 1;
-          totalScore += score;
-          if (includeMatches) {
-            const type = searcher.constructor.type;
-            if (MultiMatchSet.has(type)) {
-              allIndices = [...allIndices, ...indices];
-            } else {
-              allIndices.push(indices);
-            }
-          }
-        } else {
-          totalScore = 0;
-          numMatches = 0;
-          allIndices.length = 0;
-          break;
-        }
-      }
-      if (numMatches) {
-        let result = {
-          isMatch: true,
-          score: totalScore / numMatches
-        };
-        if (includeMatches) {
-          result.indices = allIndices;
-        }
-        return result;
-      }
-    }
-    return {
-      isMatch: false,
-      score: 1
-    };
-  }
-}
-const registeredSearchers = [];
-function register(...args) {
-  registeredSearchers.push(...args);
-}
-function createSearcher(pattern, options) {
-  for (let i = 0, len = registeredSearchers.length; i < len; i += 1) {
-    let searcherClass = registeredSearchers[i];
-    if (searcherClass.condition(pattern, options)) {
-      return new searcherClass(pattern, options);
-    }
-  }
-  return new BitapSearch(pattern, options);
-}
-const LogicalOperator = {
-  AND: "$and",
-  OR: "$or"
-};
-const KeyType = {
-  PATH: "$path",
-  PATTERN: "$val"
-};
-const isExpression = (query) => !!(query[LogicalOperator.AND] || query[LogicalOperator.OR]);
-const isPath = (query) => !!query[KeyType.PATH];
-const isLeaf = (query) => !isArray$2(query) && isObject$3(query) && !isExpression(query);
-const convertToExplicit = (query) => ({
-  [LogicalOperator.AND]: Object.keys(query).map((key) => ({
-    [key]: query[key]
-  }))
-});
-function parse(query, options, { auto = true } = {}) {
-  const next = (query2) => {
-    let keys2 = Object.keys(query2);
-    const isQueryPath = isPath(query2);
-    if (!isQueryPath && keys2.length > 1 && !isExpression(query2)) {
-      return next(convertToExplicit(query2));
-    }
-    if (isLeaf(query2)) {
-      const key = isQueryPath ? query2[KeyType.PATH] : keys2[0];
-      const pattern = isQueryPath ? query2[KeyType.PATTERN] : query2[key];
-      if (!isString$2(pattern)) {
-        throw new Error(LOGICAL_SEARCH_INVALID_QUERY_FOR_KEY(key));
-      }
-      const obj = {
-        keyId: createKeyId(key),
-        pattern
-      };
-      if (auto) {
-        obj.searcher = createSearcher(pattern, options);
-      }
-      return obj;
-    }
-    let node = {
-      children: [],
-      operator: keys2[0]
-    };
-    keys2.forEach((key) => {
-      const value2 = query2[key];
-      if (isArray$2(value2)) {
-        value2.forEach((item) => {
-          node.children.push(next(item));
-        });
-      }
-    });
-    return node;
-  };
-  if (!isExpression(query)) {
-    query = convertToExplicit(query);
-  }
-  return next(query);
-}
-function computeScore(results, { ignoreFieldNorm = Config.ignoreFieldNorm }) {
-  results.forEach((result) => {
-    let totalScore = 1;
-    result.matches.forEach(({ key, norm: norm2, score }) => {
-      const weight = key ? key.weight : null;
-      totalScore *= Math.pow(
-        score === 0 && weight ? Number.EPSILON : score,
-        (weight || 1) * (ignoreFieldNorm ? 1 : norm2)
-      );
-    });
-    result.score = totalScore;
-  });
-}
-function transformMatches(result, data) {
-  const matches = result.matches;
-  data.matches = [];
-  if (!isDefined(matches)) {
-    return;
-  }
-  matches.forEach((match) => {
-    if (!isDefined(match.indices) || !match.indices.length) {
-      return;
-    }
-    const { indices, value: value2 } = match;
-    let obj = {
-      indices,
-      value: value2
-    };
-    if (match.key) {
-      obj.key = match.key.src;
-    }
-    if (match.idx > -1) {
-      obj.refIndex = match.idx;
-    }
-    data.matches.push(obj);
-  });
-}
-function transformScore(result, data) {
-  data.score = result.score;
-}
-function format(results, docs, {
-  includeMatches = Config.includeMatches,
-  includeScore = Config.includeScore
-} = {}) {
-  const transformers = [];
-  if (includeMatches)
-    transformers.push(transformMatches);
-  if (includeScore)
-    transformers.push(transformScore);
-  return results.map((result) => {
-    const { idx } = result;
-    const data = {
-      item: docs[idx],
-      refIndex: idx
-    };
-    if (transformers.length) {
-      transformers.forEach((transformer) => {
-        transformer(result, data);
-      });
-    }
-    return data;
-  });
-}
-class Fuse {
-  constructor(docs, options = {}, index) {
-    this.options = { ...Config, ...options };
-    if (this.options.useExtendedSearch && false) {
-      throw new Error(EXTENDED_SEARCH_UNAVAILABLE);
-    }
-    this._keyStore = new KeyStore(this.options.keys);
-    this.setCollection(docs, index);
-  }
-  setCollection(docs, index) {
-    this._docs = docs;
-    if (index && !(index instanceof FuseIndex)) {
-      throw new Error(INCORRECT_INDEX_TYPE);
-    }
-    this._myIndex = index || createIndex(this.options.keys, this._docs, {
-      getFn: this.options.getFn,
-      fieldNormWeight: this.options.fieldNormWeight
-    });
-  }
-  add(doc2) {
-    if (!isDefined(doc2)) {
-      return;
-    }
-    this._docs.push(doc2);
-    this._myIndex.add(doc2);
-  }
-  remove(predicate = () => false) {
-    const results = [];
-    for (let i = 0, len = this._docs.length; i < len; i += 1) {
-      const doc2 = this._docs[i];
-      if (predicate(doc2, i)) {
-        this.removeAt(i);
-        i -= 1;
-        len -= 1;
-        results.push(doc2);
-      }
-    }
-    return results;
-  }
-  removeAt(idx) {
-    this._docs.splice(idx, 1);
-    this._myIndex.removeAt(idx);
-  }
-  getIndex() {
-    return this._myIndex;
-  }
-  search(query, { limit = -1 } = {}) {
-    const {
-      includeMatches,
-      includeScore,
-      shouldSort,
-      sortFn,
-      ignoreFieldNorm
-    } = this.options;
-    let results = isString$2(query) ? isString$2(this._docs[0]) ? this._searchStringList(query) : this._searchObjectList(query) : this._searchLogical(query);
-    computeScore(results, { ignoreFieldNorm });
-    if (shouldSort) {
-      results.sort(sortFn);
-    }
-    if (isNumber$1(limit) && limit > -1) {
-      results = results.slice(0, limit);
-    }
-    return format(results, this._docs, {
-      includeMatches,
-      includeScore
-    });
-  }
-  _searchStringList(query) {
-    const searcher = createSearcher(query, this.options);
-    const { records } = this._myIndex;
-    const results = [];
-    records.forEach(({ v: text, i: idx, n: norm2 }) => {
-      if (!isDefined(text)) {
-        return;
-      }
-      const { isMatch, score, indices } = searcher.searchIn(text);
-      if (isMatch) {
-        results.push({
-          item: text,
-          idx,
-          matches: [{ score, value: text, norm: norm2, indices }]
-        });
-      }
-    });
-    return results;
-  }
-  _searchLogical(query) {
-    const expression = parse(query, this.options);
-    const evaluate = (node, item, idx) => {
-      if (!node.children) {
-        const { keyId, searcher } = node;
-        const matches = this._findMatches({
-          key: this._keyStore.get(keyId),
-          value: this._myIndex.getValueForItemAtKeyId(item, keyId),
-          searcher
-        });
-        if (matches && matches.length) {
-          return [
-            {
-              idx,
-              item,
-              matches
-            }
-          ];
-        }
-        return [];
-      }
-      const res = [];
-      for (let i = 0, len = node.children.length; i < len; i += 1) {
-        const child = node.children[i];
-        const result = evaluate(child, item, idx);
-        if (result.length) {
-          res.push(...result);
-        } else if (node.operator === LogicalOperator.AND) {
-          return [];
-        }
-      }
-      return res;
-    };
-    const records = this._myIndex.records;
-    const resultMap = {};
-    const results = [];
-    records.forEach(({ $: item, i: idx }) => {
-      if (isDefined(item)) {
-        let expResults = evaluate(expression, item, idx);
-        if (expResults.length) {
-          if (!resultMap[idx]) {
-            resultMap[idx] = { idx, item, matches: [] };
-            results.push(resultMap[idx]);
-          }
-          expResults.forEach(({ matches }) => {
-            resultMap[idx].matches.push(...matches);
-          });
-        }
-      }
-    });
-    return results;
-  }
-  _searchObjectList(query) {
-    const searcher = createSearcher(query, this.options);
-    const { keys: keys2, records } = this._myIndex;
-    const results = [];
-    records.forEach(({ $: item, i: idx }) => {
-      if (!isDefined(item)) {
-        return;
-      }
-      let matches = [];
-      keys2.forEach((key, keyIndex) => {
-        matches.push(
-          ...this._findMatches({
-            key,
-            value: item[keyIndex],
-            searcher
-          })
-        );
-      });
-      if (matches.length) {
-        results.push({
-          idx,
-          item,
-          matches
-        });
-      }
-    });
-    return results;
-  }
-  _findMatches({ key, value: value2, searcher }) {
-    if (!isDefined(value2)) {
-      return [];
-    }
-    let matches = [];
-    if (isArray$2(value2)) {
-      value2.forEach(({ v: text, i: idx, n: norm2 }) => {
-        if (!isDefined(text)) {
-          return;
-        }
-        const { isMatch, score, indices } = searcher.searchIn(text);
-        if (isMatch) {
-          matches.push({
-            score,
-            key,
-            value: text,
-            idx,
-            norm: norm2,
-            indices
-          });
-        }
-      });
+  function YAMLException(reason, mark) {
+    Error.call(this);
+    this.name = "YAMLException";
+    this.reason = reason;
+    this.mark = mark;
+    this.message = formatError(this, false);
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
     } else {
-      const { v: text, n: norm2 } = value2;
-      const { isMatch, score, indices } = searcher.searchIn(text);
-      if (isMatch) {
-        matches.push({ score, key, value: text, norm: norm2, indices });
-      }
+      this.stack = new Error().stack || "";
     }
-    return matches;
   }
-}
-Fuse.version = "6.6.2";
-Fuse.createIndex = createIndex;
-Fuse.parseIndex = parseIndex;
-Fuse.config = Config;
-{
-  Fuse.parseQuery = parse;
-}
-{
-  register(ExtendedSearch);
-}
-const store = { state: {} };
-function readFromLocalStorage() {
-  let storedData;
-  try {
-    storedData = localStorage.getItem("IconSearch");
-    store.state = JSON.parse(storedData ?? "{}");
-  } catch (ex) {
-    const error = ex;
-    console.warn("Icon Search data in local storage is corrupted; resetting.", { storedData, error: error.message });
-    updateLocalStorage();
-  }
-}
-function updateLocalStorage() {
-  localStorage.setItem("IconSearch", JSON.stringify(store.state ?? {}));
-}
-const icons = Object.values(_iconsCache);
-const fuse = new Fuse(icons, {
-  keys: [
-    "icon",
-    "iconName"
-  ]
-});
-class IconSearch {
-  constructor() {
-    readFromLocalStorage();
-  }
-  findIcon(searchString) {
-    var _a2, _b2, _c, _d;
-    const existing = (_b2 = (_a2 = store == null ? void 0 : store.state) == null ? void 0 : _a2.icons) == null ? void 0 : _b2[searchString];
-    if (existing !== void 0) {
-      return existing;
-    }
-    let bestMatch = (_c = fuse.search(searchString)) == null ? void 0 : _c[0];
-    if (bestMatch === void 0) {
-      const alts = searchString.split(" ").map((part) => {
-        var _a3;
-        const partMatch = (_a3 = fuse.search(part)) == null ? void 0 : _a3[0];
-        return partMatch;
-      }).filter((n) => n);
-      bestMatch = alts[0];
-    }
-    const newMatch = (_d = bestMatch == null ? void 0 : bestMatch.item) == null ? void 0 : _d.iconName;
-    store.state.icons = store.state.icons ?? {};
-    store.state.icons[searchString] = newMatch;
-    updateLocalStorage();
-    return newMatch;
-  }
-}
-const fnRegex = /(async\s)?([A-z][A-z0-9_]+)\((.*)\)/;
-function paramsForFunction(signature) {
-  const parts = signature.match(fnRegex) ?? [];
-  const middle = parts.pop() ?? "";
-  const params = middle.split(",").map((n) => n.trim()).filter((n) => n);
-  return params;
-}
-function describeObject(obj) {
-  const signatures = {
-    object: (objProp) => objProp,
-    function: (objProp) => {
-      const parts = (objProp + "").match(fnRegex);
-      return (parts == null ? void 0 : parts[0]) ?? objProp + "";
-    },
-    string: (objProp) => objProp,
-    number: (objProp) => objProp,
-    bigint: (objProp) => objProp,
-    boolean: (objProp) => objProp,
-    symbol: (objProp) => objProp,
-    undefined: (objProp) => objProp,
-    default: (objProp) => objProp + ""
+  YAMLException.prototype = Object.create(Error.prototype);
+  YAMLException.prototype.constructor = YAMLException;
+  YAMLException.prototype.toString = function toString3(compact) {
+    return this.name + ": " + formatError(this, compact);
   };
-  const ignoreList = ["__defineGetter__", "__defineSetter__"];
-  const properties = Object.getOwnPropertyNames(Object.getPrototypeOf(obj)).filter((n) => n !== "constructor");
-  return properties.map((prop) => {
-    if (ignoreList.includes(prop)) {
+  exception = YAMLException;
+  return exception;
+}
+var snippet;
+var hasRequiredSnippet;
+function requireSnippet() {
+  if (hasRequiredSnippet)
+    return snippet;
+  hasRequiredSnippet = 1;
+  var common2 = requireCommon();
+  function getLine(buffer, lineStart, lineEnd, position, maxLineLength) {
+    var head = "";
+    var tail = "";
+    var maxHalfLength = Math.floor(maxLineLength / 2) - 1;
+    if (position - lineStart > maxHalfLength) {
+      head = " ... ";
+      lineStart = position - maxHalfLength + head.length;
+    }
+    if (lineEnd - position > maxHalfLength) {
+      tail = " ...";
+      lineEnd = position + maxHalfLength - tail.length;
+    }
+    return {
+      str: head + buffer.slice(lineStart, lineEnd).replace(/\t/g, "→") + tail,
+      pos: position - lineStart + head.length
+      // relative position
+    };
+  }
+  function padStart(string, max2) {
+    return common2.repeat(" ", max2 - string.length) + string;
+  }
+  function makeSnippet(mark, options) {
+    options = Object.create(options || null);
+    if (!mark.buffer)
       return null;
+    if (!options.maxLength)
+      options.maxLength = 79;
+    if (typeof options.indent !== "number")
+      options.indent = 1;
+    if (typeof options.linesBefore !== "number")
+      options.linesBefore = 3;
+    if (typeof options.linesAfter !== "number")
+      options.linesAfter = 2;
+    var re = /\r?\n|\r|\0/g;
+    var lineStarts = [0];
+    var lineEnds = [];
+    var match;
+    var foundLineNo = -1;
+    while (match = re.exec(mark.buffer)) {
+      lineEnds.push(match.index);
+      lineStarts.push(match.index + match[0].length);
+      if (mark.position <= match.index && foundLineNo < 0) {
+        foundLineNo = lineStarts.length - 2;
+      }
     }
-    let value2, type, signature, params, description;
-    try {
-      value2 = obj[prop];
-      type = typeof value2;
-      signature = (signatures[type] ?? signatures.default)(value2);
-      params = type === "function" ? paramsForFunction(signature) : null;
-      description = (signature + "").includes(prop) ? signature : `${type} ${prop}`;
-    } catch (ex) {
-      const error = ex;
-      description = `Key: "${prop}", Error: "${error.message}"`;
-      console.warn("Object property not describable:", { prop, obj });
+    if (foundLineNo < 0)
+      foundLineNo = lineStarts.length - 1;
+    var result = "", i, line;
+    var lineNoLength = Math.min(mark.line + options.linesAfter, lineEnds.length).toString().length;
+    var maxLineLength = options.maxLength - (options.indent + lineNoLength + 3);
+    for (i = 1; i <= options.linesBefore; i++) {
+      if (foundLineNo - i < 0)
+        break;
+      line = getLine(
+        mark.buffer,
+        lineStarts[foundLineNo - i],
+        lineEnds[foundLineNo - i],
+        mark.position - (lineStarts[foundLineNo] - lineStarts[foundLineNo - i]),
+        maxLineLength
+      );
+      result = common2.repeat(" ", options.indent) + padStart((mark.line - i + 1).toString(), lineNoLength) + " | " + line.str + "\n" + result;
     }
-    return {
-      prop,
-      type,
-      signature,
-      params,
-      description,
-      value: value2
+    line = getLine(mark.buffer, lineStarts[foundLineNo], lineEnds[foundLineNo], mark.position, maxLineLength);
+    result += common2.repeat(" ", options.indent) + padStart((mark.line + 1).toString(), lineNoLength) + " | " + line.str + "\n";
+    result += common2.repeat("-", options.indent + lineNoLength + 3 + line.pos) + "^\n";
+    for (i = 1; i <= options.linesAfter; i++) {
+      if (foundLineNo + i >= lineEnds.length)
+        break;
+      line = getLine(
+        mark.buffer,
+        lineStarts[foundLineNo + i],
+        lineEnds[foundLineNo + i],
+        mark.position - (lineStarts[foundLineNo] - lineStarts[foundLineNo + i]),
+        maxLineLength
+      );
+      result += common2.repeat(" ", options.indent) + padStart((mark.line + i + 1).toString(), lineNoLength) + " | " + line.str + "\n";
+    }
+    return result.replace(/\n$/, "");
+  }
+  snippet = makeSnippet;
+  return snippet;
+}
+var type;
+var hasRequiredType;
+function requireType() {
+  if (hasRequiredType)
+    return type;
+  hasRequiredType = 1;
+  var YAMLException = requireException();
+  var TYPE_CONSTRUCTOR_OPTIONS = [
+    "kind",
+    "multi",
+    "resolve",
+    "construct",
+    "instanceOf",
+    "predicate",
+    "represent",
+    "representName",
+    "defaultStyle",
+    "styleAliases"
+  ];
+  var YAML_NODE_KINDS = [
+    "scalar",
+    "sequence",
+    "mapping"
+  ];
+  function compileStyleAliases(map2) {
+    var result = {};
+    if (map2 !== null) {
+      Object.keys(map2).forEach(function(style2) {
+        map2[style2].forEach(function(alias) {
+          result[String(alias)] = style2;
+        });
+      });
+    }
+    return result;
+  }
+  function Type(tag, options) {
+    options = options || {};
+    Object.keys(options).forEach(function(name) {
+      if (TYPE_CONSTRUCTOR_OPTIONS.indexOf(name) === -1) {
+        throw new YAMLException('Unknown option "' + name + '" is met in definition of "' + tag + '" YAML type.');
+      }
+    });
+    this.options = options;
+    this.tag = tag;
+    this.kind = options["kind"] || null;
+    this.resolve = options["resolve"] || function() {
+      return true;
     };
-  }).filter((n) => n);
-}
-function sentenceCase(camelCase) {
-  return capitalizeFirstLetter(camelCase + "").replace(/([A-Z]+)/g, " $1").replace(/([A-Z][a-z])/g, " $1").replaceAll(/\s+/g, " ").trim();
-}
-function capitalizeFirstLetter(input) {
-  return input.charAt(0).toUpperCase() + input.slice(1);
-}
-const TabSelector_vue_vue_type_style_index_0_scoped_1efabf36_lang = "";
-const _sfc_main$6 = {
-  props: {
-    modelValue: {
-      type: null,
-      default: false
-    },
-    tabs: {
-      type: Array,
-      default: () => {
-        return [];
-      }
-    },
-    label: {
-      type: String,
-      default: ""
-    }
-  },
-  methods: {
-    selectedClass(actual, current) {
-      if (JSON.stringify(actual) === JSON.stringify(current)) {
-        return "button selected";
-      }
-      return "button";
-    },
-    tabIcon(tab) {
-      return (tab == null ? void 0 : tab.icon) ?? "star";
-    },
-    tabId(tab) {
-      const entry = Array.isArray(tab) ? tab[1] : null;
-      return entry ?? (tab == null ? void 0 : tab.id) ?? (tab == null ? void 0 : tab.key) ?? (tab == null ? void 0 : tab.label) ?? (tab == null ? void 0 : tab.name) ?? (tab == null ? void 0 : tab.value) ?? tab;
-    },
-    tabLabel(tab) {
-      const entry = Array.isArray(tab) ? tab[1] : null;
-      return entry ?? (tab == null ? void 0 : tab.label) ?? (tab == null ? void 0 : tab.name) ?? (tab == null ? void 0 : tab.value) ?? (tab == null ? void 0 : tab.name) ?? tab;
+    this.construct = options["construct"] || function(data) {
+      return data;
+    };
+    this.instanceOf = options["instanceOf"] || null;
+    this.predicate = options["predicate"] || null;
+    this.represent = options["represent"] || null;
+    this.representName = options["representName"] || null;
+    this.defaultStyle = options["defaultStyle"] || null;
+    this.multi = options["multi"] || false;
+    this.styleAliases = compileStyleAliases(options["styleAliases"] || null);
+    if (YAML_NODE_KINDS.indexOf(this.kind) === -1) {
+      throw new YAMLException('Unknown kind "' + this.kind + '" is specified for "' + tag + '" YAML type.');
     }
   }
-};
-const _hoisted_1$6 = { class: "tab-selector buttons" };
-const _hoisted_2$6 = { key: 0 };
-const _hoisted_3$3 = ["onClick"];
-function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
-  const _component_icon = resolveComponent("icon");
-  return openBlock(), createElementBlock("div", _hoisted_1$6, [
-    $props.label ? (openBlock(), createElementBlock("label", _hoisted_2$6, toDisplayString($props.label), 1)) : createCommentVNode("", true),
-    renderSlot(_ctx.$slots, "default", { tabs: $props.tabs }, () => [
-      (openBlock(true), createElementBlock(Fragment, null, renderList($props.tabs, (tab) => {
-        return openBlock(), createElementBlock("div", {
-          key: `type_${$options.tabId(tab)}`,
-          class: normalizeClass($options.selectedClass($props.modelValue, tab)),
-          onClick: ($event) => _ctx.$emit("update:modelValue", tab)
-        }, [
-          createVNode(_component_icon, {
-            icon: $options.tabIcon(tab)
-          }, null, 8, ["icon"]),
-          createBaseVNode("span", null, toDisplayString($options.tabLabel(tab)), 1)
-        ], 10, _hoisted_3$3);
-      }), 128))
-    ], true)
-  ]);
+  type = Type;
+  return type;
 }
-const TabSelector = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__scopeId", "data-v-1efabf36"]]);
-function flattenObject(obj = {}, res = {}, extraKey = "") {
-  for (const key in obj) {
-    if (typeof obj[key] !== "object") {
-      res[extraKey + key] = obj[key];
+var schema;
+var hasRequiredSchema;
+function requireSchema() {
+  if (hasRequiredSchema)
+    return schema;
+  hasRequiredSchema = 1;
+  var YAMLException = requireException();
+  var Type = requireType();
+  function compileList(schema2, name) {
+    var result = [];
+    schema2[name].forEach(function(currentType) {
+      var newIndex = result.length;
+      result.forEach(function(previousType, previousIndex) {
+        if (previousType.tag === currentType.tag && previousType.kind === currentType.kind && previousType.multi === currentType.multi) {
+          newIndex = previousIndex;
+        }
+      });
+      result[newIndex] = currentType;
+    });
+    return result;
+  }
+  function compileMap() {
+    var result = {
+      scalar: {},
+      sequence: {},
+      mapping: {},
+      fallback: {},
+      multi: {
+        scalar: [],
+        sequence: [],
+        mapping: [],
+        fallback: []
+      }
+    }, index, length;
+    function collectType(type2) {
+      if (type2.multi) {
+        result.multi[type2.kind].push(type2);
+        result.multi["fallback"].push(type2);
+      } else {
+        result[type2.kind][type2.tag] = result["fallback"][type2.tag] = type2;
+      }
+    }
+    for (index = 0, length = arguments.length; index < length; index += 1) {
+      arguments[index].forEach(collectType);
+    }
+    return result;
+  }
+  function Schema(definition) {
+    return this.extend(definition);
+  }
+  Schema.prototype.extend = function extend2(definition) {
+    var implicit = [];
+    var explicit = [];
+    if (definition instanceof Type) {
+      explicit.push(definition);
+    } else if (Array.isArray(definition)) {
+      explicit = explicit.concat(definition);
+    } else if (definition && (Array.isArray(definition.implicit) || Array.isArray(definition.explicit))) {
+      if (definition.implicit)
+        implicit = implicit.concat(definition.implicit);
+      if (definition.explicit)
+        explicit = explicit.concat(definition.explicit);
     } else {
-      flattenObject(obj[key], res, `${extraKey}${key}.`);
+      throw new YAMLException("Schema.extend argument should be a Type, [ Type ], or a schema definition ({ implicit: [...], explicit: [...] })");
     }
-  }
-  return res;
+    implicit.forEach(function(type2) {
+      if (!(type2 instanceof Type)) {
+        throw new YAMLException("Specified list of YAML types (or a single Type object) contains a non-Type object.");
+      }
+      if (type2.loadKind && type2.loadKind !== "scalar") {
+        throw new YAMLException("There is a non-scalar type in the implicit list of a schema. Implicit resolving of such types is not supported.");
+      }
+      if (type2.multi) {
+        throw new YAMLException("There is a multi type in the implicit list of a schema. Multi tags can only be listed as explicit.");
+      }
+    });
+    explicit.forEach(function(type2) {
+      if (!(type2 instanceof Type)) {
+        throw new YAMLException("Specified list of YAML types (or a single Type object) contains a non-Type object.");
+      }
+    });
+    var result = Object.create(Schema.prototype);
+    result.implicit = (this.implicit || []).concat(implicit);
+    result.explicit = (this.explicit || []).concat(explicit);
+    result.compiledImplicit = compileList(result, "implicit");
+    result.compiledExplicit = compileList(result, "explicit");
+    result.compiledTypeMap = compileMap(result.compiledImplicit, result.compiledExplicit);
+    return result;
+  };
+  schema = Schema;
+  return schema;
 }
-const HiddenByDefault_vue_vue_type_style_index_0_scoped_005de0bb_lang = "";
-const _sfc_main$5 = {
-  props: {
-    reason: {
-      type: String,
-      default: "Hidden value"
+var str$1;
+var hasRequiredStr;
+function requireStr() {
+  if (hasRequiredStr)
+    return str$1;
+  hasRequiredStr = 1;
+  var Type = requireType();
+  str$1 = new Type("tag:yaml.org,2002:str", {
+    kind: "scalar",
+    construct: function(data) {
+      return data !== null ? data : "";
     }
-  },
-  data() {
-    return {
-      hidden: true,
-      copied: false
-    };
-  },
-  computed: {
-    copyIcon() {
-      return this.copied ? "clipboard-check" : "clipboard";
-    }
-  },
-  methods: {
-    copy() {
-      const value2 = (this.$refs.dataslot.textContent + "").trim();
-      navigator.clipboard.writeText(value2);
-      this.copied = true;
-    }
-  }
-};
-const _withScopeId$1 = (n) => (pushScopeId("data-v-005de0bb"), n = n(), popScopeId(), n);
-const _hoisted_1$5 = { class: "hidden-by-default" };
-const _hoisted_2$5 = {
-  key: 1,
-  style: { "font-family": "monospace", "white-space": "nowrap" }
-};
-const _hoisted_3$2 = /* @__PURE__ */ _withScopeId$1(() => /* @__PURE__ */ createBaseVNode("span", { style: { "display": "none" } }, "Hide value", -1));
-const _hoisted_4$2 = { style: { "display": "none" } };
-const _hoisted_5$2 = {
-  ref: "dataslot",
-  style: { "display": "none" }
-};
-function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
-  const _component_Icon = resolveComponent("Icon");
-  return openBlock(), createElementBlock("div", _hoisted_1$5, [
-    $data.hidden ? (openBlock(), createElementBlock("b", {
-      key: 0,
-      class: "show button",
-      title: "Click to show hidden value",
-      onClick: _cache[0] || (_cache[0] = ($event) => $data.hidden = false)
-    }, [
-      createBaseVNode("span", null, toDisplayString($props.reason), 1),
-      createVNode(_component_Icon, { icon: "eye-low-vision" })
-    ])) : (openBlock(), createElementBlock("span", _hoisted_2$5, [
-      renderSlot(_ctx.$slots, "default", {}, void 0, true)
-    ])),
-    !$data.hidden ? (openBlock(), createElementBlock("b", {
-      key: 2,
-      class: "hide button",
-      title: "Hide value",
-      onClick: _cache[1] || (_cache[1] = ($event) => $data.hidden = true)
-    }, [
-      _hoisted_3$2,
-      createVNode(_component_Icon, { icon: "eye" })
-    ])) : createCommentVNode("", true),
-    createBaseVNode("b", {
-      class: "copy button",
-      title: "Copy value to clipboard",
-      onClick: _cache[2] || (_cache[2] = (...args) => $options.copy && $options.copy(...args))
-    }, [
-      createBaseVNode("span", _hoisted_4$2, toDisplayString($data.copied ? "Copied" : "Copy") + " to clipboard", 1),
-      createVNode(_component_Icon, { icon: $options.copyIcon }, null, 8, ["icon"])
-    ]),
-    createBaseVNode("div", _hoisted_5$2, [
-      renderSlot(_ctx.$slots, "default", {}, void 0, true)
-    ], 512)
-  ]);
+  });
+  return str$1;
 }
-const HiddenByDefault = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__scopeId", "data-v-005de0bb"]]);
-const SmartType_vue_vue_type_style_index_0_scoped_875acb94_lang = "";
-const keyTypes = {
-  icon: "icon",
-  color: "color"
-};
-const _sfc_main$4 = {
-  name: "SmartType",
-  components: { HiddenByDefault, RelativeDate },
-  props: {
-    name: {
-      type: String,
-      default: ""
-    },
-    value: {
-      type: null,
-      default() {
+var seq;
+var hasRequiredSeq;
+function requireSeq() {
+  if (hasRequiredSeq)
+    return seq;
+  hasRequiredSeq = 1;
+  var Type = requireType();
+  seq = new Type("tag:yaml.org,2002:seq", {
+    kind: "sequence",
+    construct: function(data) {
+      return data !== null ? data : [];
+    }
+  });
+  return seq;
+}
+var map$2;
+var hasRequiredMap$1;
+function requireMap$1() {
+  if (hasRequiredMap$1)
+    return map$2;
+  hasRequiredMap$1 = 1;
+  var Type = requireType();
+  map$2 = new Type("tag:yaml.org,2002:map", {
+    kind: "mapping",
+    construct: function(data) {
+      return data !== null ? data : {};
+    }
+  });
+  return map$2;
+}
+var failsafe;
+var hasRequiredFailsafe;
+function requireFailsafe() {
+  if (hasRequiredFailsafe)
+    return failsafe;
+  hasRequiredFailsafe = 1;
+  var Schema = requireSchema();
+  failsafe = new Schema({
+    explicit: [
+      requireStr(),
+      requireSeq(),
+      requireMap$1()
+    ]
+  });
+  return failsafe;
+}
+var _null;
+var hasRequired_null;
+function require_null() {
+  if (hasRequired_null)
+    return _null;
+  hasRequired_null = 1;
+  var Type = requireType();
+  function resolveYamlNull(data) {
+    if (data === null)
+      return true;
+    var max2 = data.length;
+    return max2 === 1 && data === "~" || max2 === 4 && (data === "null" || data === "Null" || data === "NULL");
+  }
+  function constructYamlNull() {
+    return null;
+  }
+  function isNull(object) {
+    return object === null;
+  }
+  _null = new Type("tag:yaml.org,2002:null", {
+    kind: "scalar",
+    resolve: resolveYamlNull,
+    construct: constructYamlNull,
+    predicate: isNull,
+    represent: {
+      canonical: function() {
+        return "~";
+      },
+      lowercase: function() {
+        return "null";
+      },
+      uppercase: function() {
+        return "NULL";
+      },
+      camelcase: function() {
+        return "Null";
+      },
+      empty: function() {
         return "";
       }
     },
-    showName: {
-      type: Boolean,
-      default: false
-    }
-  },
-  computed: {
-    smartClass() {
-      const { smartType, showName } = this;
-      const withName = showName ? "with-name" : false;
-      return ["smart", "property", smartType, withName].filter((n) => n).join(" ");
-    },
-    smartType() {
-      const { name, value: value2 } = this;
-      const keyString = (name + "").toLowerCase();
-      const valueString = (value2 + "").toLowerCase();
-      const knownKeyType = keyTypes[keyString];
-      if (knownKeyType) {
-        return knownKeyType;
-      }
-      if (valueString.includes("https://")) {
-        return "url";
-      }
-      if (valueString.includes("arn:")) {
-        return "aws-arn";
-      }
-      if (keyString.includes("date")) {
-        return "date";
-      }
-      if (keyString.includes("api") && keyString.includes("key")) {
-        return "apikey";
-      }
-      if (keyString.includes("timestamp")) {
-        return "datetime";
-      }
-      if (valueString.match(/^[0-9]{4}-(0[1-9]|1[0-2])/)) {
-        return "datetime";
-      }
-      return typeof value2;
-    }
-  },
-  methods: {
-    objectEntries(value2) {
-      const flattened = flattenObject(value2);
-      return Object.entries(flattened);
-    },
-    parseDate(value2) {
-      const date = new Date(value2);
-      return date.toString() === "Invalid Date" ? /* @__PURE__ */ new Date() : date;
-    }
+    defaultStyle: "lowercase"
+  });
+  return _null;
+}
+var bool;
+var hasRequiredBool;
+function requireBool() {
+  if (hasRequiredBool)
+    return bool;
+  hasRequiredBool = 1;
+  var Type = requireType();
+  function resolveYamlBoolean(data) {
+    if (data === null)
+      return false;
+    var max2 = data.length;
+    return max2 === 4 && (data === "true" || data === "True" || data === "TRUE") || max2 === 5 && (data === "false" || data === "False" || data === "FALSE");
   }
-};
-const _hoisted_1$4 = { key: 0 };
-const _hoisted_2$4 = { key: 1 };
-const _hoisted_3$1 = { key: 2 };
-const _hoisted_4$1 = {
-  key: 3,
-  style: { "text-transform": "uppercase", "font-family": "monospace" }
-};
-const _hoisted_5$1 = {
-  key: 4,
-  style: { "font-family": "monospace", "white-space": "nowrap" }
-};
-const _hoisted_6$1 = ["href"];
-const _hoisted_7$1 = { key: 5 };
-const _hoisted_8$1 = { key: 1 };
-const _hoisted_9$1 = { key: 6 };
-const _hoisted_10 = { key: 1 };
-const _hoisted_11 = { key: 7 };
-const _hoisted_12 = { key: 8 };
-const _hoisted_13 = { key: 9 };
-const _hoisted_14 = { key: 10 };
-function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
-  const _component_smart_type = resolveComponent("smart-type", true);
-  const _component_icon = resolveComponent("icon");
-  const _component_RelativeDate = resolveComponent("RelativeDate");
-  const _component_HiddenByDefault = resolveComponent("HiddenByDefault");
-  const _component_hidden_by_default = resolveComponent("hidden-by-default");
-  return openBlock(), createElementBlock("div", {
-    class: normalizeClass($options.smartClass)
-  }, [
-    $props.showName ? (openBlock(), createElementBlock("b", _hoisted_1$4, toDisplayString($props.name), 1)) : createCommentVNode("", true),
-    $options.smartType === "object" ? (openBlock(), createElementBlock("div", _hoisted_2$4, [
-      (openBlock(true), createElementBlock(Fragment, null, renderList($options.objectEntries($props.value), ([entryKey, entryValue]) => {
-        return openBlock(), createBlock(_component_smart_type, {
-          key: `st_${entryKey}`,
-          name: entryKey,
-          value: entryValue,
-          "show-name": true
-        }, null, 8, ["name", "value"]);
-      }), 128))
-    ])) : $options.smartType === "icon" ? (openBlock(), createElementBlock("span", _hoisted_3$1, [
-      createVNode(_component_icon, { icon: $props.value }, null, 8, ["icon"])
-    ])) : $options.smartType === "color" ? (openBlock(), createElementBlock("div", _hoisted_4$1, [
-      createBaseVNode("span", null, toDisplayString($props.value), 1),
-      createVNode(_component_icon, {
-        icon: "square",
-        style: normalizeStyle(`color: ${$props.value}`)
-      }, null, 8, ["style"])
-    ])) : $options.smartType === "url" ? (openBlock(), createElementBlock("div", _hoisted_5$1, [
-      createVNode(_component_icon, { icon: "earth-americas" }),
-      createBaseVNode("a", { href: $props.value }, "/" + toDisplayString($props.value.split("/").pop().split("?")[0]), 9, _hoisted_6$1)
-    ])) : $options.smartType === "date" ? (openBlock(), createElementBlock("div", _hoisted_7$1, [
-      $options.parseDate($props.value) ? (openBlock(), createBlock(_component_RelativeDate, {
-        key: 0,
-        date: $options.parseDate($props.value)
-      }, {
-        default: withCtx(() => [
-          createTextVNode(" (" + toDisplayString($props.value) + ") ", 1)
-        ]),
-        _: 1
-      }, 8, ["date"])) : (openBlock(), createElementBlock("b", _hoisted_8$1, toDisplayString($props.value), 1))
-    ])) : $options.smartType === "datetime" ? (openBlock(), createElementBlock("div", _hoisted_9$1, [
-      $options.parseDate($props.value) ? (openBlock(), createBlock(_component_RelativeDate, {
-        key: 0,
-        date: $options.parseDate($props.value)
-      }, {
-        default: withCtx(() => [
-          createTextVNode(" (" + toDisplayString($props.value) + ") ", 1)
-        ]),
-        _: 1
-      }, 8, ["date"])) : (openBlock(), createElementBlock("b", _hoisted_10, toDisplayString($props.value), 1))
-    ])) : $options.smartType === "apikey" ? (openBlock(), createElementBlock("div", _hoisted_11, [
-      createVNode(_component_HiddenByDefault, null, {
-        default: withCtx(() => [
-          createTextVNode(toDisplayString($props.value), 1)
-        ]),
-        _: 1
-      })
-    ])) : $options.smartType === "aws-arn" ? (openBlock(), createElementBlock("span", _hoisted_12, [
-      createVNode(_component_hidden_by_default, { reason: "Long value" }, {
-        default: withCtx(() => [
-          createTextVNode(toDisplayString($props.value), 1)
-        ]),
-        _: 1
-      })
-    ])) : $options.smartType === "string" && $props.value.length > 30 && !$props.value.match(/\s/) ? (openBlock(), createElementBlock("span", _hoisted_13, [
-      createVNode(_component_hidden_by_default, { reason: "Long value" }, {
-        default: withCtx(() => [
-          createTextVNode(toDisplayString($props.value), 1)
-        ]),
-        _: 1
-      })
-    ])) : (openBlock(), createElementBlock("span", _hoisted_14, toDisplayString($props.value), 1))
-  ], 2);
-}
-const SmartType = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__scopeId", "data-v-875acb94"]]);
-const Tabulation_vue_vue_type_style_index_0_scoped_2934aaf4_lang = "";
-function removeArrayListeners(data) {
-  return JSON.parse(JSON.stringify(data));
-}
-const _sfc_main$3 = {
-  components: { SmartType },
-  props: {
-    items: {
-      type: Array,
-      default: () => []
-    },
-    columns: {
-      type: Array,
-      default: () => []
-    },
-    groupItems: {
-      type: Boolean,
-      default: false
-    },
-    sortedColumn: {
-      type: String,
-      default: ""
-    },
-    sortAscending: {
-      type: Boolean,
-      default: false
-    }
-  },
-  data() {
-    return {
-      internalSortedColumn: "",
-      internalSortAscending: true
-    };
-  },
-  computed: {
-    firstHeading() {
-      return this.items[0];
-    },
-    columnHeadings() {
-      return this.columnKeys.map((n) => n.label || n);
-    },
-    columnKeys() {
-      const columns = this.columns && this.columns.length ? this.columns : false;
-      return (columns || this.listAllProperties).map((n) => n.key || n);
-    },
-    groupedRows() {
-      const index = this.items.reduce((acc, item) => {
-        const lookup = item[this.row] ?? item;
-        const entry = acc[lookup] ?? [];
-        entry.push(item);
-        acc[lookup] = entry;
-        return acc;
-      }, {});
-      const result = Object.entries(index).map(([key, values]) => {
-        const nonEmpty = values.map((n) => n);
-        return [].concat([key], ...nonEmpty);
-      });
-      return result;
-    },
-    listAllProperties() {
-      const index = this.items.reduce((acc, item) => {
-        acc = typeof item === "string" ? { text: item } : Object.assign(acc, Object.keys(item));
-        return acc;
-      }, {});
-      return Object.values(index);
-    },
-    plainRows() {
-      return this.items.map((item) => {
-        return this.columnKeys.map(() => item);
-      });
-    },
-    row() {
-      return this.columnKeys[0];
-    },
-    rows() {
-      return this.groupItems ? this.groupedRows : this.plainRows;
-    },
-    computedSortedColumn() {
-      return this.sortedColumn ?? this.internalSortedColumn;
-    },
-    computedSortAscending() {
-      return this.sortedColumn ? this.sortAscending : this.internalSortAscending;
-    },
-    sortedRows() {
-      const { rows, sortedColumn, internalSortedColumn, internalSortAscending } = this;
-      const dataPreSorted = sortedColumn ? true : false;
-      if (dataPreSorted) {
-        return rows;
-      }
-      if (!Array.isArray(rows)) {
-        return [];
-      }
-      const col = internalSortedColumn;
-      const asc = internalSortAscending;
-      const clonedRows = removeArrayListeners(rows);
-      if (col) {
-        clonedRows.sort((a, b) => {
-          const sa = JSON.stringify(a[0][col]);
-          const sb = JSON.stringify(b[0][col]);
-          return asc ? sa.localeCompare(sb) : sb.localeCompare(sa);
-        });
-      }
-      return clonedRows;
-    }
-  },
-  methods: {
-    cellEntries(cell, column) {
-      const value2 = this.contentsOf(cell, column);
-      const flattened = flattenObject(value2);
-      return Object.entries(flattened);
-    },
-    columnHeadingClass(columnHeading) {
-      return columnHeading === this.computedSortedColumn ? "sorted" : "unsorted";
-    },
-    columnIcon(columnHeading) {
-      const direction = this.computedSortAscending ? "sort-amount-up" : "sort-amount-down";
-      return this.computedSortedColumn === columnHeading ? direction : "sort";
-    },
-    contentsOf(cell, column) {
-      const columnKey = this.columnKeys[column] ?? column;
-      return cell[columnKey] ?? "";
-    },
-    columnKey(column) {
-      return this.columnKeys[column] ?? column;
-    },
-    sortByColumnEvent(columnHeading) {
-      const same = columnHeading === this.computedSortedColumn;
-      this.internalSortedColumn = columnHeading;
-      this.internalSortAscending = same ? !this.internalSortAscending : true;
-      const reset = same && this.internalSortAscending;
-      if (reset) {
-        this.internalSortedColumn = "";
-      }
-      this.$emit("sortByColumn", {
-        columnHeading,
-        sortAscending: same ? !this.computedSortAscending : true
-      });
-    },
-    valueAsArray(value2) {
-      if (Array.isArray(value2)) {
-        return value2;
-      }
-      if (Object.keys(value2).length === 1) {
-        const onlyKey = Object.keys(value2)[0];
-        return this.valueAsArray(value2[onlyKey]);
-      }
-      return [value2];
-    }
+  function constructYamlBoolean(data) {
+    return data === "true" || data === "True" || data === "TRUE";
   }
-};
-const _hoisted_1$3 = {
-  key: 0,
-  class: "tabulation"
-};
-const _hoisted_2$3 = ["onClick"];
-function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
-  const _component_icon = resolveComponent("icon");
-  const _component_smart_type = resolveComponent("smart-type");
-  return $options.rows.length ? (openBlock(), createElementBlock("table", _hoisted_1$3, [
-    createBaseVNode("thead", null, [
-      createBaseVNode("tr", null, [
-        (openBlock(true), createElementBlock(Fragment, null, renderList($options.columnHeadings, (columnHeading, i) => {
-          return openBlock(), createElementBlock("th", {
-            key: `colHeading-${columnHeading}-${i}`,
-            class: normalizeClass($options.columnHeadingClass(columnHeading, i)),
-            onClick: ($event) => $options.sortByColumnEvent(columnHeading, i)
-          }, [
-            createBaseVNode("div", null, [
-              createBaseVNode("label", null, toDisplayString(columnHeading), 1),
-              createVNode(_component_icon, {
-                icon: $options.columnIcon(columnHeading)
-              }, null, 8, ["icon"])
-            ])
-          ], 10, _hoisted_2$3);
-        }), 128))
-      ])
-    ]),
-    createBaseVNode("tbody", null, [
-      (openBlock(true), createElementBlock(Fragment, null, renderList($options.sortedRows, (rowItem, j) => {
-        return openBlock(), createElementBlock("tr", {
-          key: `row-${j}`
-        }, [
-          (openBlock(true), createElementBlock(Fragment, null, renderList(rowItem, (cell, column) => {
-            return openBlock(), createElementBlock("td", {
-              key: `cell-${column}`
-            }, [
-              renderSlot(_ctx.$slots, "default", {
-                cell,
-                column,
-                columnKey: $options.columnKey(column)
-              }, () => [
-                (openBlock(), createBlock(_component_smart_type, {
-                  key: $options.columnKey(column),
-                  value: $options.contentsOf(cell, column)
-                }, null, 8, ["value"]))
-              ], true)
-            ]);
-          }), 128))
-        ]);
-      }), 128))
-    ])
-  ])) : createCommentVNode("", true);
-}
-const Tabulation = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__scopeId", "data-v-2934aaf4"]]);
-function tabulate(item, filter2 = []) {
-  item = item ?? {};
-  return Object.entries(item).map(([key, value2]) => {
-    return { key, value: value2 };
-  }).filter((item2) => !filter2.includes(item2.key));
-}
-const SmartTable_vue_vue_type_style_index_0_scoped_487dc2b1_lang = "";
-const modes = [
-  { label: "table", icon: "table" },
-  { label: "json", icon: "code" },
-  { label: "paged", icon: "list-alt" },
-  { label: "paged json", icon: "file-code" }
-];
-const _sfc_main$2 = {
-  components: { TabSelector, Tabulation, PaginatedItems },
-  props: {
-    value: {
-      type: null,
-      default: null
-    }
-  },
-  data() {
-    return {
-      mode: modes[0],
-      modes
-    };
-  },
-  methods: {
-    tabulate,
-    valueAsArray(value2) {
-      if (Array.isArray(value2)) {
-        return value2;
-      }
-      if (Object.keys(value2).length === 1) {
-        const onlyKey = Object.keys(value2)[0];
-        return this.valueAsArray(value2[onlyKey]);
-      }
-      return [value2];
-    }
+  function isBoolean2(object) {
+    return Object.prototype.toString.call(object) === "[object Boolean]";
   }
-};
-const _hoisted_1$2 = { class: "smart-table column p5" };
-const _hoisted_2$2 = { key: 1 };
-function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
-  const _component_TabSelector = resolveComponent("TabSelector");
-  const _component_Tabulation = resolveComponent("Tabulation");
-  const _component_PaginatedItems = resolveComponent("PaginatedItems");
-  return openBlock(), createElementBlock("div", _hoisted_1$2, [
-    $props.value ? (openBlock(), createBlock(_component_TabSelector, {
-      key: 0,
-      tabs: $data.modes,
-      modelValue: $data.mode,
-      "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $data.mode = $event)
-    }, null, 8, ["tabs", "modelValue"])) : createCommentVNode("", true),
-    $data.mode.label === "json" ? (openBlock(), createElementBlock("pre", _hoisted_2$2, [
-      createBaseVNode("code", null, toDisplayString($props.value), 1)
-    ])) : createCommentVNode("", true),
-    $data.mode.label === "table" ? (openBlock(), createBlock(_component_Tabulation, {
-      key: 2,
-      items: $options.valueAsArray($props.value)
-    }, null, 8, ["items"])) : createCommentVNode("", true),
-    $data.mode.label === "paged" ? (openBlock(), createBlock(_component_PaginatedItems, {
-      key: 3,
-      items: $options.valueAsArray($props.value),
-      "page-size": 5
-    }, {
-      default: withCtx(({ paginatedItems }) => [
-        (openBlock(true), createElementBlock(Fragment, null, renderList(paginatedItems, (item) => {
-          return openBlock(), createElementBlock("div", {
-            key: (item == null ? void 0 : item.id) ?? JSON.stringify(item),
-            class: "paged-item"
-          }, [
-            createVNode(_component_Tabulation, {
-              items: $options.valueAsArray(item)
-            }, null, 8, ["items"])
-          ]);
-        }), 128))
-      ]),
-      _: 1
-    }, 8, ["items"])) : createCommentVNode("", true),
-    $data.mode.label === "paged json" ? (openBlock(), createBlock(_component_PaginatedItems, {
-      key: 4,
-      items: $options.valueAsArray($props.value),
-      "page-size": 5
-    }, {
-      default: withCtx(({ paginatedItems }) => [
-        (openBlock(true), createElementBlock(Fragment, null, renderList(paginatedItems, (item) => {
-          return openBlock(), createElementBlock("div", {
-            key: (item == null ? void 0 : item.id) ?? JSON.stringify(item),
-            class: "paged-item"
-          }, [
-            createBaseVNode("pre", null, [
-              createBaseVNode("code", null, toDisplayString(item), 1)
-            ])
-          ]);
-        }), 128))
-      ]),
-      _: 1
-    }, 8, ["items"])) : createCommentVNode("", true)
-  ]);
-}
-const SmartTable = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__scopeId", "data-v-487dc2b1"]]);
-class HelloWorld {
-  helloWorld(success = true) {
-    let succeed, fail;
-    const future = new Promise((resolve2, reject2) => {
-      succeed = resolve2;
-      fail = reject2;
-    });
-    setTimeout(() => {
-      if (success) {
-        succeed("Hello world");
-      } else {
-        fail("Error world");
+  bool = new Type("tag:yaml.org,2002:bool", {
+    kind: "scalar",
+    resolve: resolveYamlBoolean,
+    construct: constructYamlBoolean,
+    predicate: isBoolean2,
+    represent: {
+      lowercase: function(object) {
+        return object ? "true" : "false";
+      },
+      uppercase: function(object) {
+        return object ? "TRUE" : "FALSE";
+      },
+      camelcase: function(object) {
+        return object ? "True" : "False";
       }
-    }, 2500);
-    return future;
-  }
-}
-const _sfc_main$1 = {
-  components: { ActionButton, SmartTable },
-  data() {
-    return {
-      iconSearch: new IconSearch(),
-      actions: {},
-      results: {}
-    };
-  },
-  props: {
-    modelValue: {
-      type: Object,
-      default: () => {
-        return new HelloWorld();
-      }
-    }
-  },
-  computed: {
-    signatures() {
-      const { modelValue } = this;
-      const items = describeObject(this.modelValue);
-      return items.map((item) => {
-        return { ...item, inputs: {}, action: this.createActionFor(item, modelValue) };
-      });
-    }
-  },
-  methods: {
-    describeObject,
-    sentenceCase,
-    createActionFor(item, context) {
-      var _a2;
-      const { actions, iconSearch } = this;
-      const actionFunction = item.type === "function" ? async (...args) => {
-        return item.value.apply(context, args);
-      } : () => item.value;
-      const action = ((_a2 = actions[item.prop]) == null ? void 0 : _a2.on) ? actions[item.prop] : new Action(actionFunction);
-      action.startLabel = sentenceCase(item.prop);
-      const suggestedIcon = iconSearch.findIcon(action.startLabel);
-      action.icon = suggestedIcon ?? "star";
-      actions[item.prop] = action;
-      this.actions = actions;
-      try {
-        action.on("loading", () => {
-          this.$forceUpdate();
-        });
-        action.on("updated", () => {
-          this.$forceUpdate();
-        });
-        action.on("result", async (result) => {
-          this.results[action.id] = await action.actionResult;
-          this.$forceUpdate();
-        });
-        action.on("error", (error) => {
-          this.$forceUpdate();
-        });
-      } catch (error) {
-        console.log("Action:", action, "Error:", { error });
-      }
-      return action;
     },
-    inputParams(item) {
-      return (item.params ?? []).map((param) => {
-        let value2 = item.inputs[param];
-        try {
-          value2 = JSON.parse(value2);
-          console.log("Converted", param, "from JSON into", { value: value2 });
-        } catch (ex) {
+    defaultStyle: "lowercase"
+  });
+  return bool;
+}
+var int;
+var hasRequiredInt;
+function requireInt() {
+  if (hasRequiredInt)
+    return int;
+  hasRequiredInt = 1;
+  var common2 = requireCommon();
+  var Type = requireType();
+  function isHexCode(c) {
+    return 48 <= c && c <= 57 || 65 <= c && c <= 70 || 97 <= c && c <= 102;
+  }
+  function isOctCode(c) {
+    return 48 <= c && c <= 55;
+  }
+  function isDecCode(c) {
+    return 48 <= c && c <= 57;
+  }
+  function resolveYamlInteger(data) {
+    if (data === null)
+      return false;
+    var max2 = data.length, index = 0, hasDigits = false, ch;
+    if (!max2)
+      return false;
+    ch = data[index];
+    if (ch === "-" || ch === "+") {
+      ch = data[++index];
+    }
+    if (ch === "0") {
+      if (index + 1 === max2)
+        return true;
+      ch = data[++index];
+      if (ch === "b") {
+        index++;
+        for (; index < max2; index++) {
+          ch = data[index];
+          if (ch === "_")
+            continue;
+          if (ch !== "0" && ch !== "1")
+            return false;
+          hasDigits = true;
         }
-        return value2;
+        return hasDigits && ch !== "_";
+      }
+      if (ch === "x") {
+        index++;
+        for (; index < max2; index++) {
+          ch = data[index];
+          if (ch === "_")
+            continue;
+          if (!isHexCode(data.charCodeAt(index)))
+            return false;
+          hasDigits = true;
+        }
+        return hasDigits && ch !== "_";
+      }
+      if (ch === "o") {
+        index++;
+        for (; index < max2; index++) {
+          ch = data[index];
+          if (ch === "_")
+            continue;
+          if (!isOctCode(data.charCodeAt(index)))
+            return false;
+          hasDigits = true;
+        }
+        return hasDigits && ch !== "_";
+      }
+    }
+    if (ch === "_")
+      return false;
+    for (; index < max2; index++) {
+      ch = data[index];
+      if (ch === "_")
+        continue;
+      if (!isDecCode(data.charCodeAt(index))) {
+        return false;
+      }
+      hasDigits = true;
+    }
+    if (!hasDigits || ch === "_")
+      return false;
+    return true;
+  }
+  function constructYamlInteger(data) {
+    var value2 = data, sign2 = 1, ch;
+    if (value2.indexOf("_") !== -1) {
+      value2 = value2.replace(/_/g, "");
+    }
+    ch = value2[0];
+    if (ch === "-" || ch === "+") {
+      if (ch === "-")
+        sign2 = -1;
+      value2 = value2.slice(1);
+      ch = value2[0];
+    }
+    if (value2 === "0")
+      return 0;
+    if (ch === "0") {
+      if (value2[1] === "b")
+        return sign2 * parseInt(value2.slice(2), 2);
+      if (value2[1] === "x")
+        return sign2 * parseInt(value2.slice(2), 16);
+      if (value2[1] === "o")
+        return sign2 * parseInt(value2.slice(2), 8);
+    }
+    return sign2 * parseInt(value2, 10);
+  }
+  function isInteger(object) {
+    return Object.prototype.toString.call(object) === "[object Number]" && (object % 1 === 0 && !common2.isNegativeZero(object));
+  }
+  int = new Type("tag:yaml.org,2002:int", {
+    kind: "scalar",
+    resolve: resolveYamlInteger,
+    construct: constructYamlInteger,
+    predicate: isInteger,
+    represent: {
+      binary: function(obj) {
+        return obj >= 0 ? "0b" + obj.toString(2) : "-0b" + obj.toString(2).slice(1);
+      },
+      octal: function(obj) {
+        return obj >= 0 ? "0o" + obj.toString(8) : "-0o" + obj.toString(8).slice(1);
+      },
+      decimal: function(obj) {
+        return obj.toString(10);
+      },
+      /* eslint-disable max-len */
+      hexadecimal: function(obj) {
+        return obj >= 0 ? "0x" + obj.toString(16).toUpperCase() : "-0x" + obj.toString(16).toUpperCase().slice(1);
+      }
+    },
+    defaultStyle: "decimal",
+    styleAliases: {
+      binary: [2, "bin"],
+      octal: [8, "oct"],
+      decimal: [10, "dec"],
+      hexadecimal: [16, "hex"]
+    }
+  });
+  return int;
+}
+var float;
+var hasRequiredFloat;
+function requireFloat() {
+  if (hasRequiredFloat)
+    return float;
+  hasRequiredFloat = 1;
+  var common2 = requireCommon();
+  var Type = requireType();
+  var YAML_FLOAT_PATTERN = new RegExp(
+    // 2.5e4, 2.5 and integers
+    "^(?:[-+]?(?:[0-9][0-9_]*)(?:\\.[0-9_]*)?(?:[eE][-+]?[0-9]+)?|\\.[0-9_]+(?:[eE][-+]?[0-9]+)?|[-+]?\\.(?:inf|Inf|INF)|\\.(?:nan|NaN|NAN))$"
+  );
+  function resolveYamlFloat(data) {
+    if (data === null)
+      return false;
+    if (!YAML_FLOAT_PATTERN.test(data) || // Quick hack to not allow integers end with `_`
+    // Probably should update regexp & check speed
+    data[data.length - 1] === "_") {
+      return false;
+    }
+    return true;
+  }
+  function constructYamlFloat(data) {
+    var value2, sign2;
+    value2 = data.replace(/_/g, "").toLowerCase();
+    sign2 = value2[0] === "-" ? -1 : 1;
+    if ("+-".indexOf(value2[0]) >= 0) {
+      value2 = value2.slice(1);
+    }
+    if (value2 === ".inf") {
+      return sign2 === 1 ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+    } else if (value2 === ".nan") {
+      return NaN;
+    }
+    return sign2 * parseFloat(value2, 10);
+  }
+  var SCIENTIFIC_WITHOUT_DOT = /^[-+]?[0-9]+e/;
+  function representYamlFloat(object, style2) {
+    var res;
+    if (isNaN(object)) {
+      switch (style2) {
+        case "lowercase":
+          return ".nan";
+        case "uppercase":
+          return ".NAN";
+        case "camelcase":
+          return ".NaN";
+      }
+    } else if (Number.POSITIVE_INFINITY === object) {
+      switch (style2) {
+        case "lowercase":
+          return ".inf";
+        case "uppercase":
+          return ".INF";
+        case "camelcase":
+          return ".Inf";
+      }
+    } else if (Number.NEGATIVE_INFINITY === object) {
+      switch (style2) {
+        case "lowercase":
+          return "-.inf";
+        case "uppercase":
+          return "-.INF";
+        case "camelcase":
+          return "-.Inf";
+      }
+    } else if (common2.isNegativeZero(object)) {
+      return "-0.0";
+    }
+    res = object.toString(10);
+    return SCIENTIFIC_WITHOUT_DOT.test(res) ? res.replace("e", ".e") : res;
+  }
+  function isFloat(object) {
+    return Object.prototype.toString.call(object) === "[object Number]" && (object % 1 !== 0 || common2.isNegativeZero(object));
+  }
+  float = new Type("tag:yaml.org,2002:float", {
+    kind: "scalar",
+    resolve: resolveYamlFloat,
+    construct: constructYamlFloat,
+    predicate: isFloat,
+    represent: representYamlFloat,
+    defaultStyle: "lowercase"
+  });
+  return float;
+}
+var json;
+var hasRequiredJson;
+function requireJson() {
+  if (hasRequiredJson)
+    return json;
+  hasRequiredJson = 1;
+  json = requireFailsafe().extend({
+    implicit: [
+      require_null(),
+      requireBool(),
+      requireInt(),
+      requireFloat()
+    ]
+  });
+  return json;
+}
+var core$1;
+var hasRequiredCore$1;
+function requireCore$1() {
+  if (hasRequiredCore$1)
+    return core$1;
+  hasRequiredCore$1 = 1;
+  core$1 = requireJson();
+  return core$1;
+}
+var timestamp;
+var hasRequiredTimestamp;
+function requireTimestamp() {
+  if (hasRequiredTimestamp)
+    return timestamp;
+  hasRequiredTimestamp = 1;
+  var Type = requireType();
+  var YAML_DATE_REGEXP = new RegExp(
+    "^([0-9][0-9][0-9][0-9])-([0-9][0-9])-([0-9][0-9])$"
+  );
+  var YAML_TIMESTAMP_REGEXP = new RegExp(
+    "^([0-9][0-9][0-9][0-9])-([0-9][0-9]?)-([0-9][0-9]?)(?:[Tt]|[ \\t]+)([0-9][0-9]?):([0-9][0-9]):([0-9][0-9])(?:\\.([0-9]*))?(?:[ \\t]*(Z|([-+])([0-9][0-9]?)(?::([0-9][0-9]))?))?$"
+  );
+  function resolveYamlTimestamp(data) {
+    if (data === null)
+      return false;
+    if (YAML_DATE_REGEXP.exec(data) !== null)
+      return true;
+    if (YAML_TIMESTAMP_REGEXP.exec(data) !== null)
+      return true;
+    return false;
+  }
+  function constructYamlTimestamp(data) {
+    var match, year, month, day, hour, minute, second, fraction = 0, delta = null, tz_hour, tz_minute, date;
+    match = YAML_DATE_REGEXP.exec(data);
+    if (match === null)
+      match = YAML_TIMESTAMP_REGEXP.exec(data);
+    if (match === null)
+      throw new Error("Date resolve error");
+    year = +match[1];
+    month = +match[2] - 1;
+    day = +match[3];
+    if (!match[4]) {
+      return new Date(Date.UTC(year, month, day));
+    }
+    hour = +match[4];
+    minute = +match[5];
+    second = +match[6];
+    if (match[7]) {
+      fraction = match[7].slice(0, 3);
+      while (fraction.length < 3) {
+        fraction += "0";
+      }
+      fraction = +fraction;
+    }
+    if (match[9]) {
+      tz_hour = +match[10];
+      tz_minute = +(match[11] || 0);
+      delta = (tz_hour * 60 + tz_minute) * 6e4;
+      if (match[9] === "-")
+        delta = -delta;
+    }
+    date = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
+    if (delta)
+      date.setTime(date.getTime() - delta);
+    return date;
+  }
+  function representYamlTimestamp(object) {
+    return object.toISOString();
+  }
+  timestamp = new Type("tag:yaml.org,2002:timestamp", {
+    kind: "scalar",
+    resolve: resolveYamlTimestamp,
+    construct: constructYamlTimestamp,
+    instanceOf: Date,
+    represent: representYamlTimestamp
+  });
+  return timestamp;
+}
+var merge;
+var hasRequiredMerge;
+function requireMerge() {
+  if (hasRequiredMerge)
+    return merge;
+  hasRequiredMerge = 1;
+  var Type = requireType();
+  function resolveYamlMerge(data) {
+    return data === "<<" || data === null;
+  }
+  merge = new Type("tag:yaml.org,2002:merge", {
+    kind: "scalar",
+    resolve: resolveYamlMerge
+  });
+  return merge;
+}
+var binary;
+var hasRequiredBinary;
+function requireBinary() {
+  if (hasRequiredBinary)
+    return binary;
+  hasRequiredBinary = 1;
+  var Type = requireType();
+  var BASE64_MAP = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=\n\r";
+  function resolveYamlBinary(data) {
+    if (data === null)
+      return false;
+    var code, idx, bitlen = 0, max2 = data.length, map2 = BASE64_MAP;
+    for (idx = 0; idx < max2; idx++) {
+      code = map2.indexOf(data.charAt(idx));
+      if (code > 64)
+        continue;
+      if (code < 0)
+        return false;
+      bitlen += 6;
+    }
+    return bitlen % 8 === 0;
+  }
+  function constructYamlBinary(data) {
+    var idx, tailbits, input = data.replace(/[\r\n=]/g, ""), max2 = input.length, map2 = BASE64_MAP, bits = 0, result = [];
+    for (idx = 0; idx < max2; idx++) {
+      if (idx % 4 === 0 && idx) {
+        result.push(bits >> 16 & 255);
+        result.push(bits >> 8 & 255);
+        result.push(bits & 255);
+      }
+      bits = bits << 6 | map2.indexOf(input.charAt(idx));
+    }
+    tailbits = max2 % 4 * 6;
+    if (tailbits === 0) {
+      result.push(bits >> 16 & 255);
+      result.push(bits >> 8 & 255);
+      result.push(bits & 255);
+    } else if (tailbits === 18) {
+      result.push(bits >> 10 & 255);
+      result.push(bits >> 2 & 255);
+    } else if (tailbits === 12) {
+      result.push(bits >> 4 & 255);
+    }
+    return new Uint8Array(result);
+  }
+  function representYamlBinary(object) {
+    var result = "", bits = 0, idx, tail, max2 = object.length, map2 = BASE64_MAP;
+    for (idx = 0; idx < max2; idx++) {
+      if (idx % 3 === 0 && idx) {
+        result += map2[bits >> 18 & 63];
+        result += map2[bits >> 12 & 63];
+        result += map2[bits >> 6 & 63];
+        result += map2[bits & 63];
+      }
+      bits = (bits << 8) + object[idx];
+    }
+    tail = max2 % 3;
+    if (tail === 0) {
+      result += map2[bits >> 18 & 63];
+      result += map2[bits >> 12 & 63];
+      result += map2[bits >> 6 & 63];
+      result += map2[bits & 63];
+    } else if (tail === 2) {
+      result += map2[bits >> 10 & 63];
+      result += map2[bits >> 4 & 63];
+      result += map2[bits << 2 & 63];
+      result += map2[64];
+    } else if (tail === 1) {
+      result += map2[bits >> 2 & 63];
+      result += map2[bits << 4 & 63];
+      result += map2[64];
+      result += map2[64];
+    }
+    return result;
+  }
+  function isBinary(obj) {
+    return Object.prototype.toString.call(obj) === "[object Uint8Array]";
+  }
+  binary = new Type("tag:yaml.org,2002:binary", {
+    kind: "scalar",
+    resolve: resolveYamlBinary,
+    construct: constructYamlBinary,
+    predicate: isBinary,
+    represent: representYamlBinary
+  });
+  return binary;
+}
+var omap;
+var hasRequiredOmap;
+function requireOmap() {
+  if (hasRequiredOmap)
+    return omap;
+  hasRequiredOmap = 1;
+  var Type = requireType();
+  var _hasOwnProperty = Object.prototype.hasOwnProperty;
+  var _toString = Object.prototype.toString;
+  function resolveYamlOmap(data) {
+    if (data === null)
+      return true;
+    var objectKeys = [], index, length, pair, pairKey, pairHasKey, object = data;
+    for (index = 0, length = object.length; index < length; index += 1) {
+      pair = object[index];
+      pairHasKey = false;
+      if (_toString.call(pair) !== "[object Object]")
+        return false;
+      for (pairKey in pair) {
+        if (_hasOwnProperty.call(pair, pairKey)) {
+          if (!pairHasKey)
+            pairHasKey = true;
+          else
+            return false;
+        }
+      }
+      if (!pairHasKey)
+        return false;
+      if (objectKeys.indexOf(pairKey) === -1)
+        objectKeys.push(pairKey);
+      else
+        return false;
+    }
+    return true;
+  }
+  function constructYamlOmap(data) {
+    return data !== null ? data : [];
+  }
+  omap = new Type("tag:yaml.org,2002:omap", {
+    kind: "sequence",
+    resolve: resolveYamlOmap,
+    construct: constructYamlOmap
+  });
+  return omap;
+}
+var pairs;
+var hasRequiredPairs;
+function requirePairs() {
+  if (hasRequiredPairs)
+    return pairs;
+  hasRequiredPairs = 1;
+  var Type = requireType();
+  var _toString = Object.prototype.toString;
+  function resolveYamlPairs(data) {
+    if (data === null)
+      return true;
+    var index, length, pair, keys2, result, object = data;
+    result = new Array(object.length);
+    for (index = 0, length = object.length; index < length; index += 1) {
+      pair = object[index];
+      if (_toString.call(pair) !== "[object Object]")
+        return false;
+      keys2 = Object.keys(pair);
+      if (keys2.length !== 1)
+        return false;
+      result[index] = [keys2[0], pair[keys2[0]]];
+    }
+    return true;
+  }
+  function constructYamlPairs(data) {
+    if (data === null)
+      return [];
+    var index, length, pair, keys2, result, object = data;
+    result = new Array(object.length);
+    for (index = 0, length = object.length; index < length; index += 1) {
+      pair = object[index];
+      keys2 = Object.keys(pair);
+      result[index] = [keys2[0], pair[keys2[0]]];
+    }
+    return result;
+  }
+  pairs = new Type("tag:yaml.org,2002:pairs", {
+    kind: "sequence",
+    resolve: resolveYamlPairs,
+    construct: constructYamlPairs
+  });
+  return pairs;
+}
+var set;
+var hasRequiredSet;
+function requireSet() {
+  if (hasRequiredSet)
+    return set;
+  hasRequiredSet = 1;
+  var Type = requireType();
+  var _hasOwnProperty = Object.prototype.hasOwnProperty;
+  function resolveYamlSet(data) {
+    if (data === null)
+      return true;
+    var key, object = data;
+    for (key in object) {
+      if (_hasOwnProperty.call(object, key)) {
+        if (object[key] !== null)
+          return false;
+      }
+    }
+    return true;
+  }
+  function constructYamlSet(data) {
+    return data !== null ? data : {};
+  }
+  set = new Type("tag:yaml.org,2002:set", {
+    kind: "mapping",
+    resolve: resolveYamlSet,
+    construct: constructYamlSet
+  });
+  return set;
+}
+var _default;
+var hasRequired_default;
+function require_default() {
+  if (hasRequired_default)
+    return _default;
+  hasRequired_default = 1;
+  _default = requireCore$1().extend({
+    implicit: [
+      requireTimestamp(),
+      requireMerge()
+    ],
+    explicit: [
+      requireBinary(),
+      requireOmap(),
+      requirePairs(),
+      requireSet()
+    ]
+  });
+  return _default;
+}
+var hasRequiredLoader;
+function requireLoader() {
+  if (hasRequiredLoader)
+    return loader;
+  hasRequiredLoader = 1;
+  var common2 = requireCommon();
+  var YAMLException = requireException();
+  var makeSnippet = requireSnippet();
+  var DEFAULT_SCHEMA = require_default();
+  var _hasOwnProperty = Object.prototype.hasOwnProperty;
+  var CONTEXT_FLOW_IN = 1;
+  var CONTEXT_FLOW_OUT = 2;
+  var CONTEXT_BLOCK_IN = 3;
+  var CONTEXT_BLOCK_OUT = 4;
+  var CHOMPING_CLIP = 1;
+  var CHOMPING_STRIP = 2;
+  var CHOMPING_KEEP = 3;
+  var PATTERN_NON_PRINTABLE = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x84\x86-\x9F\uFFFE\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/;
+  var PATTERN_NON_ASCII_LINE_BREAKS = /[\x85\u2028\u2029]/;
+  var PATTERN_FLOW_INDICATORS = /[,\[\]\{\}]/;
+  var PATTERN_TAG_HANDLE = /^(?:!|!!|![a-z\-]+!)$/i;
+  var PATTERN_TAG_URI = /^(?:!|[^,\[\]\{\}])(?:%[0-9a-f]{2}|[0-9a-z\-#;\/\?:@&=\+\$,_\.!~\*'\(\)\[\]])*$/i;
+  function _class(obj) {
+    return Object.prototype.toString.call(obj);
+  }
+  function is_EOL(c) {
+    return c === 10 || c === 13;
+  }
+  function is_WHITE_SPACE(c) {
+    return c === 9 || c === 32;
+  }
+  function is_WS_OR_EOL(c) {
+    return c === 9 || c === 32 || c === 10 || c === 13;
+  }
+  function is_FLOW_INDICATOR(c) {
+    return c === 44 || c === 91 || c === 93 || c === 123 || c === 125;
+  }
+  function fromHexCode(c) {
+    var lc;
+    if (48 <= c && c <= 57) {
+      return c - 48;
+    }
+    lc = c | 32;
+    if (97 <= lc && lc <= 102) {
+      return lc - 97 + 10;
+    }
+    return -1;
+  }
+  function escapedHexLen(c) {
+    if (c === 120) {
+      return 2;
+    }
+    if (c === 117) {
+      return 4;
+    }
+    if (c === 85) {
+      return 8;
+    }
+    return 0;
+  }
+  function fromDecimalCode(c) {
+    if (48 <= c && c <= 57) {
+      return c - 48;
+    }
+    return -1;
+  }
+  function simpleEscapeSequence(c) {
+    return c === 48 ? "\0" : c === 97 ? "\x07" : c === 98 ? "\b" : c === 116 ? "	" : c === 9 ? "	" : c === 110 ? "\n" : c === 118 ? "\v" : c === 102 ? "\f" : c === 114 ? "\r" : c === 101 ? "\x1B" : c === 32 ? " " : c === 34 ? '"' : c === 47 ? "/" : c === 92 ? "\\" : c === 78 ? "" : c === 95 ? " " : c === 76 ? "\u2028" : c === 80 ? "\u2029" : "";
+  }
+  function charFromCodepoint(c) {
+    if (c <= 65535) {
+      return String.fromCharCode(c);
+    }
+    return String.fromCharCode(
+      (c - 65536 >> 10) + 55296,
+      (c - 65536 & 1023) + 56320
+    );
+  }
+  var simpleEscapeCheck = new Array(256);
+  var simpleEscapeMap = new Array(256);
+  for (var i = 0; i < 256; i++) {
+    simpleEscapeCheck[i] = simpleEscapeSequence(i) ? 1 : 0;
+    simpleEscapeMap[i] = simpleEscapeSequence(i);
+  }
+  function State(input, options) {
+    this.input = input;
+    this.filename = options["filename"] || null;
+    this.schema = options["schema"] || DEFAULT_SCHEMA;
+    this.onWarning = options["onWarning"] || null;
+    this.legacy = options["legacy"] || false;
+    this.json = options["json"] || false;
+    this.listener = options["listener"] || null;
+    this.implicitTypes = this.schema.compiledImplicit;
+    this.typeMap = this.schema.compiledTypeMap;
+    this.length = input.length;
+    this.position = 0;
+    this.line = 0;
+    this.lineStart = 0;
+    this.lineIndent = 0;
+    this.firstTabInLine = -1;
+    this.documents = [];
+  }
+  function generateError(state, message) {
+    var mark = {
+      name: state.filename,
+      buffer: state.input.slice(0, -1),
+      // omit trailing \0
+      position: state.position,
+      line: state.line,
+      column: state.position - state.lineStart
+    };
+    mark.snippet = makeSnippet(mark);
+    return new YAMLException(message, mark);
+  }
+  function throwError(state, message) {
+    throw generateError(state, message);
+  }
+  function throwWarning(state, message) {
+    if (state.onWarning) {
+      state.onWarning.call(null, generateError(state, message));
+    }
+  }
+  var directiveHandlers = {
+    YAML: function handleYamlDirective(state, name, args) {
+      var match, major, minor;
+      if (state.version !== null) {
+        throwError(state, "duplication of %YAML directive");
+      }
+      if (args.length !== 1) {
+        throwError(state, "YAML directive accepts exactly one argument");
+      }
+      match = /^([0-9]+)\.([0-9]+)$/.exec(args[0]);
+      if (match === null) {
+        throwError(state, "ill-formed argument of the YAML directive");
+      }
+      major = parseInt(match[1], 10);
+      minor = parseInt(match[2], 10);
+      if (major !== 1) {
+        throwError(state, "unacceptable YAML version of the document");
+      }
+      state.version = args[0];
+      state.checkLineBreaks = minor < 2;
+      if (minor !== 1 && minor !== 2) {
+        throwWarning(state, "unsupported YAML version of the document");
+      }
+    },
+    TAG: function handleTagDirective(state, name, args) {
+      var handle, prefix;
+      if (args.length !== 2) {
+        throwError(state, "TAG directive accepts exactly two arguments");
+      }
+      handle = args[0];
+      prefix = args[1];
+      if (!PATTERN_TAG_HANDLE.test(handle)) {
+        throwError(state, "ill-formed tag handle (first argument) of the TAG directive");
+      }
+      if (_hasOwnProperty.call(state.tagMap, handle)) {
+        throwError(state, 'there is a previously declared suffix for "' + handle + '" tag handle');
+      }
+      if (!PATTERN_TAG_URI.test(prefix)) {
+        throwError(state, "ill-formed tag prefix (second argument) of the TAG directive");
+      }
+      try {
+        prefix = decodeURIComponent(prefix);
+      } catch (err) {
+        throwError(state, "tag prefix is malformed: " + prefix);
+      }
+      state.tagMap[handle] = prefix;
+    }
+  };
+  function captureSegment(state, start, end, checkJson) {
+    var _position, _length, _character, _result;
+    if (start < end) {
+      _result = state.input.slice(start, end);
+      if (checkJson) {
+        for (_position = 0, _length = _result.length; _position < _length; _position += 1) {
+          _character = _result.charCodeAt(_position);
+          if (!(_character === 9 || 32 <= _character && _character <= 1114111)) {
+            throwError(state, "expected valid JSON character");
+          }
+        }
+      } else if (PATTERN_NON_PRINTABLE.test(_result)) {
+        throwError(state, "the stream contains non-printable characters");
+      }
+      state.result += _result;
+    }
+  }
+  function mergeMappings(state, destination, source, overridableKeys) {
+    var sourceKeys, key, index, quantity;
+    if (!common2.isObject(source)) {
+      throwError(state, "cannot merge mappings; the provided source object is unacceptable");
+    }
+    sourceKeys = Object.keys(source);
+    for (index = 0, quantity = sourceKeys.length; index < quantity; index += 1) {
+      key = sourceKeys[index];
+      if (!_hasOwnProperty.call(destination, key)) {
+        destination[key] = source[key];
+        overridableKeys[key] = true;
+      }
+    }
+  }
+  function storeMappingPair(state, _result, overridableKeys, keyTag, keyNode, valueNode, startLine, startLineStart, startPos) {
+    var index, quantity;
+    if (Array.isArray(keyNode)) {
+      keyNode = Array.prototype.slice.call(keyNode);
+      for (index = 0, quantity = keyNode.length; index < quantity; index += 1) {
+        if (Array.isArray(keyNode[index])) {
+          throwError(state, "nested arrays are not supported inside keys");
+        }
+        if (typeof keyNode === "object" && _class(keyNode[index]) === "[object Object]") {
+          keyNode[index] = "[object Object]";
+        }
+      }
+    }
+    if (typeof keyNode === "object" && _class(keyNode) === "[object Object]") {
+      keyNode = "[object Object]";
+    }
+    keyNode = String(keyNode);
+    if (_result === null) {
+      _result = {};
+    }
+    if (keyTag === "tag:yaml.org,2002:merge") {
+      if (Array.isArray(valueNode)) {
+        for (index = 0, quantity = valueNode.length; index < quantity; index += 1) {
+          mergeMappings(state, _result, valueNode[index], overridableKeys);
+        }
+      } else {
+        mergeMappings(state, _result, valueNode, overridableKeys);
+      }
+    } else {
+      if (!state.json && !_hasOwnProperty.call(overridableKeys, keyNode) && _hasOwnProperty.call(_result, keyNode)) {
+        state.line = startLine || state.line;
+        state.lineStart = startLineStart || state.lineStart;
+        state.position = startPos || state.position;
+        throwError(state, "duplicated mapping key");
+      }
+      if (keyNode === "__proto__") {
+        Object.defineProperty(_result, keyNode, {
+          configurable: true,
+          enumerable: true,
+          writable: true,
+          value: valueNode
+        });
+      } else {
+        _result[keyNode] = valueNode;
+      }
+      delete overridableKeys[keyNode];
+    }
+    return _result;
+  }
+  function readLineBreak(state) {
+    var ch;
+    ch = state.input.charCodeAt(state.position);
+    if (ch === 10) {
+      state.position++;
+    } else if (ch === 13) {
+      state.position++;
+      if (state.input.charCodeAt(state.position) === 10) {
+        state.position++;
+      }
+    } else {
+      throwError(state, "a line break is expected");
+    }
+    state.line += 1;
+    state.lineStart = state.position;
+    state.firstTabInLine = -1;
+  }
+  function skipSeparationSpace(state, allowComments, checkIndent) {
+    var lineBreaks = 0, ch = state.input.charCodeAt(state.position);
+    while (ch !== 0) {
+      while (is_WHITE_SPACE(ch)) {
+        if (ch === 9 && state.firstTabInLine === -1) {
+          state.firstTabInLine = state.position;
+        }
+        ch = state.input.charCodeAt(++state.position);
+      }
+      if (allowComments && ch === 35) {
+        do {
+          ch = state.input.charCodeAt(++state.position);
+        } while (ch !== 10 && ch !== 13 && ch !== 0);
+      }
+      if (is_EOL(ch)) {
+        readLineBreak(state);
+        ch = state.input.charCodeAt(state.position);
+        lineBreaks++;
+        state.lineIndent = 0;
+        while (ch === 32) {
+          state.lineIndent++;
+          ch = state.input.charCodeAt(++state.position);
+        }
+      } else {
+        break;
+      }
+    }
+    if (checkIndent !== -1 && lineBreaks !== 0 && state.lineIndent < checkIndent) {
+      throwWarning(state, "deficient indentation");
+    }
+    return lineBreaks;
+  }
+  function testDocumentSeparator(state) {
+    var _position = state.position, ch;
+    ch = state.input.charCodeAt(_position);
+    if ((ch === 45 || ch === 46) && ch === state.input.charCodeAt(_position + 1) && ch === state.input.charCodeAt(_position + 2)) {
+      _position += 3;
+      ch = state.input.charCodeAt(_position);
+      if (ch === 0 || is_WS_OR_EOL(ch)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  function writeFoldedLines(state, count) {
+    if (count === 1) {
+      state.result += " ";
+    } else if (count > 1) {
+      state.result += common2.repeat("\n", count - 1);
+    }
+  }
+  function readPlainScalar(state, nodeIndent, withinFlowCollection) {
+    var preceding, following, captureStart, captureEnd, hasPendingContent, _line, _lineStart, _lineIndent, _kind = state.kind, _result = state.result, ch;
+    ch = state.input.charCodeAt(state.position);
+    if (is_WS_OR_EOL(ch) || is_FLOW_INDICATOR(ch) || ch === 35 || ch === 38 || ch === 42 || ch === 33 || ch === 124 || ch === 62 || ch === 39 || ch === 34 || ch === 37 || ch === 64 || ch === 96) {
+      return false;
+    }
+    if (ch === 63 || ch === 45) {
+      following = state.input.charCodeAt(state.position + 1);
+      if (is_WS_OR_EOL(following) || withinFlowCollection && is_FLOW_INDICATOR(following)) {
+        return false;
+      }
+    }
+    state.kind = "scalar";
+    state.result = "";
+    captureStart = captureEnd = state.position;
+    hasPendingContent = false;
+    while (ch !== 0) {
+      if (ch === 58) {
+        following = state.input.charCodeAt(state.position + 1);
+        if (is_WS_OR_EOL(following) || withinFlowCollection && is_FLOW_INDICATOR(following)) {
+          break;
+        }
+      } else if (ch === 35) {
+        preceding = state.input.charCodeAt(state.position - 1);
+        if (is_WS_OR_EOL(preceding)) {
+          break;
+        }
+      } else if (state.position === state.lineStart && testDocumentSeparator(state) || withinFlowCollection && is_FLOW_INDICATOR(ch)) {
+        break;
+      } else if (is_EOL(ch)) {
+        _line = state.line;
+        _lineStart = state.lineStart;
+        _lineIndent = state.lineIndent;
+        skipSeparationSpace(state, false, -1);
+        if (state.lineIndent >= nodeIndent) {
+          hasPendingContent = true;
+          ch = state.input.charCodeAt(state.position);
+          continue;
+        } else {
+          state.position = captureEnd;
+          state.line = _line;
+          state.lineStart = _lineStart;
+          state.lineIndent = _lineIndent;
+          break;
+        }
+      }
+      if (hasPendingContent) {
+        captureSegment(state, captureStart, captureEnd, false);
+        writeFoldedLines(state, state.line - _line);
+        captureStart = captureEnd = state.position;
+        hasPendingContent = false;
+      }
+      if (!is_WHITE_SPACE(ch)) {
+        captureEnd = state.position + 1;
+      }
+      ch = state.input.charCodeAt(++state.position);
+    }
+    captureSegment(state, captureStart, captureEnd, false);
+    if (state.result) {
+      return true;
+    }
+    state.kind = _kind;
+    state.result = _result;
+    return false;
+  }
+  function readSingleQuotedScalar(state, nodeIndent) {
+    var ch, captureStart, captureEnd;
+    ch = state.input.charCodeAt(state.position);
+    if (ch !== 39) {
+      return false;
+    }
+    state.kind = "scalar";
+    state.result = "";
+    state.position++;
+    captureStart = captureEnd = state.position;
+    while ((ch = state.input.charCodeAt(state.position)) !== 0) {
+      if (ch === 39) {
+        captureSegment(state, captureStart, state.position, true);
+        ch = state.input.charCodeAt(++state.position);
+        if (ch === 39) {
+          captureStart = state.position;
+          state.position++;
+          captureEnd = state.position;
+        } else {
+          return true;
+        }
+      } else if (is_EOL(ch)) {
+        captureSegment(state, captureStart, captureEnd, true);
+        writeFoldedLines(state, skipSeparationSpace(state, false, nodeIndent));
+        captureStart = captureEnd = state.position;
+      } else if (state.position === state.lineStart && testDocumentSeparator(state)) {
+        throwError(state, "unexpected end of the document within a single quoted scalar");
+      } else {
+        state.position++;
+        captureEnd = state.position;
+      }
+    }
+    throwError(state, "unexpected end of the stream within a single quoted scalar");
+  }
+  function readDoubleQuotedScalar(state, nodeIndent) {
+    var captureStart, captureEnd, hexLength, hexResult, tmp, ch;
+    ch = state.input.charCodeAt(state.position);
+    if (ch !== 34) {
+      return false;
+    }
+    state.kind = "scalar";
+    state.result = "";
+    state.position++;
+    captureStart = captureEnd = state.position;
+    while ((ch = state.input.charCodeAt(state.position)) !== 0) {
+      if (ch === 34) {
+        captureSegment(state, captureStart, state.position, true);
+        state.position++;
+        return true;
+      } else if (ch === 92) {
+        captureSegment(state, captureStart, state.position, true);
+        ch = state.input.charCodeAt(++state.position);
+        if (is_EOL(ch)) {
+          skipSeparationSpace(state, false, nodeIndent);
+        } else if (ch < 256 && simpleEscapeCheck[ch]) {
+          state.result += simpleEscapeMap[ch];
+          state.position++;
+        } else if ((tmp = escapedHexLen(ch)) > 0) {
+          hexLength = tmp;
+          hexResult = 0;
+          for (; hexLength > 0; hexLength--) {
+            ch = state.input.charCodeAt(++state.position);
+            if ((tmp = fromHexCode(ch)) >= 0) {
+              hexResult = (hexResult << 4) + tmp;
+            } else {
+              throwError(state, "expected hexadecimal character");
+            }
+          }
+          state.result += charFromCodepoint(hexResult);
+          state.position++;
+        } else {
+          throwError(state, "unknown escape sequence");
+        }
+        captureStart = captureEnd = state.position;
+      } else if (is_EOL(ch)) {
+        captureSegment(state, captureStart, captureEnd, true);
+        writeFoldedLines(state, skipSeparationSpace(state, false, nodeIndent));
+        captureStart = captureEnd = state.position;
+      } else if (state.position === state.lineStart && testDocumentSeparator(state)) {
+        throwError(state, "unexpected end of the document within a double quoted scalar");
+      } else {
+        state.position++;
+        captureEnd = state.position;
+      }
+    }
+    throwError(state, "unexpected end of the stream within a double quoted scalar");
+  }
+  function readFlowCollection(state, nodeIndent) {
+    var readNext = true, _line, _lineStart, _pos, _tag = state.tag, _result, _anchor = state.anchor, following, terminator, isPair, isExplicitPair, isMapping, overridableKeys = /* @__PURE__ */ Object.create(null), keyNode, keyTag, valueNode, ch;
+    ch = state.input.charCodeAt(state.position);
+    if (ch === 91) {
+      terminator = 93;
+      isMapping = false;
+      _result = [];
+    } else if (ch === 123) {
+      terminator = 125;
+      isMapping = true;
+      _result = {};
+    } else {
+      return false;
+    }
+    if (state.anchor !== null) {
+      state.anchorMap[state.anchor] = _result;
+    }
+    ch = state.input.charCodeAt(++state.position);
+    while (ch !== 0) {
+      skipSeparationSpace(state, true, nodeIndent);
+      ch = state.input.charCodeAt(state.position);
+      if (ch === terminator) {
+        state.position++;
+        state.tag = _tag;
+        state.anchor = _anchor;
+        state.kind = isMapping ? "mapping" : "sequence";
+        state.result = _result;
+        return true;
+      } else if (!readNext) {
+        throwError(state, "missed comma between flow collection entries");
+      } else if (ch === 44) {
+        throwError(state, "expected the node content, but found ','");
+      }
+      keyTag = keyNode = valueNode = null;
+      isPair = isExplicitPair = false;
+      if (ch === 63) {
+        following = state.input.charCodeAt(state.position + 1);
+        if (is_WS_OR_EOL(following)) {
+          isPair = isExplicitPair = true;
+          state.position++;
+          skipSeparationSpace(state, true, nodeIndent);
+        }
+      }
+      _line = state.line;
+      _lineStart = state.lineStart;
+      _pos = state.position;
+      composeNode(state, nodeIndent, CONTEXT_FLOW_IN, false, true);
+      keyTag = state.tag;
+      keyNode = state.result;
+      skipSeparationSpace(state, true, nodeIndent);
+      ch = state.input.charCodeAt(state.position);
+      if ((isExplicitPair || state.line === _line) && ch === 58) {
+        isPair = true;
+        ch = state.input.charCodeAt(++state.position);
+        skipSeparationSpace(state, true, nodeIndent);
+        composeNode(state, nodeIndent, CONTEXT_FLOW_IN, false, true);
+        valueNode = state.result;
+      }
+      if (isMapping) {
+        storeMappingPair(state, _result, overridableKeys, keyTag, keyNode, valueNode, _line, _lineStart, _pos);
+      } else if (isPair) {
+        _result.push(storeMappingPair(state, null, overridableKeys, keyTag, keyNode, valueNode, _line, _lineStart, _pos));
+      } else {
+        _result.push(keyNode);
+      }
+      skipSeparationSpace(state, true, nodeIndent);
+      ch = state.input.charCodeAt(state.position);
+      if (ch === 44) {
+        readNext = true;
+        ch = state.input.charCodeAt(++state.position);
+      } else {
+        readNext = false;
+      }
+    }
+    throwError(state, "unexpected end of the stream within a flow collection");
+  }
+  function readBlockScalar(state, nodeIndent) {
+    var captureStart, folding, chomping = CHOMPING_CLIP, didReadContent = false, detectedIndent = false, textIndent = nodeIndent, emptyLines = 0, atMoreIndented = false, tmp, ch;
+    ch = state.input.charCodeAt(state.position);
+    if (ch === 124) {
+      folding = false;
+    } else if (ch === 62) {
+      folding = true;
+    } else {
+      return false;
+    }
+    state.kind = "scalar";
+    state.result = "";
+    while (ch !== 0) {
+      ch = state.input.charCodeAt(++state.position);
+      if (ch === 43 || ch === 45) {
+        if (CHOMPING_CLIP === chomping) {
+          chomping = ch === 43 ? CHOMPING_KEEP : CHOMPING_STRIP;
+        } else {
+          throwError(state, "repeat of a chomping mode identifier");
+        }
+      } else if ((tmp = fromDecimalCode(ch)) >= 0) {
+        if (tmp === 0) {
+          throwError(state, "bad explicit indentation width of a block scalar; it cannot be less than one");
+        } else if (!detectedIndent) {
+          textIndent = nodeIndent + tmp - 1;
+          detectedIndent = true;
+        } else {
+          throwError(state, "repeat of an indentation width identifier");
+        }
+      } else {
+        break;
+      }
+    }
+    if (is_WHITE_SPACE(ch)) {
+      do {
+        ch = state.input.charCodeAt(++state.position);
+      } while (is_WHITE_SPACE(ch));
+      if (ch === 35) {
+        do {
+          ch = state.input.charCodeAt(++state.position);
+        } while (!is_EOL(ch) && ch !== 0);
+      }
+    }
+    while (ch !== 0) {
+      readLineBreak(state);
+      state.lineIndent = 0;
+      ch = state.input.charCodeAt(state.position);
+      while ((!detectedIndent || state.lineIndent < textIndent) && ch === 32) {
+        state.lineIndent++;
+        ch = state.input.charCodeAt(++state.position);
+      }
+      if (!detectedIndent && state.lineIndent > textIndent) {
+        textIndent = state.lineIndent;
+      }
+      if (is_EOL(ch)) {
+        emptyLines++;
+        continue;
+      }
+      if (state.lineIndent < textIndent) {
+        if (chomping === CHOMPING_KEEP) {
+          state.result += common2.repeat("\n", didReadContent ? 1 + emptyLines : emptyLines);
+        } else if (chomping === CHOMPING_CLIP) {
+          if (didReadContent) {
+            state.result += "\n";
+          }
+        }
+        break;
+      }
+      if (folding) {
+        if (is_WHITE_SPACE(ch)) {
+          atMoreIndented = true;
+          state.result += common2.repeat("\n", didReadContent ? 1 + emptyLines : emptyLines);
+        } else if (atMoreIndented) {
+          atMoreIndented = false;
+          state.result += common2.repeat("\n", emptyLines + 1);
+        } else if (emptyLines === 0) {
+          if (didReadContent) {
+            state.result += " ";
+          }
+        } else {
+          state.result += common2.repeat("\n", emptyLines);
+        }
+      } else {
+        state.result += common2.repeat("\n", didReadContent ? 1 + emptyLines : emptyLines);
+      }
+      didReadContent = true;
+      detectedIndent = true;
+      emptyLines = 0;
+      captureStart = state.position;
+      while (!is_EOL(ch) && ch !== 0) {
+        ch = state.input.charCodeAt(++state.position);
+      }
+      captureSegment(state, captureStart, state.position, false);
+    }
+    return true;
+  }
+  function readBlockSequence(state, nodeIndent) {
+    var _line, _tag = state.tag, _anchor = state.anchor, _result = [], following, detected = false, ch;
+    if (state.firstTabInLine !== -1)
+      return false;
+    if (state.anchor !== null) {
+      state.anchorMap[state.anchor] = _result;
+    }
+    ch = state.input.charCodeAt(state.position);
+    while (ch !== 0) {
+      if (state.firstTabInLine !== -1) {
+        state.position = state.firstTabInLine;
+        throwError(state, "tab characters must not be used in indentation");
+      }
+      if (ch !== 45) {
+        break;
+      }
+      following = state.input.charCodeAt(state.position + 1);
+      if (!is_WS_OR_EOL(following)) {
+        break;
+      }
+      detected = true;
+      state.position++;
+      if (skipSeparationSpace(state, true, -1)) {
+        if (state.lineIndent <= nodeIndent) {
+          _result.push(null);
+          ch = state.input.charCodeAt(state.position);
+          continue;
+        }
+      }
+      _line = state.line;
+      composeNode(state, nodeIndent, CONTEXT_BLOCK_IN, false, true);
+      _result.push(state.result);
+      skipSeparationSpace(state, true, -1);
+      ch = state.input.charCodeAt(state.position);
+      if ((state.line === _line || state.lineIndent > nodeIndent) && ch !== 0) {
+        throwError(state, "bad indentation of a sequence entry");
+      } else if (state.lineIndent < nodeIndent) {
+        break;
+      }
+    }
+    if (detected) {
+      state.tag = _tag;
+      state.anchor = _anchor;
+      state.kind = "sequence";
+      state.result = _result;
+      return true;
+    }
+    return false;
+  }
+  function readBlockMapping(state, nodeIndent, flowIndent) {
+    var following, allowCompact, _line, _keyLine, _keyLineStart, _keyPos, _tag = state.tag, _anchor = state.anchor, _result = {}, overridableKeys = /* @__PURE__ */ Object.create(null), keyTag = null, keyNode = null, valueNode = null, atExplicitKey = false, detected = false, ch;
+    if (state.firstTabInLine !== -1)
+      return false;
+    if (state.anchor !== null) {
+      state.anchorMap[state.anchor] = _result;
+    }
+    ch = state.input.charCodeAt(state.position);
+    while (ch !== 0) {
+      if (!atExplicitKey && state.firstTabInLine !== -1) {
+        state.position = state.firstTabInLine;
+        throwError(state, "tab characters must not be used in indentation");
+      }
+      following = state.input.charCodeAt(state.position + 1);
+      _line = state.line;
+      if ((ch === 63 || ch === 58) && is_WS_OR_EOL(following)) {
+        if (ch === 63) {
+          if (atExplicitKey) {
+            storeMappingPair(state, _result, overridableKeys, keyTag, keyNode, null, _keyLine, _keyLineStart, _keyPos);
+            keyTag = keyNode = valueNode = null;
+          }
+          detected = true;
+          atExplicitKey = true;
+          allowCompact = true;
+        } else if (atExplicitKey) {
+          atExplicitKey = false;
+          allowCompact = true;
+        } else {
+          throwError(state, "incomplete explicit mapping pair; a key node is missed; or followed by a non-tabulated empty line");
+        }
+        state.position += 1;
+        ch = following;
+      } else {
+        _keyLine = state.line;
+        _keyLineStart = state.lineStart;
+        _keyPos = state.position;
+        if (!composeNode(state, flowIndent, CONTEXT_FLOW_OUT, false, true)) {
+          break;
+        }
+        if (state.line === _line) {
+          ch = state.input.charCodeAt(state.position);
+          while (is_WHITE_SPACE(ch)) {
+            ch = state.input.charCodeAt(++state.position);
+          }
+          if (ch === 58) {
+            ch = state.input.charCodeAt(++state.position);
+            if (!is_WS_OR_EOL(ch)) {
+              throwError(state, "a whitespace character is expected after the key-value separator within a block mapping");
+            }
+            if (atExplicitKey) {
+              storeMappingPair(state, _result, overridableKeys, keyTag, keyNode, null, _keyLine, _keyLineStart, _keyPos);
+              keyTag = keyNode = valueNode = null;
+            }
+            detected = true;
+            atExplicitKey = false;
+            allowCompact = false;
+            keyTag = state.tag;
+            keyNode = state.result;
+          } else if (detected) {
+            throwError(state, "can not read an implicit mapping pair; a colon is missed");
+          } else {
+            state.tag = _tag;
+            state.anchor = _anchor;
+            return true;
+          }
+        } else if (detected) {
+          throwError(state, "can not read a block mapping entry; a multiline key may not be an implicit key");
+        } else {
+          state.tag = _tag;
+          state.anchor = _anchor;
+          return true;
+        }
+      }
+      if (state.line === _line || state.lineIndent > nodeIndent) {
+        if (atExplicitKey) {
+          _keyLine = state.line;
+          _keyLineStart = state.lineStart;
+          _keyPos = state.position;
+        }
+        if (composeNode(state, nodeIndent, CONTEXT_BLOCK_OUT, true, allowCompact)) {
+          if (atExplicitKey) {
+            keyNode = state.result;
+          } else {
+            valueNode = state.result;
+          }
+        }
+        if (!atExplicitKey) {
+          storeMappingPair(state, _result, overridableKeys, keyTag, keyNode, valueNode, _keyLine, _keyLineStart, _keyPos);
+          keyTag = keyNode = valueNode = null;
+        }
+        skipSeparationSpace(state, true, -1);
+        ch = state.input.charCodeAt(state.position);
+      }
+      if ((state.line === _line || state.lineIndent > nodeIndent) && ch !== 0) {
+        throwError(state, "bad indentation of a mapping entry");
+      } else if (state.lineIndent < nodeIndent) {
+        break;
+      }
+    }
+    if (atExplicitKey) {
+      storeMappingPair(state, _result, overridableKeys, keyTag, keyNode, null, _keyLine, _keyLineStart, _keyPos);
+    }
+    if (detected) {
+      state.tag = _tag;
+      state.anchor = _anchor;
+      state.kind = "mapping";
+      state.result = _result;
+    }
+    return detected;
+  }
+  function readTagProperty(state) {
+    var _position, isVerbatim = false, isNamed = false, tagHandle, tagName, ch;
+    ch = state.input.charCodeAt(state.position);
+    if (ch !== 33)
+      return false;
+    if (state.tag !== null) {
+      throwError(state, "duplication of a tag property");
+    }
+    ch = state.input.charCodeAt(++state.position);
+    if (ch === 60) {
+      isVerbatim = true;
+      ch = state.input.charCodeAt(++state.position);
+    } else if (ch === 33) {
+      isNamed = true;
+      tagHandle = "!!";
+      ch = state.input.charCodeAt(++state.position);
+    } else {
+      tagHandle = "!";
+    }
+    _position = state.position;
+    if (isVerbatim) {
+      do {
+        ch = state.input.charCodeAt(++state.position);
+      } while (ch !== 0 && ch !== 62);
+      if (state.position < state.length) {
+        tagName = state.input.slice(_position, state.position);
+        ch = state.input.charCodeAt(++state.position);
+      } else {
+        throwError(state, "unexpected end of the stream within a verbatim tag");
+      }
+    } else {
+      while (ch !== 0 && !is_WS_OR_EOL(ch)) {
+        if (ch === 33) {
+          if (!isNamed) {
+            tagHandle = state.input.slice(_position - 1, state.position + 1);
+            if (!PATTERN_TAG_HANDLE.test(tagHandle)) {
+              throwError(state, "named tag handle cannot contain such characters");
+            }
+            isNamed = true;
+            _position = state.position + 1;
+          } else {
+            throwError(state, "tag suffix cannot contain exclamation marks");
+          }
+        }
+        ch = state.input.charCodeAt(++state.position);
+      }
+      tagName = state.input.slice(_position, state.position);
+      if (PATTERN_FLOW_INDICATORS.test(tagName)) {
+        throwError(state, "tag suffix cannot contain flow indicator characters");
+      }
+    }
+    if (tagName && !PATTERN_TAG_URI.test(tagName)) {
+      throwError(state, "tag name cannot contain such characters: " + tagName);
+    }
+    try {
+      tagName = decodeURIComponent(tagName);
+    } catch (err) {
+      throwError(state, "tag name is malformed: " + tagName);
+    }
+    if (isVerbatim) {
+      state.tag = tagName;
+    } else if (_hasOwnProperty.call(state.tagMap, tagHandle)) {
+      state.tag = state.tagMap[tagHandle] + tagName;
+    } else if (tagHandle === "!") {
+      state.tag = "!" + tagName;
+    } else if (tagHandle === "!!") {
+      state.tag = "tag:yaml.org,2002:" + tagName;
+    } else {
+      throwError(state, 'undeclared tag handle "' + tagHandle + '"');
+    }
+    return true;
+  }
+  function readAnchorProperty(state) {
+    var _position, ch;
+    ch = state.input.charCodeAt(state.position);
+    if (ch !== 38)
+      return false;
+    if (state.anchor !== null) {
+      throwError(state, "duplication of an anchor property");
+    }
+    ch = state.input.charCodeAt(++state.position);
+    _position = state.position;
+    while (ch !== 0 && !is_WS_OR_EOL(ch) && !is_FLOW_INDICATOR(ch)) {
+      ch = state.input.charCodeAt(++state.position);
+    }
+    if (state.position === _position) {
+      throwError(state, "name of an anchor node must contain at least one character");
+    }
+    state.anchor = state.input.slice(_position, state.position);
+    return true;
+  }
+  function readAlias(state) {
+    var _position, alias, ch;
+    ch = state.input.charCodeAt(state.position);
+    if (ch !== 42)
+      return false;
+    ch = state.input.charCodeAt(++state.position);
+    _position = state.position;
+    while (ch !== 0 && !is_WS_OR_EOL(ch) && !is_FLOW_INDICATOR(ch)) {
+      ch = state.input.charCodeAt(++state.position);
+    }
+    if (state.position === _position) {
+      throwError(state, "name of an alias node must contain at least one character");
+    }
+    alias = state.input.slice(_position, state.position);
+    if (!_hasOwnProperty.call(state.anchorMap, alias)) {
+      throwError(state, 'unidentified alias "' + alias + '"');
+    }
+    state.result = state.anchorMap[alias];
+    skipSeparationSpace(state, true, -1);
+    return true;
+  }
+  function composeNode(state, parentIndent, nodeContext, allowToSeek, allowCompact) {
+    var allowBlockStyles, allowBlockScalars, allowBlockCollections, indentStatus = 1, atNewLine = false, hasContent = false, typeIndex, typeQuantity, typeList, type2, flowIndent, blockIndent;
+    if (state.listener !== null) {
+      state.listener("open", state);
+    }
+    state.tag = null;
+    state.anchor = null;
+    state.kind = null;
+    state.result = null;
+    allowBlockStyles = allowBlockScalars = allowBlockCollections = CONTEXT_BLOCK_OUT === nodeContext || CONTEXT_BLOCK_IN === nodeContext;
+    if (allowToSeek) {
+      if (skipSeparationSpace(state, true, -1)) {
+        atNewLine = true;
+        if (state.lineIndent > parentIndent) {
+          indentStatus = 1;
+        } else if (state.lineIndent === parentIndent) {
+          indentStatus = 0;
+        } else if (state.lineIndent < parentIndent) {
+          indentStatus = -1;
+        }
+      }
+    }
+    if (indentStatus === 1) {
+      while (readTagProperty(state) || readAnchorProperty(state)) {
+        if (skipSeparationSpace(state, true, -1)) {
+          atNewLine = true;
+          allowBlockCollections = allowBlockStyles;
+          if (state.lineIndent > parentIndent) {
+            indentStatus = 1;
+          } else if (state.lineIndent === parentIndent) {
+            indentStatus = 0;
+          } else if (state.lineIndent < parentIndent) {
+            indentStatus = -1;
+          }
+        } else {
+          allowBlockCollections = false;
+        }
+      }
+    }
+    if (allowBlockCollections) {
+      allowBlockCollections = atNewLine || allowCompact;
+    }
+    if (indentStatus === 1 || CONTEXT_BLOCK_OUT === nodeContext) {
+      if (CONTEXT_FLOW_IN === nodeContext || CONTEXT_FLOW_OUT === nodeContext) {
+        flowIndent = parentIndent;
+      } else {
+        flowIndent = parentIndent + 1;
+      }
+      blockIndent = state.position - state.lineStart;
+      if (indentStatus === 1) {
+        if (allowBlockCollections && (readBlockSequence(state, blockIndent) || readBlockMapping(state, blockIndent, flowIndent)) || readFlowCollection(state, flowIndent)) {
+          hasContent = true;
+        } else {
+          if (allowBlockScalars && readBlockScalar(state, flowIndent) || readSingleQuotedScalar(state, flowIndent) || readDoubleQuotedScalar(state, flowIndent)) {
+            hasContent = true;
+          } else if (readAlias(state)) {
+            hasContent = true;
+            if (state.tag !== null || state.anchor !== null) {
+              throwError(state, "alias node should not have any properties");
+            }
+          } else if (readPlainScalar(state, flowIndent, CONTEXT_FLOW_IN === nodeContext)) {
+            hasContent = true;
+            if (state.tag === null) {
+              state.tag = "?";
+            }
+          }
+          if (state.anchor !== null) {
+            state.anchorMap[state.anchor] = state.result;
+          }
+        }
+      } else if (indentStatus === 0) {
+        hasContent = allowBlockCollections && readBlockSequence(state, blockIndent);
+      }
+    }
+    if (state.tag === null) {
+      if (state.anchor !== null) {
+        state.anchorMap[state.anchor] = state.result;
+      }
+    } else if (state.tag === "?") {
+      if (state.result !== null && state.kind !== "scalar") {
+        throwError(state, 'unacceptable node kind for !<?> tag; it should be "scalar", not "' + state.kind + '"');
+      }
+      for (typeIndex = 0, typeQuantity = state.implicitTypes.length; typeIndex < typeQuantity; typeIndex += 1) {
+        type2 = state.implicitTypes[typeIndex];
+        if (type2.resolve(state.result)) {
+          state.result = type2.construct(state.result);
+          state.tag = type2.tag;
+          if (state.anchor !== null) {
+            state.anchorMap[state.anchor] = state.result;
+          }
+          break;
+        }
+      }
+    } else if (state.tag !== "!") {
+      if (_hasOwnProperty.call(state.typeMap[state.kind || "fallback"], state.tag)) {
+        type2 = state.typeMap[state.kind || "fallback"][state.tag];
+      } else {
+        type2 = null;
+        typeList = state.typeMap.multi[state.kind || "fallback"];
+        for (typeIndex = 0, typeQuantity = typeList.length; typeIndex < typeQuantity; typeIndex += 1) {
+          if (state.tag.slice(0, typeList[typeIndex].tag.length) === typeList[typeIndex].tag) {
+            type2 = typeList[typeIndex];
+            break;
+          }
+        }
+      }
+      if (!type2) {
+        throwError(state, "unknown tag !<" + state.tag + ">");
+      }
+      if (state.result !== null && type2.kind !== state.kind) {
+        throwError(state, "unacceptable node kind for !<" + state.tag + '> tag; it should be "' + type2.kind + '", not "' + state.kind + '"');
+      }
+      if (!type2.resolve(state.result, state.tag)) {
+        throwError(state, "cannot resolve a node with !<" + state.tag + "> explicit tag");
+      } else {
+        state.result = type2.construct(state.result, state.tag);
+        if (state.anchor !== null) {
+          state.anchorMap[state.anchor] = state.result;
+        }
+      }
+    }
+    if (state.listener !== null) {
+      state.listener("close", state);
+    }
+    return state.tag !== null || state.anchor !== null || hasContent;
+  }
+  function readDocument(state) {
+    var documentStart = state.position, _position, directiveName, directiveArgs, hasDirectives = false, ch;
+    state.version = null;
+    state.checkLineBreaks = state.legacy;
+    state.tagMap = /* @__PURE__ */ Object.create(null);
+    state.anchorMap = /* @__PURE__ */ Object.create(null);
+    while ((ch = state.input.charCodeAt(state.position)) !== 0) {
+      skipSeparationSpace(state, true, -1);
+      ch = state.input.charCodeAt(state.position);
+      if (state.lineIndent > 0 || ch !== 37) {
+        break;
+      }
+      hasDirectives = true;
+      ch = state.input.charCodeAt(++state.position);
+      _position = state.position;
+      while (ch !== 0 && !is_WS_OR_EOL(ch)) {
+        ch = state.input.charCodeAt(++state.position);
+      }
+      directiveName = state.input.slice(_position, state.position);
+      directiveArgs = [];
+      if (directiveName.length < 1) {
+        throwError(state, "directive name must not be less than one character in length");
+      }
+      while (ch !== 0) {
+        while (is_WHITE_SPACE(ch)) {
+          ch = state.input.charCodeAt(++state.position);
+        }
+        if (ch === 35) {
+          do {
+            ch = state.input.charCodeAt(++state.position);
+          } while (ch !== 0 && !is_EOL(ch));
+          break;
+        }
+        if (is_EOL(ch))
+          break;
+        _position = state.position;
+        while (ch !== 0 && !is_WS_OR_EOL(ch)) {
+          ch = state.input.charCodeAt(++state.position);
+        }
+        directiveArgs.push(state.input.slice(_position, state.position));
+      }
+      if (ch !== 0)
+        readLineBreak(state);
+      if (_hasOwnProperty.call(directiveHandlers, directiveName)) {
+        directiveHandlers[directiveName](state, directiveName, directiveArgs);
+      } else {
+        throwWarning(state, 'unknown document directive "' + directiveName + '"');
+      }
+    }
+    skipSeparationSpace(state, true, -1);
+    if (state.lineIndent === 0 && state.input.charCodeAt(state.position) === 45 && state.input.charCodeAt(state.position + 1) === 45 && state.input.charCodeAt(state.position + 2) === 45) {
+      state.position += 3;
+      skipSeparationSpace(state, true, -1);
+    } else if (hasDirectives) {
+      throwError(state, "directives end mark is expected");
+    }
+    composeNode(state, state.lineIndent - 1, CONTEXT_BLOCK_OUT, false, true);
+    skipSeparationSpace(state, true, -1);
+    if (state.checkLineBreaks && PATTERN_NON_ASCII_LINE_BREAKS.test(state.input.slice(documentStart, state.position))) {
+      throwWarning(state, "non-ASCII line breaks are interpreted as content");
+    }
+    state.documents.push(state.result);
+    if (state.position === state.lineStart && testDocumentSeparator(state)) {
+      if (state.input.charCodeAt(state.position) === 46) {
+        state.position += 3;
+        skipSeparationSpace(state, true, -1);
+      }
+      return;
+    }
+    if (state.position < state.length - 1) {
+      throwError(state, "end of the stream or a document separator is expected");
+    } else {
+      return;
+    }
+  }
+  function loadDocuments(input, options) {
+    input = String(input);
+    options = options || {};
+    if (input.length !== 0) {
+      if (input.charCodeAt(input.length - 1) !== 10 && input.charCodeAt(input.length - 1) !== 13) {
+        input += "\n";
+      }
+      if (input.charCodeAt(0) === 65279) {
+        input = input.slice(1);
+      }
+    }
+    var state = new State(input, options);
+    var nullpos = input.indexOf("\0");
+    if (nullpos !== -1) {
+      state.position = nullpos;
+      throwError(state, "null byte is not allowed in input");
+    }
+    state.input += "\0";
+    while (state.input.charCodeAt(state.position) === 32) {
+      state.lineIndent += 1;
+      state.position += 1;
+    }
+    while (state.position < state.length - 1) {
+      readDocument(state);
+    }
+    return state.documents;
+  }
+  function loadAll(input, iterator, options) {
+    if (iterator !== null && typeof iterator === "object" && typeof options === "undefined") {
+      options = iterator;
+      iterator = null;
+    }
+    var documents = loadDocuments(input, options);
+    if (typeof iterator !== "function") {
+      return documents;
+    }
+    for (var index = 0, length = documents.length; index < length; index += 1) {
+      iterator(documents[index]);
+    }
+  }
+  function load(input, options) {
+    var documents = loadDocuments(input, options);
+    if (documents.length === 0) {
+      return void 0;
+    } else if (documents.length === 1) {
+      return documents[0];
+    }
+    throw new YAMLException("expected a single document in the stream, but found more");
+  }
+  loader.loadAll = loadAll;
+  loader.load = load;
+  return loader;
+}
+var dumper = {};
+var hasRequiredDumper;
+function requireDumper() {
+  if (hasRequiredDumper)
+    return dumper;
+  hasRequiredDumper = 1;
+  var common2 = requireCommon();
+  var YAMLException = requireException();
+  var DEFAULT_SCHEMA = require_default();
+  var _toString = Object.prototype.toString;
+  var _hasOwnProperty = Object.prototype.hasOwnProperty;
+  var CHAR_BOM = 65279;
+  var CHAR_TAB = 9;
+  var CHAR_LINE_FEED = 10;
+  var CHAR_CARRIAGE_RETURN = 13;
+  var CHAR_SPACE = 32;
+  var CHAR_EXCLAMATION = 33;
+  var CHAR_DOUBLE_QUOTE = 34;
+  var CHAR_SHARP = 35;
+  var CHAR_PERCENT = 37;
+  var CHAR_AMPERSAND = 38;
+  var CHAR_SINGLE_QUOTE = 39;
+  var CHAR_ASTERISK = 42;
+  var CHAR_COMMA = 44;
+  var CHAR_MINUS = 45;
+  var CHAR_COLON = 58;
+  var CHAR_EQUALS = 61;
+  var CHAR_GREATER_THAN = 62;
+  var CHAR_QUESTION = 63;
+  var CHAR_COMMERCIAL_AT = 64;
+  var CHAR_LEFT_SQUARE_BRACKET = 91;
+  var CHAR_RIGHT_SQUARE_BRACKET = 93;
+  var CHAR_GRAVE_ACCENT = 96;
+  var CHAR_LEFT_CURLY_BRACKET = 123;
+  var CHAR_VERTICAL_LINE = 124;
+  var CHAR_RIGHT_CURLY_BRACKET = 125;
+  var ESCAPE_SEQUENCES = {};
+  ESCAPE_SEQUENCES[0] = "\\0";
+  ESCAPE_SEQUENCES[7] = "\\a";
+  ESCAPE_SEQUENCES[8] = "\\b";
+  ESCAPE_SEQUENCES[9] = "\\t";
+  ESCAPE_SEQUENCES[10] = "\\n";
+  ESCAPE_SEQUENCES[11] = "\\v";
+  ESCAPE_SEQUENCES[12] = "\\f";
+  ESCAPE_SEQUENCES[13] = "\\r";
+  ESCAPE_SEQUENCES[27] = "\\e";
+  ESCAPE_SEQUENCES[34] = '\\"';
+  ESCAPE_SEQUENCES[92] = "\\\\";
+  ESCAPE_SEQUENCES[133] = "\\N";
+  ESCAPE_SEQUENCES[160] = "\\_";
+  ESCAPE_SEQUENCES[8232] = "\\L";
+  ESCAPE_SEQUENCES[8233] = "\\P";
+  var DEPRECATED_BOOLEANS_SYNTAX = [
+    "y",
+    "Y",
+    "yes",
+    "Yes",
+    "YES",
+    "on",
+    "On",
+    "ON",
+    "n",
+    "N",
+    "no",
+    "No",
+    "NO",
+    "off",
+    "Off",
+    "OFF"
+  ];
+  var DEPRECATED_BASE60_SYNTAX = /^[-+]?[0-9_]+(?::[0-9_]+)+(?:\.[0-9_]*)?$/;
+  function compileStyleMap(schema2, map2) {
+    var result, keys2, index, length, tag, style2, type2;
+    if (map2 === null)
+      return {};
+    result = {};
+    keys2 = Object.keys(map2);
+    for (index = 0, length = keys2.length; index < length; index += 1) {
+      tag = keys2[index];
+      style2 = String(map2[tag]);
+      if (tag.slice(0, 2) === "!!") {
+        tag = "tag:yaml.org,2002:" + tag.slice(2);
+      }
+      type2 = schema2.compiledTypeMap["fallback"][tag];
+      if (type2 && _hasOwnProperty.call(type2.styleAliases, style2)) {
+        style2 = type2.styleAliases[style2];
+      }
+      result[tag] = style2;
+    }
+    return result;
+  }
+  function encodeHex(character) {
+    var string, handle, length;
+    string = character.toString(16).toUpperCase();
+    if (character <= 255) {
+      handle = "x";
+      length = 2;
+    } else if (character <= 65535) {
+      handle = "u";
+      length = 4;
+    } else if (character <= 4294967295) {
+      handle = "U";
+      length = 8;
+    } else {
+      throw new YAMLException("code point within a string may not be greater than 0xFFFFFFFF");
+    }
+    return "\\" + handle + common2.repeat("0", length - string.length) + string;
+  }
+  var QUOTING_TYPE_SINGLE = 1, QUOTING_TYPE_DOUBLE = 2;
+  function State(options) {
+    this.schema = options["schema"] || DEFAULT_SCHEMA;
+    this.indent = Math.max(1, options["indent"] || 2);
+    this.noArrayIndent = options["noArrayIndent"] || false;
+    this.skipInvalid = options["skipInvalid"] || false;
+    this.flowLevel = common2.isNothing(options["flowLevel"]) ? -1 : options["flowLevel"];
+    this.styleMap = compileStyleMap(this.schema, options["styles"] || null);
+    this.sortKeys = options["sortKeys"] || false;
+    this.lineWidth = options["lineWidth"] || 80;
+    this.noRefs = options["noRefs"] || false;
+    this.noCompatMode = options["noCompatMode"] || false;
+    this.condenseFlow = options["condenseFlow"] || false;
+    this.quotingType = options["quotingType"] === '"' ? QUOTING_TYPE_DOUBLE : QUOTING_TYPE_SINGLE;
+    this.forceQuotes = options["forceQuotes"] || false;
+    this.replacer = typeof options["replacer"] === "function" ? options["replacer"] : null;
+    this.implicitTypes = this.schema.compiledImplicit;
+    this.explicitTypes = this.schema.compiledExplicit;
+    this.tag = null;
+    this.result = "";
+    this.duplicates = [];
+    this.usedDuplicates = null;
+  }
+  function indentString(string, spaces) {
+    var ind = common2.repeat(" ", spaces), position = 0, next = -1, result = "", line, length = string.length;
+    while (position < length) {
+      next = string.indexOf("\n", position);
+      if (next === -1) {
+        line = string.slice(position);
+        position = length;
+      } else {
+        line = string.slice(position, next + 1);
+        position = next + 1;
+      }
+      if (line.length && line !== "\n")
+        result += ind;
+      result += line;
+    }
+    return result;
+  }
+  function generateNextLine(state, level) {
+    return "\n" + common2.repeat(" ", state.indent * level);
+  }
+  function testImplicitResolving(state, str2) {
+    var index, length, type2;
+    for (index = 0, length = state.implicitTypes.length; index < length; index += 1) {
+      type2 = state.implicitTypes[index];
+      if (type2.resolve(str2)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  function isWhitespace(c) {
+    return c === CHAR_SPACE || c === CHAR_TAB;
+  }
+  function isPrintable(c) {
+    return 32 <= c && c <= 126 || 161 <= c && c <= 55295 && c !== 8232 && c !== 8233 || 57344 <= c && c <= 65533 && c !== CHAR_BOM || 65536 <= c && c <= 1114111;
+  }
+  function isNsCharOrWhitespace(c) {
+    return isPrintable(c) && c !== CHAR_BOM && c !== CHAR_CARRIAGE_RETURN && c !== CHAR_LINE_FEED;
+  }
+  function isPlainSafe(c, prev, inblock) {
+    var cIsNsCharOrWhitespace = isNsCharOrWhitespace(c);
+    var cIsNsChar = cIsNsCharOrWhitespace && !isWhitespace(c);
+    return (
+      // ns-plain-safe
+      (inblock ? (
+        // c = flow-in
+        cIsNsCharOrWhitespace
+      ) : cIsNsCharOrWhitespace && c !== CHAR_COMMA && c !== CHAR_LEFT_SQUARE_BRACKET && c !== CHAR_RIGHT_SQUARE_BRACKET && c !== CHAR_LEFT_CURLY_BRACKET && c !== CHAR_RIGHT_CURLY_BRACKET) && c !== CHAR_SHARP && !(prev === CHAR_COLON && !cIsNsChar) || isNsCharOrWhitespace(prev) && !isWhitespace(prev) && c === CHAR_SHARP || prev === CHAR_COLON && cIsNsChar
+    );
+  }
+  function isPlainSafeFirst(c) {
+    return isPrintable(c) && c !== CHAR_BOM && !isWhitespace(c) && c !== CHAR_MINUS && c !== CHAR_QUESTION && c !== CHAR_COLON && c !== CHAR_COMMA && c !== CHAR_LEFT_SQUARE_BRACKET && c !== CHAR_RIGHT_SQUARE_BRACKET && c !== CHAR_LEFT_CURLY_BRACKET && c !== CHAR_RIGHT_CURLY_BRACKET && c !== CHAR_SHARP && c !== CHAR_AMPERSAND && c !== CHAR_ASTERISK && c !== CHAR_EXCLAMATION && c !== CHAR_VERTICAL_LINE && c !== CHAR_EQUALS && c !== CHAR_GREATER_THAN && c !== CHAR_SINGLE_QUOTE && c !== CHAR_DOUBLE_QUOTE && c !== CHAR_PERCENT && c !== CHAR_COMMERCIAL_AT && c !== CHAR_GRAVE_ACCENT;
+  }
+  function isPlainSafeLast(c) {
+    return !isWhitespace(c) && c !== CHAR_COLON;
+  }
+  function codePointAt(string, pos) {
+    var first = string.charCodeAt(pos), second;
+    if (first >= 55296 && first <= 56319 && pos + 1 < string.length) {
+      second = string.charCodeAt(pos + 1);
+      if (second >= 56320 && second <= 57343) {
+        return (first - 55296) * 1024 + second - 56320 + 65536;
+      }
+    }
+    return first;
+  }
+  function needIndentIndicator(string) {
+    var leadingSpaceRe = /^\n* /;
+    return leadingSpaceRe.test(string);
+  }
+  var STYLE_PLAIN = 1, STYLE_SINGLE = 2, STYLE_LITERAL = 3, STYLE_FOLDED = 4, STYLE_DOUBLE = 5;
+  function chooseScalarStyle(string, singleLineOnly, indentPerLevel, lineWidth, testAmbiguousType, quotingType, forceQuotes, inblock) {
+    var i;
+    var char = 0;
+    var prevChar = null;
+    var hasLineBreak = false;
+    var hasFoldableLine = false;
+    var shouldTrackWidth = lineWidth !== -1;
+    var previousLineBreak = -1;
+    var plain2 = isPlainSafeFirst(codePointAt(string, 0)) && isPlainSafeLast(codePointAt(string, string.length - 1));
+    if (singleLineOnly || forceQuotes) {
+      for (i = 0; i < string.length; char >= 65536 ? i += 2 : i++) {
+        char = codePointAt(string, i);
+        if (!isPrintable(char)) {
+          return STYLE_DOUBLE;
+        }
+        plain2 = plain2 && isPlainSafe(char, prevChar, inblock);
+        prevChar = char;
+      }
+    } else {
+      for (i = 0; i < string.length; char >= 65536 ? i += 2 : i++) {
+        char = codePointAt(string, i);
+        if (char === CHAR_LINE_FEED) {
+          hasLineBreak = true;
+          if (shouldTrackWidth) {
+            hasFoldableLine = hasFoldableLine || // Foldable line = too long, and not more-indented.
+            i - previousLineBreak - 1 > lineWidth && string[previousLineBreak + 1] !== " ";
+            previousLineBreak = i;
+          }
+        } else if (!isPrintable(char)) {
+          return STYLE_DOUBLE;
+        }
+        plain2 = plain2 && isPlainSafe(char, prevChar, inblock);
+        prevChar = char;
+      }
+      hasFoldableLine = hasFoldableLine || shouldTrackWidth && (i - previousLineBreak - 1 > lineWidth && string[previousLineBreak + 1] !== " ");
+    }
+    if (!hasLineBreak && !hasFoldableLine) {
+      if (plain2 && !forceQuotes && !testAmbiguousType(string)) {
+        return STYLE_PLAIN;
+      }
+      return quotingType === QUOTING_TYPE_DOUBLE ? STYLE_DOUBLE : STYLE_SINGLE;
+    }
+    if (indentPerLevel > 9 && needIndentIndicator(string)) {
+      return STYLE_DOUBLE;
+    }
+    if (!forceQuotes) {
+      return hasFoldableLine ? STYLE_FOLDED : STYLE_LITERAL;
+    }
+    return quotingType === QUOTING_TYPE_DOUBLE ? STYLE_DOUBLE : STYLE_SINGLE;
+  }
+  function writeScalar(state, string, level, iskey, inblock) {
+    state.dump = function() {
+      if (string.length === 0) {
+        return state.quotingType === QUOTING_TYPE_DOUBLE ? '""' : "''";
+      }
+      if (!state.noCompatMode) {
+        if (DEPRECATED_BOOLEANS_SYNTAX.indexOf(string) !== -1 || DEPRECATED_BASE60_SYNTAX.test(string)) {
+          return state.quotingType === QUOTING_TYPE_DOUBLE ? '"' + string + '"' : "'" + string + "'";
+        }
+      }
+      var indent = state.indent * Math.max(1, level);
+      var lineWidth = state.lineWidth === -1 ? -1 : Math.max(Math.min(state.lineWidth, 40), state.lineWidth - indent);
+      var singleLineOnly = iskey || state.flowLevel > -1 && level >= state.flowLevel;
+      function testAmbiguity(string2) {
+        return testImplicitResolving(state, string2);
+      }
+      switch (chooseScalarStyle(
+        string,
+        singleLineOnly,
+        state.indent,
+        lineWidth,
+        testAmbiguity,
+        state.quotingType,
+        state.forceQuotes && !iskey,
+        inblock
+      )) {
+        case STYLE_PLAIN:
+          return string;
+        case STYLE_SINGLE:
+          return "'" + string.replace(/'/g, "''") + "'";
+        case STYLE_LITERAL:
+          return "|" + blockHeader(string, state.indent) + dropEndingNewline(indentString(string, indent));
+        case STYLE_FOLDED:
+          return ">" + blockHeader(string, state.indent) + dropEndingNewline(indentString(foldString(string, lineWidth), indent));
+        case STYLE_DOUBLE:
+          return '"' + escapeString(string) + '"';
+        default:
+          throw new YAMLException("impossible error: invalid scalar style");
+      }
+    }();
+  }
+  function blockHeader(string, indentPerLevel) {
+    var indentIndicator = needIndentIndicator(string) ? String(indentPerLevel) : "";
+    var clip = string[string.length - 1] === "\n";
+    var keep = clip && (string[string.length - 2] === "\n" || string === "\n");
+    var chomp = keep ? "+" : clip ? "" : "-";
+    return indentIndicator + chomp + "\n";
+  }
+  function dropEndingNewline(string) {
+    return string[string.length - 1] === "\n" ? string.slice(0, -1) : string;
+  }
+  function foldString(string, width) {
+    var lineRe = /(\n+)([^\n]*)/g;
+    var result = function() {
+      var nextLF = string.indexOf("\n");
+      nextLF = nextLF !== -1 ? nextLF : string.length;
+      lineRe.lastIndex = nextLF;
+      return foldLine(string.slice(0, nextLF), width);
+    }();
+    var prevMoreIndented = string[0] === "\n" || string[0] === " ";
+    var moreIndented;
+    var match;
+    while (match = lineRe.exec(string)) {
+      var prefix = match[1], line = match[2];
+      moreIndented = line[0] === " ";
+      result += prefix + (!prevMoreIndented && !moreIndented && line !== "" ? "\n" : "") + foldLine(line, width);
+      prevMoreIndented = moreIndented;
+    }
+    return result;
+  }
+  function foldLine(line, width) {
+    if (line === "" || line[0] === " ")
+      return line;
+    var breakRe = / [^ ]/g;
+    var match;
+    var start = 0, end, curr = 0, next = 0;
+    var result = "";
+    while (match = breakRe.exec(line)) {
+      next = match.index;
+      if (next - start > width) {
+        end = curr > start ? curr : next;
+        result += "\n" + line.slice(start, end);
+        start = end + 1;
+      }
+      curr = next;
+    }
+    result += "\n";
+    if (line.length - start > width && curr > start) {
+      result += line.slice(start, curr) + "\n" + line.slice(curr + 1);
+    } else {
+      result += line.slice(start);
+    }
+    return result.slice(1);
+  }
+  function escapeString(string) {
+    var result = "";
+    var char = 0;
+    var escapeSeq;
+    for (var i = 0; i < string.length; char >= 65536 ? i += 2 : i++) {
+      char = codePointAt(string, i);
+      escapeSeq = ESCAPE_SEQUENCES[char];
+      if (!escapeSeq && isPrintable(char)) {
+        result += string[i];
+        if (char >= 65536)
+          result += string[i + 1];
+      } else {
+        result += escapeSeq || encodeHex(char);
+      }
+    }
+    return result;
+  }
+  function writeFlowSequence(state, level, object) {
+    var _result = "", _tag = state.tag, index, length, value2;
+    for (index = 0, length = object.length; index < length; index += 1) {
+      value2 = object[index];
+      if (state.replacer) {
+        value2 = state.replacer.call(object, String(index), value2);
+      }
+      if (writeNode(state, level, value2, false, false) || typeof value2 === "undefined" && writeNode(state, level, null, false, false)) {
+        if (_result !== "")
+          _result += "," + (!state.condenseFlow ? " " : "");
+        _result += state.dump;
+      }
+    }
+    state.tag = _tag;
+    state.dump = "[" + _result + "]";
+  }
+  function writeBlockSequence(state, level, object, compact) {
+    var _result = "", _tag = state.tag, index, length, value2;
+    for (index = 0, length = object.length; index < length; index += 1) {
+      value2 = object[index];
+      if (state.replacer) {
+        value2 = state.replacer.call(object, String(index), value2);
+      }
+      if (writeNode(state, level + 1, value2, true, true, false, true) || typeof value2 === "undefined" && writeNode(state, level + 1, null, true, true, false, true)) {
+        if (!compact || _result !== "") {
+          _result += generateNextLine(state, level);
+        }
+        if (state.dump && CHAR_LINE_FEED === state.dump.charCodeAt(0)) {
+          _result += "-";
+        } else {
+          _result += "- ";
+        }
+        _result += state.dump;
+      }
+    }
+    state.tag = _tag;
+    state.dump = _result || "[]";
+  }
+  function writeFlowMapping(state, level, object) {
+    var _result = "", _tag = state.tag, objectKeyList = Object.keys(object), index, length, objectKey, objectValue, pairBuffer;
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      pairBuffer = "";
+      if (_result !== "")
+        pairBuffer += ", ";
+      if (state.condenseFlow)
+        pairBuffer += '"';
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+      if (state.replacer) {
+        objectValue = state.replacer.call(object, objectKey, objectValue);
+      }
+      if (!writeNode(state, level, objectKey, false, false)) {
+        continue;
+      }
+      if (state.dump.length > 1024)
+        pairBuffer += "? ";
+      pairBuffer += state.dump + (state.condenseFlow ? '"' : "") + ":" + (state.condenseFlow ? "" : " ");
+      if (!writeNode(state, level, objectValue, false, false)) {
+        continue;
+      }
+      pairBuffer += state.dump;
+      _result += pairBuffer;
+    }
+    state.tag = _tag;
+    state.dump = "{" + _result + "}";
+  }
+  function writeBlockMapping(state, level, object, compact) {
+    var _result = "", _tag = state.tag, objectKeyList = Object.keys(object), index, length, objectKey, objectValue, explicitPair, pairBuffer;
+    if (state.sortKeys === true) {
+      objectKeyList.sort();
+    } else if (typeof state.sortKeys === "function") {
+      objectKeyList.sort(state.sortKeys);
+    } else if (state.sortKeys) {
+      throw new YAMLException("sortKeys must be a boolean or a function");
+    }
+    for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+      pairBuffer = "";
+      if (!compact || _result !== "") {
+        pairBuffer += generateNextLine(state, level);
+      }
+      objectKey = objectKeyList[index];
+      objectValue = object[objectKey];
+      if (state.replacer) {
+        objectValue = state.replacer.call(object, objectKey, objectValue);
+      }
+      if (!writeNode(state, level + 1, objectKey, true, true, true)) {
+        continue;
+      }
+      explicitPair = state.tag !== null && state.tag !== "?" || state.dump && state.dump.length > 1024;
+      if (explicitPair) {
+        if (state.dump && CHAR_LINE_FEED === state.dump.charCodeAt(0)) {
+          pairBuffer += "?";
+        } else {
+          pairBuffer += "? ";
+        }
+      }
+      pairBuffer += state.dump;
+      if (explicitPair) {
+        pairBuffer += generateNextLine(state, level);
+      }
+      if (!writeNode(state, level + 1, objectValue, true, explicitPair)) {
+        continue;
+      }
+      if (state.dump && CHAR_LINE_FEED === state.dump.charCodeAt(0)) {
+        pairBuffer += ":";
+      } else {
+        pairBuffer += ": ";
+      }
+      pairBuffer += state.dump;
+      _result += pairBuffer;
+    }
+    state.tag = _tag;
+    state.dump = _result || "{}";
+  }
+  function detectType(state, object, explicit) {
+    var _result, typeList, index, length, type2, style2;
+    typeList = explicit ? state.explicitTypes : state.implicitTypes;
+    for (index = 0, length = typeList.length; index < length; index += 1) {
+      type2 = typeList[index];
+      if ((type2.instanceOf || type2.predicate) && (!type2.instanceOf || typeof object === "object" && object instanceof type2.instanceOf) && (!type2.predicate || type2.predicate(object))) {
+        if (explicit) {
+          if (type2.multi && type2.representName) {
+            state.tag = type2.representName(object);
+          } else {
+            state.tag = type2.tag;
+          }
+        } else {
+          state.tag = "?";
+        }
+        if (type2.represent) {
+          style2 = state.styleMap[type2.tag] || type2.defaultStyle;
+          if (_toString.call(type2.represent) === "[object Function]") {
+            _result = type2.represent(object, style2);
+          } else if (_hasOwnProperty.call(type2.represent, style2)) {
+            _result = type2.represent[style2](object, style2);
+          } else {
+            throw new YAMLException("!<" + type2.tag + '> tag resolver accepts not "' + style2 + '" style');
+          }
+          state.dump = _result;
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+  function writeNode(state, level, object, block, compact, iskey, isblockseq) {
+    state.tag = null;
+    state.dump = object;
+    if (!detectType(state, object, false)) {
+      detectType(state, object, true);
+    }
+    var type2 = _toString.call(state.dump);
+    var inblock = block;
+    var tagStr;
+    if (block) {
+      block = state.flowLevel < 0 || state.flowLevel > level;
+    }
+    var objectOrArray = type2 === "[object Object]" || type2 === "[object Array]", duplicateIndex, duplicate;
+    if (objectOrArray) {
+      duplicateIndex = state.duplicates.indexOf(object);
+      duplicate = duplicateIndex !== -1;
+    }
+    if (state.tag !== null && state.tag !== "?" || duplicate || state.indent !== 2 && level > 0) {
+      compact = false;
+    }
+    if (duplicate && state.usedDuplicates[duplicateIndex]) {
+      state.dump = "*ref_" + duplicateIndex;
+    } else {
+      if (objectOrArray && duplicate && !state.usedDuplicates[duplicateIndex]) {
+        state.usedDuplicates[duplicateIndex] = true;
+      }
+      if (type2 === "[object Object]") {
+        if (block && Object.keys(state.dump).length !== 0) {
+          writeBlockMapping(state, level, state.dump, compact);
+          if (duplicate) {
+            state.dump = "&ref_" + duplicateIndex + state.dump;
+          }
+        } else {
+          writeFlowMapping(state, level, state.dump);
+          if (duplicate) {
+            state.dump = "&ref_" + duplicateIndex + " " + state.dump;
+          }
+        }
+      } else if (type2 === "[object Array]") {
+        if (block && state.dump.length !== 0) {
+          if (state.noArrayIndent && !isblockseq && level > 0) {
+            writeBlockSequence(state, level - 1, state.dump, compact);
+          } else {
+            writeBlockSequence(state, level, state.dump, compact);
+          }
+          if (duplicate) {
+            state.dump = "&ref_" + duplicateIndex + state.dump;
+          }
+        } else {
+          writeFlowSequence(state, level, state.dump);
+          if (duplicate) {
+            state.dump = "&ref_" + duplicateIndex + " " + state.dump;
+          }
+        }
+      } else if (type2 === "[object String]") {
+        if (state.tag !== "?") {
+          writeScalar(state, state.dump, level, iskey, inblock);
+        }
+      } else if (type2 === "[object Undefined]") {
+        return false;
+      } else {
+        if (state.skipInvalid)
+          return false;
+        throw new YAMLException("unacceptable kind of an object to dump " + type2);
+      }
+      if (state.tag !== null && state.tag !== "?") {
+        tagStr = encodeURI(
+          state.tag[0] === "!" ? state.tag.slice(1) : state.tag
+        ).replace(/!/g, "%21");
+        if (state.tag[0] === "!") {
+          tagStr = "!" + tagStr;
+        } else if (tagStr.slice(0, 18) === "tag:yaml.org,2002:") {
+          tagStr = "!!" + tagStr.slice(18);
+        } else {
+          tagStr = "!<" + tagStr + ">";
+        }
+        state.dump = tagStr + " " + state.dump;
+      }
+    }
+    return true;
+  }
+  function getDuplicateReferences(object, state) {
+    var objects = [], duplicatesIndexes = [], index, length;
+    inspectNode(object, objects, duplicatesIndexes);
+    for (index = 0, length = duplicatesIndexes.length; index < length; index += 1) {
+      state.duplicates.push(objects[duplicatesIndexes[index]]);
+    }
+    state.usedDuplicates = new Array(length);
+  }
+  function inspectNode(object, objects, duplicatesIndexes) {
+    var objectKeyList, index, length;
+    if (object !== null && typeof object === "object") {
+      index = objects.indexOf(object);
+      if (index !== -1) {
+        if (duplicatesIndexes.indexOf(index) === -1) {
+          duplicatesIndexes.push(index);
+        }
+      } else {
+        objects.push(object);
+        if (Array.isArray(object)) {
+          for (index = 0, length = object.length; index < length; index += 1) {
+            inspectNode(object[index], objects, duplicatesIndexes);
+          }
+        } else {
+          objectKeyList = Object.keys(object);
+          for (index = 0, length = objectKeyList.length; index < length; index += 1) {
+            inspectNode(object[objectKeyList[index]], objects, duplicatesIndexes);
+          }
+        }
+      }
+    }
+  }
+  function dump(input, options) {
+    options = options || {};
+    var state = new State(options);
+    if (!state.noRefs)
+      getDuplicateReferences(input, state);
+    var value2 = input;
+    if (state.replacer) {
+      value2 = state.replacer.call({ "": value2 }, "", value2);
+    }
+    if (writeNode(state, 0, value2, true, true))
+      return state.dump + "\n";
+    return "";
+  }
+  dumper.dump = dump;
+  return dumper;
+}
+var hasRequiredJsYaml;
+function requireJsYaml() {
+  if (hasRequiredJsYaml)
+    return jsYaml;
+  hasRequiredJsYaml = 1;
+  var loader2 = requireLoader();
+  var dumper2 = requireDumper();
+  function renamed(from2, to) {
+    return function() {
+      throw new Error("Function yaml." + from2 + " is removed in js-yaml 4. Use yaml." + to + " instead, which is now safe by default.");
+    };
+  }
+  jsYaml.Type = requireType();
+  jsYaml.Schema = requireSchema();
+  jsYaml.FAILSAFE_SCHEMA = requireFailsafe();
+  jsYaml.JSON_SCHEMA = requireJson();
+  jsYaml.CORE_SCHEMA = requireCore$1();
+  jsYaml.DEFAULT_SCHEMA = require_default();
+  jsYaml.load = loader2.load;
+  jsYaml.loadAll = loader2.loadAll;
+  jsYaml.dump = dumper2.dump;
+  jsYaml.YAMLException = requireException();
+  jsYaml.types = {
+    binary: requireBinary(),
+    float: requireFloat(),
+    map: requireMap$1(),
+    null: require_null(),
+    pairs: requirePairs(),
+    set: requireSet(),
+    timestamp: requireTimestamp(),
+    bool: requireBool(),
+    int: requireInt(),
+    merge: requireMerge(),
+    omap: requireOmap(),
+    seq: requireSeq(),
+    str: requireStr()
+  };
+  jsYaml.safeLoad = renamed("safeLoad", "load");
+  jsYaml.safeLoadAll = renamed("safeLoadAll", "loadAll");
+  jsYaml.safeDump = renamed("safeDump", "dump");
+  return jsYaml;
+}
+var __assign = commonjsGlobal && commonjsGlobal.__assign || function() {
+  __assign = Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p2 in s)
+        if (Object.prototype.hasOwnProperty.call(s, p2))
+          t[p2] = s[p2];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __createBinding = commonjsGlobal && commonjsGlobal.__createBinding || (Object.create ? function(o, m, k, k2) {
+  if (k2 === void 0)
+    k2 = k;
+  Object.defineProperty(o, k2, { enumerable: true, get: function() {
+    return m[k];
+  } });
+} : function(o, m, k, k2) {
+  if (k2 === void 0)
+    k2 = k;
+  o[k2] = m[k];
+});
+var __setModuleDefault = commonjsGlobal && commonjsGlobal.__setModuleDefault || (Object.create ? function(o, v) {
+  Object.defineProperty(o, "default", { enumerable: true, value: v });
+} : function(o, v) {
+  o["default"] = v;
+});
+var __importStar = commonjsGlobal && commonjsGlobal.__importStar || function(mod) {
+  if (mod && mod.__esModule)
+    return mod;
+  var result = {};
+  if (mod != null) {
+    for (var k in mod)
+      if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k))
+        __createBinding(result, mod, k);
+  }
+  __setModuleDefault(result, mod);
+  return result;
+};
+var __awaiter = commonjsGlobal && commonjsGlobal.__awaiter || function(thisArg, _arguments, P2, generator) {
+  function adopt(value2) {
+    return value2 instanceof P2 ? value2 : new P2(function(resolve2) {
+      resolve2(value2);
+    });
+  }
+  return new (P2 || (P2 = Promise))(function(resolve2, reject2) {
+    function fulfilled(value2) {
+      try {
+        step(generator.next(value2));
+      } catch (e) {
+        reject2(e);
+      }
+    }
+    function rejected(value2) {
+      try {
+        step(generator["throw"](value2));
+      } catch (e) {
+        reject2(e);
+      }
+    }
+    function step(result) {
+      result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+var __generator = commonjsGlobal && commonjsGlobal.__generator || function(thisArg, body) {
+  var _ = { label: 0, sent: function() {
+    if (t[0] & 1)
+      throw t[1];
+    return t[1];
+  }, trys: [], ops: [] }, f, y, t, g;
+  return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+    return this;
+  }), g;
+  function verb(n) {
+    return function(v) {
+      return step([n, v]);
+    };
+  }
+  function step(op) {
+    if (f)
+      throw new TypeError("Generator is already executing.");
+    while (_)
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
+          return t;
+        if (y = 0, t)
+          op = [op[0] & 2, t.value];
+        switch (op[0]) {
+          case 0:
+          case 1:
+            t = op;
+            break;
+          case 4:
+            _.label++;
+            return { value: op[1], done: false };
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
+          case 7:
+            op = _.ops.pop();
+            _.trys.pop();
+            continue;
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
+              break;
+            }
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
+            }
+            if (t && _.label < t[2]) {
+              _.label = t[2];
+              _.ops.push(op);
+              break;
+            }
+            if (t[2])
+              _.ops.pop();
+            _.trys.pop();
+            continue;
+        }
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
+      }
+    if (op[0] & 5)
+      throw op[1];
+    return { value: op[0] ? op[1] : void 0, done: true };
+  }
+};
+var __values = commonjsGlobal && commonjsGlobal.__values || function(o) {
+  var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+  if (m)
+    return m.call(o);
+  if (o && typeof o.length === "number")
+    return {
+      next: function() {
+        if (o && i >= o.length)
+          o = void 0;
+        return { value: o && o[i++], done: !o };
+      }
+    };
+  throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var __read = commonjsGlobal && commonjsGlobal.__read || function(o, n) {
+  var m = typeof Symbol === "function" && o[Symbol.iterator];
+  if (!m)
+    return o;
+  var i = m.call(o), r, ar = [], e;
+  try {
+    while ((n === void 0 || n-- > 0) && !(r = i.next()).done)
+      ar.push(r.value);
+  } catch (error) {
+    e = { error };
+  } finally {
+    try {
+      if (r && !r.done && (m = i["return"]))
+        m.call(i);
+    } finally {
+      if (e)
+        throw e.error;
+    }
+  }
+  return ar;
+};
+var __spreadArray = commonjsGlobal && commonjsGlobal.__spreadArray || function(to, from2, pack) {
+  if (pack || arguments.length === 2)
+    for (var i = 0, l = from2.length, ar; i < l; i++) {
+      if (ar || !(i in from2)) {
+        if (!ar)
+          ar = Array.prototype.slice.call(from2, 0, i);
+        ar[i] = from2[i];
+      }
+    }
+  return to.concat(ar || Array.prototype.slice.call(from2));
+};
+var __importDefault = commonjsGlobal && commonjsGlobal.__importDefault || function(mod) {
+  return mod && mod.__esModule ? mod : { "default": mod };
+};
+Object.defineProperty(client$1, "__esModule", { value: true });
+client$1.OpenAPIClientAxios = void 0;
+var axios_1 = __importDefault(require$$1);
+var bath_es5_1 = __importDefault(bathEs5);
+var dereference_json_schema_1 = dereferenceJsonSchema;
+var client_1 = client;
+var DefaultRunnerKey = "default";
+var OpenAPIClientAxios$1 = (
+  /** @class */
+  function() {
+    function OpenAPIClientAxios2(opts) {
+      var _a2;
+      var _this = this;
+      this.getClient = function() {
+        return __awaiter(_this, void 0, void 0, function() {
+          return __generator(this, function(_a3) {
+            if (!this.initialized) {
+              return [2, this.init()];
+            }
+            return [2, this.instance];
+          });
+        });
+      };
+      this.init = function() {
+        return __awaiter(_this, void 0, void 0, function() {
+          return __generator(this, function(_a3) {
+            switch (_a3.label) {
+              case 0:
+                return [4, this.loadDocument()];
+              case 1:
+                _a3.sent();
+                this.definition = (0, dereference_json_schema_1.dereferenceSync)(this.document);
+                this.instance = this.createAxiosInstance();
+                this.initialized = true;
+                return [2, this.instance];
+            }
+          });
+        });
+      };
+      this.initSync = function() {
+        if (typeof _this.inputDocument !== "object") {
+          throw new Error(".initSync() can't be called with a non-object definition. Please use .init()");
+        }
+        _this.document = _this.inputDocument;
+        _this.definition = (0, dereference_json_schema_1.dereferenceSync)(_this.document);
+        _this.instance = _this.createAxiosInstance();
+        _this.initialized = true;
+        return _this.instance;
+      };
+      this.getAxiosInstance = function() {
+        var instance = axios_1.default.create(_this.axiosConfigDefaults);
+        return instance;
+      };
+      this.createAxiosInstance = function() {
+        var e_1, _a3;
+        var instance = _this.getAxiosInstance();
+        var baseURL = _this.getBaseURL();
+        if (baseURL && !_this.axiosConfigDefaults.baseURL) {
+          instance.defaults.baseURL = baseURL;
+        }
+        var operations = _this.getOperations();
+        try {
+          for (var operations_1 = __values(operations), operations_1_1 = operations_1.next(); !operations_1_1.done; operations_1_1 = operations_1.next()) {
+            var operation = operations_1_1.value;
+            var operationId = operation.operationId;
+            if (operationId) {
+              instance[_this.transformOperationName(operationId)] = _this.createOperationMethod(operation);
+            }
+          }
+        } catch (e_1_1) {
+          e_1 = { error: e_1_1 };
+        } finally {
+          try {
+            if (operations_1_1 && !operations_1_1.done && (_a3 = operations_1.return))
+              _a3.call(operations_1);
+          } finally {
+            if (e_1)
+              throw e_1.error;
+          }
+        }
+        instance.paths = {};
+        var _loop_1 = function(path3) {
+          if (_this.definition.paths[path3]) {
+            if (!instance.paths[path3]) {
+              instance.paths[path3] = {};
+            }
+            var methods = _this.definition.paths[path3];
+            var _loop_2 = function(m2) {
+              if (methods[m2] && Object.values(client_1.HttpMethod).includes(m2)) {
+                var method_1 = m2;
+                var operation2 = _this.getOperations().find(function(op) {
+                  return op.method === method_1 && op.path === path3;
+                });
+                instance.paths[path3][method_1] = _this.createOperationMethod(operation2);
+              }
+            };
+            for (var m in methods) {
+              _loop_2(m);
+            }
+          }
+        };
+        for (var path2 in _this.definition.paths) {
+          _loop_1(path2);
+        }
+        instance.api = _this;
+        return instance;
+      };
+      this.getBaseURL = function(operation) {
+        var e_2, _a3, e_3, _b2;
+        if (!_this.definition) {
+          return void 0;
+        }
+        if (operation) {
+          if (typeof operation === "string") {
+            operation = _this.getOperation(operation);
+          }
+          if (operation.servers && operation.servers[0]) {
+            return operation.servers[0].url;
+          }
+        }
+        var targetServer;
+        if (typeof _this.defaultServer === "number") {
+          if (_this.definition.servers && _this.definition.servers[_this.defaultServer]) {
+            targetServer = _this.definition.servers[_this.defaultServer];
+          }
+        } else if (typeof _this.defaultServer === "string") {
+          try {
+            for (var _c = __values(_this.definition.servers), _d = _c.next(); !_d.done; _d = _c.next()) {
+              var server = _d.value;
+              if (server.description === _this.defaultServer) {
+                targetServer = server;
+                break;
+              }
+            }
+          } catch (e_2_1) {
+            e_2 = { error: e_2_1 };
+          } finally {
+            try {
+              if (_d && !_d.done && (_a3 = _c.return))
+                _a3.call(_c);
+            } finally {
+              if (e_2)
+                throw e_2.error;
+            }
+          }
+        } else if (_this.defaultServer.url) {
+          targetServer = _this.defaultServer;
+        }
+        if (!targetServer) {
+          return void 0;
+        }
+        var baseURL = targetServer.url;
+        var baseURLVariableSet = targetServer.variables;
+        var baseURLBuilder = (0, bath_es5_1.default)(baseURL);
+        if (!baseURLBuilder.names.length) {
+          return baseURL;
+        }
+        var baseURLVariablesResolved = {};
+        try {
+          for (var _e = __values(baseURLBuilder.names), _f = _e.next(); !_f.done; _f = _e.next()) {
+            var name_1 = _f.value;
+            var varValue = _this.baseURLVariables[name_1];
+            if (varValue !== void 0 && baseURLVariableSet[name_1].enum) {
+              if (typeof varValue === "number") {
+                var enumVal = baseURLVariableSet[name_1].enum[varValue];
+                if (enumVal) {
+                  baseURLVariablesResolved[name_1] = enumVal;
+                } else {
+                  throw new Error("index ".concat(varValue, " out of range for enum of baseURL variable: ").concat(name_1, ";               enum max index is ").concat(baseURLVariableSet[name_1].enum.length - 1));
+                }
+              } else if (typeof varValue === "string") {
+                if (baseURLVariableSet[name_1].enum.includes(varValue)) {
+                  baseURLVariablesResolved[name_1] = varValue;
+                } else {
+                  throw new Error("".concat(varValue, " is not a valid entry for baseURL variable ").concat(name_1, ";                 variable must be of the following: ").concat(baseURLVariableSet[name_1].enum.join(", ")));
+                }
+              }
+            } else {
+              baseURLVariablesResolved[name_1] = baseURLVariableSet[name_1].default;
+            }
+          }
+        } catch (e_3_1) {
+          e_3 = { error: e_3_1 };
+        } finally {
+          try {
+            if (_f && !_f.done && (_b2 = _e.return))
+              _b2.call(_e);
+          } finally {
+            if (e_3)
+              throw e_3.error;
+          }
+        }
+        return baseURLBuilder.path(baseURLVariablesResolved);
+      };
+      this.getAxiosConfigForOperation = function(operation, args) {
+        if (typeof operation === "string") {
+          operation = _this.getOperation(operation);
+        }
+        var request = _this.getRequestConfigForOperation(operation, args);
+        var axiosConfig = {
+          method: request.method,
+          url: request.path,
+          data: request.payload,
+          params: request.query,
+          headers: request.headers
+        };
+        var servers2 = operation.servers;
+        if (servers2 && servers2[0]) {
+          axiosConfig.baseURL = servers2[0].url;
+        }
+        var _a3 = __read(args, 3), config2 = _a3[2];
+        return __assign(__assign(__assign({}, axiosConfig), config2), { headers: __assign(__assign({}, axiosConfig === null || axiosConfig === void 0 ? void 0 : axiosConfig.headers), config2 === null || config2 === void 0 ? void 0 : config2.headers) });
+      };
+      this.getRequestConfigForOperation = function(operation, args) {
+        var e_4, _a3, e_5, _b2, e_6, _c, e_7, _d;
+        var _e, _f;
+        if (typeof operation === "string") {
+          operation = _this.getOperation(operation);
+        }
+        var pathParams = {};
+        var searchParams = new URLSearchParams();
+        var query = {};
+        var headers = {};
+        var cookies2 = {};
+        var parameters = operation.parameters || [];
+        var setRequestParam = function(name, value3, type2) {
+          var e_8, _a4;
+          switch (type2) {
+            case client_1.ParamType.Path:
+              pathParams[name] = value3;
+              break;
+            case client_1.ParamType.Query:
+              if (Array.isArray(value3)) {
+                try {
+                  for (var value_1 = __values(value3), value_1_1 = value_1.next(); !value_1_1.done; value_1_1 = value_1.next()) {
+                    var valueItem = value_1_1.value;
+                    searchParams.append(name, valueItem);
+                  }
+                } catch (e_8_1) {
+                  e_8 = { error: e_8_1 };
+                } finally {
+                  try {
+                    if (value_1_1 && !value_1_1.done && (_a4 = value_1.return))
+                      _a4.call(value_1);
+                  } finally {
+                    if (e_8)
+                      throw e_8.error;
+                  }
+                }
+              } else {
+                searchParams.append(name, value3);
+              }
+              query[name] = value3;
+              break;
+            case client_1.ParamType.Header:
+              headers[name] = value3;
+              break;
+            case client_1.ParamType.Cookie:
+              cookies2[name] = value3;
+              break;
+          }
+        };
+        var getParamType = function(paramName) {
+          var param2 = parameters.find(function(_a4) {
+            var name = _a4.name;
+            return name === paramName;
+          });
+          if (param2) {
+            return param2.in;
+          }
+          return client_1.ParamType.Query;
+        };
+        var getFirstOperationParam = function() {
+          var firstRequiredParam = parameters.find(function(_a4) {
+            var required = _a4.required;
+            return required === true;
+          });
+          if (firstRequiredParam) {
+            return firstRequiredParam;
+          }
+          var firstParam2 = parameters[0];
+          if (firstParam2) {
+            return firstParam2;
+          }
+        };
+        var _g = __read(args, 2), paramsArg = _g[0], payload = _g[1];
+        if (Array.isArray(paramsArg)) {
+          try {
+            for (var paramsArg_1 = __values(paramsArg), paramsArg_1_1 = paramsArg_1.next(); !paramsArg_1_1.done; paramsArg_1_1 = paramsArg_1.next()) {
+              var param = paramsArg_1_1.value;
+              setRequestParam(param.name, param.value, param.in || getParamType(param.name));
+            }
+          } catch (e_4_1) {
+            e_4 = { error: e_4_1 };
+          } finally {
+            try {
+              if (paramsArg_1_1 && !paramsArg_1_1.done && (_a3 = paramsArg_1.return))
+                _a3.call(paramsArg_1);
+            } finally {
+              if (e_4)
+                throw e_4.error;
+            }
+          }
+        } else if (typeof paramsArg === "object") {
+          for (var name_2 in paramsArg) {
+            if (paramsArg[name_2] !== void 0) {
+              setRequestParam(name_2, paramsArg[name_2], getParamType(name_2));
+            }
+          }
+        } else if (paramsArg) {
+          var firstParam = getFirstOperationParam();
+          if (!firstParam) {
+            throw new Error("No parameters found for operation ".concat(operation.operationId));
+          }
+          setRequestParam(firstParam.name, paramsArg, firstParam.in);
+        }
+        var pathBuilder = (0, bath_es5_1.default)(operation.path);
+        try {
+          for (var _h = __values(pathBuilder.names), _j = _h.next(); !_j.done; _j = _h.next()) {
+            var name_3 = _j.value;
+            var value2 = pathParams[name_3];
+            pathParams[name_3] = "".concat(value2);
+          }
+        } catch (e_5_1) {
+          e_5 = { error: e_5_1 };
+        } finally {
+          try {
+            if (_j && !_j.done && (_b2 = _h.return))
+              _b2.call(_h);
+          } finally {
+            if (e_5)
+              throw e_5.error;
+          }
+        }
+        var path2 = pathBuilder.path(pathParams);
+        var queryString = searchParams.toString();
+        var url = "".concat(_this.getBaseURL(operation)).concat(path2).concat(queryString ? "?".concat(queryString) : "");
+        var defaultHeaders = _this.client.defaults.headers;
+        try {
+          for (var _k = __values(Object.entries((_e = defaultHeaders.common) !== null && _e !== void 0 ? _e : {})), _l = _k.next(); !_l.done; _l = _k.next()) {
+            var _m = __read(_l.value, 2), key = _m[0], val = _m[1];
+            headers[key] = val;
+          }
+        } catch (e_6_1) {
+          e_6 = { error: e_6_1 };
+        } finally {
+          try {
+            if (_l && !_l.done && (_c = _k.return))
+              _c.call(_k);
+          } finally {
+            if (e_6)
+              throw e_6.error;
+          }
+        }
+        if (_this.applyMethodCommonHeaders) {
+          var methodHeaders = (_f = defaultHeaders[operation.method]) !== null && _f !== void 0 ? _f : {};
+          try {
+            for (var _o = __values(Object.entries(methodHeaders)), _p = _o.next(); !_p.done; _p = _o.next()) {
+              var _q = __read(_p.value, 2), key = _q[0], val = _q[1];
+              headers[key] = val;
+            }
+          } catch (e_7_1) {
+            e_7 = { error: e_7_1 };
+          } finally {
+            try {
+              if (_p && !_p.done && (_d = _o.return))
+                _d.call(_o);
+            } finally {
+              if (e_7)
+                throw e_7.error;
+            }
+          }
+        }
+        var config2 = {
+          method: operation.method,
+          url,
+          path: path2,
+          pathParams,
+          query,
+          queryString,
+          headers,
+          cookies: cookies2,
+          payload
+        };
+        return config2;
+      };
+      this.getOperations = function() {
+        var _a3;
+        var paths2 = ((_a3 = _this.definition) === null || _a3 === void 0 ? void 0 : _a3.paths) || {};
+        return Object.entries(paths2).flatMap(function(_a4) {
+          var _b2 = __read(_a4, 2), path2 = _b2[0], pathObject = _b2[1];
+          return Object.values(client_1.HttpMethod).map(function(method) {
+            return { path: path2, method, operation: pathObject[method] };
+          }).filter(function(_a5) {
+            var operation = _a5.operation;
+            return operation;
+          }).map(function(_a5) {
+            var _b3;
+            var operation = _a5.operation, method = _a5.method;
+            var op = __assign(__assign({}, typeof operation === "object" ? operation : {}), { path: path2, method });
+            if (pathObject.parameters) {
+              op.parameters = __spreadArray(__spreadArray([], __read(op.parameters || []), false), __read(pathObject.parameters), false);
+            }
+            if (pathObject.servers) {
+              op.servers = __spreadArray(__spreadArray([], __read(op.servers || []), false), __read(pathObject.servers), false);
+            }
+            op.security = (_b3 = op.security) !== null && _b3 !== void 0 ? _b3 : _this.definition.security;
+            return op;
+          });
+        });
+      };
+      this.getOperation = function(operationId) {
+        return _this.getOperations().find(function(op) {
+          return op.operationId === operationId;
+        });
+      };
+      this.createOperationMethod = function(operation) {
+        var originalOperationMethod = function() {
+          var args = [];
+          for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+          }
+          return __awaiter(_this, void 0, void 0, function() {
+            var axiosConfig, runner;
+            return __generator(this, function(_a3) {
+              axiosConfig = this.getAxiosConfigForOperation(operation, args);
+              runner = this.getRunner(operation.operationId);
+              return [2, runner.runRequest(axiosConfig, operation, runner.context)];
+            });
+          });
+        };
+        return _this.transformOperationMethod(originalOperationMethod, operation);
+      };
+      var optsWithDefaults = __assign(__assign({ quick: false, withServer: 0, baseURLVariables: {}, transformOperationName: function(operationId) {
+        return operationId;
+      }, transformOperationMethod: function(operationMethod) {
+        return operationMethod;
+      }, axiosRunner: function(axiosConfig) {
+        return _this.client.request(axiosConfig);
+      }, applyMethodCommonHeaders: false }, opts), { axiosConfigDefaults: __assign({}, opts.axiosConfigDefaults || {}) });
+      this.inputDocument = optsWithDefaults.definition;
+      this.quick = optsWithDefaults.quick;
+      this.axiosConfigDefaults = optsWithDefaults.axiosConfigDefaults;
+      this.defaultServer = optsWithDefaults.withServer;
+      this.baseURLVariables = optsWithDefaults.baseURLVariables;
+      this.applyMethodCommonHeaders = optsWithDefaults.applyMethodCommonHeaders;
+      this.transformOperationName = optsWithDefaults.transformOperationName;
+      this.transformOperationMethod = optsWithDefaults.transformOperationMethod;
+      this.runners = (_a2 = {}, _a2[DefaultRunnerKey] = { runRequest: optsWithDefaults.axiosRunner }, _a2);
+    }
+    Object.defineProperty(OpenAPIClientAxios2.prototype, "client", {
+      /**
+       * Returns the instance of OpenAPIClient
+       *
+       * @readonly
+       * @type {OpenAPIClient}
+       * @memberof OpenAPIClientAxios
+       */
+      get: function() {
+        return this.instance;
+      },
+      enumerable: false,
+      configurable: true
+    });
+    OpenAPIClientAxios2.prototype.withServer = function(server, variables) {
+      if (variables === void 0) {
+        variables = {};
+      }
+      this.defaultServer = server;
+      this.baseURLVariables = variables;
+    };
+    OpenAPIClientAxios2.prototype.loadDocument = function() {
+      var _a2;
+      return __awaiter(this, void 0, void 0, function() {
+        var client2, documentRes, yaml, err;
+        return __generator(this, function(_b2) {
+          switch (_b2.label) {
+            case 0:
+              if (!(typeof this.inputDocument === "object"))
+                return [3, 1];
+              this.document = this.inputDocument;
+              return [3, 6];
+            case 1:
+              client2 = this.getAxiosInstance();
+              return [4, client2.get(this.inputDocument)];
+            case 2:
+              documentRes = _b2.sent();
+              if (!(typeof documentRes.data === "object"))
+                return [3, 3];
+              this.document = documentRes.data;
+              return [3, 6];
+            case 3:
+              if (!(typeof documentRes.data === "string" && ((_a2 = documentRes.headers["content-type"]) === null || _a2 === void 0 ? void 0 : _a2.match(/ya?ml/))))
+                return [3, 5];
+              return [4, Promise.resolve().then(function() {
+                return __importStar(requireJsYaml());
+              })];
+            case 4:
+              yaml = _b2.sent();
+              this.document = yaml.load(documentRes.data);
+              return [3, 6];
+            case 5:
+              err = new Error("Invalid fesponse fetching OpenAPI definition: ".concat(documentRes));
+              err.response = documentRes;
+              throw err;
+            case 6:
+              return [2, this.document];
+          }
+        });
       });
+    };
+    OpenAPIClientAxios2.prototype.registerRunner = function(runner, operationId) {
+      this.runners[operationId !== null && operationId !== void 0 ? operationId : DefaultRunnerKey] = runner;
+    };
+    OpenAPIClientAxios2.prototype.getRunner = function(operationId) {
+      var _a2;
+      return (_a2 = this.runners[operationId]) !== null && _a2 !== void 0 ? _a2 : this.runners[DefaultRunnerKey];
+    };
+    return OpenAPIClientAxios2;
+  }()
+);
+client$1.OpenAPIClientAxios = OpenAPIClientAxios$1;
+(function(exports) {
+  var __createBinding2 = commonjsGlobal && commonjsGlobal.__createBinding || (Object.create ? function(o, m, k, k2) {
+    if (k2 === void 0)
+      k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() {
+      return m[k];
+    } });
+  } : function(o, m, k, k2) {
+    if (k2 === void 0)
+      k2 = k;
+    o[k2] = m[k];
+  });
+  var __exportStar = commonjsGlobal && commonjsGlobal.__exportStar || function(m, exports2) {
+    for (var p2 in m)
+      if (p2 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p2))
+        __createBinding2(exports2, m, p2);
+  };
+  Object.defineProperty(exports, "__esModule", { value: true });
+  var client_12 = client$1;
+  exports.default = client_12.OpenAPIClientAxios;
+  __exportStar(require$$1, exports);
+  __exportStar(client$1, exports);
+  __exportStar(client, exports);
+})(openapiClientAxios);
+const OpenAPIClientAxios = /* @__PURE__ */ getDefaultExportFromCjs(openapiClientAxios);
+const openapi = "3.0.1";
+const info = {
+  title: "Board Games API",
+  description: "Board Games API - https://github.com/connected-web/boardgames-api/",
+  version: "2023-07-23T19:02:17Z"
+};
+const servers = [
+  {
+    url: "https://boardgames-api.prod.connected-web.services"
+  }
+];
+const paths = {
+  "/status": {
+    get: {
+      operationId: "getStatus",
+      responses: {
+        "200": {
+          description: "200 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/StatusResponseModel"
+              }
+            }
+          }
+        }
+      },
+      security: [
+        {
+          BoardgamesAPIBoardGamesAPIPrivateApiRequestAuthorizerB54985A8: []
+        }
+      ]
+    },
+    options: {
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
     }
   },
-  watch: {
-    modelValue() {
-      this.actions = {};
-      this.results = {};
+  "/playrecords/list": {
+    get: {
+      operationId: "listPlayRecords",
+      responses: {
+        "200": {
+          description: "200 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/PlayRecordsModel"
+              }
+            }
+          }
+        }
+      },
+      security: [
+        {
+          BoardgamesAPIBoardGamesAPIPrivateApiRequestAuthorizerB54985A8: []
+        }
+      ]
+    },
+    options: {
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
+    }
+  },
+  "/playrecords": {
+    options: {
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
+    }
+  },
+  "/hello/{name}": {
+    get: {
+      operationId: "helloWorld",
+      parameters: [
+        {
+          name: "name",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        }
+      ],
+      responses: {
+        "200": {
+          description: "200 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/MessageResponseModel"
+              }
+            }
+          }
+        }
+      },
+      security: [
+        {
+          BoardgamesAPIBoardGamesAPIPrivateApiRequestAuthorizerB54985A8: []
+        }
+      ]
+    },
+    options: {
+      parameters: [
+        {
+          name: "name",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        }
+      ],
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
+    }
+  },
+  "/playrecords/delete": {
+    get: {
+      operationId: "deletePlayRecord",
+      responses: {
+        "200": {
+          description: "200 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/BasicObjectModel"
+              }
+            }
+          }
+        }
+      },
+      security: [
+        {
+          BoardgamesAPIBoardGamesAPIPrivateApiRequestAuthorizerB54985A8: []
+        }
+      ]
+    },
+    "delete": {
+      operationId: "deletePlayRecord",
+      responses: {
+        "200": {
+          description: "200 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/BasicObjectModel"
+              }
+            }
+          }
+        }
+      },
+      security: [
+        {
+          BoardgamesAPIBoardGamesAPIPrivateApiRequestAuthorizerB54985A8: []
+        }
+      ]
+    },
+    options: {
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
+    }
+  },
+  "/playrecords/list/{dateCode}": {
+    get: {
+      operationId: "listPlayRecordsByDate",
+      parameters: [
+        {
+          name: "dateCode",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        }
+      ],
+      responses: {
+        "200": {
+          description: "200 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/PlayRecordsModel"
+              }
+            }
+          }
+        }
+      },
+      security: [
+        {
+          BoardgamesAPIBoardGamesAPIPrivateApiRequestAuthorizerB54985A8: []
+        }
+      ]
+    },
+    options: {
+      parameters: [
+        {
+          name: "dateCode",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        }
+      ],
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
+    }
+  },
+  "/openapi": {
+    get: {
+      operationId: "getOpenAPISpec",
+      responses: {
+        "200": {
+          description: "200 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/BasicObjectModel"
+              }
+            }
+          }
+        }
+      },
+      security: [
+        {
+          BoardgamesAPIBoardGamesAPIPrivateApiRequestAuthorizerB54985A8: []
+        }
+      ]
+    },
+    options: {
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
+    }
+  },
+  "/playrecords/create": {
+    get: {
+      operationId: "createPlayRecord",
+      responses: {
+        "200": {
+          description: "200 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/BasicObjectModel"
+              }
+            }
+          }
+        }
+      },
+      security: [
+        {
+          BoardgamesAPIBoardGamesAPIPrivateApiRequestAuthorizerB54985A8: []
+        }
+      ]
+    },
+    post: {
+      operationId: "createPlayRecord",
+      responses: {
+        "200": {
+          description: "200 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/BasicObjectModel"
+              }
+            }
+          }
+        }
+      },
+      security: [
+        {
+          BoardgamesAPIBoardGamesAPIPrivateApiRequestAuthorizerB54985A8: []
+        }
+      ]
+    },
+    options: {
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
+    }
+  },
+  "/": {
+    options: {
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
+    }
+  },
+  "/hello": {
+    options: {
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
     }
   }
 };
-const ObjectActions_vue_vue_type_style_index_0_scoped_5851f9ea_lang = "";
-const _withScopeId = (n) => (pushScopeId("data-v-5851f9ea"), n = n(), popScopeId(), n);
-const _hoisted_1$1 = { class: "object-actions" };
-const _hoisted_2$1 = {
-  key: 0,
-  class: "inputs"
+const components = {
+  schemas: {
+    StatusResponseModel: {
+      title: "Status",
+      required: [
+        "deploymentTime"
+      ],
+      type: "object",
+      properties: {
+        deploymentTime: {
+          type: "string",
+          description: "The UTC timestamp representing the last time the server was updated"
+        }
+      }
+    },
+    BasicObjectModel: {
+      title: "Basic Object",
+      type: "object",
+      properties: {},
+      additionalProperties: true,
+      description: "A basic JSON object with key value pairs"
+    },
+    MessageResponseModel: {
+      title: "Message",
+      required: [
+        "message"
+      ],
+      type: "object",
+      properties: {
+        message: {
+          type: "string",
+          description: "The message returned by the server"
+        }
+      }
+    },
+    PlayRecordModel: {
+      title: "Play Record",
+      required: [
+        "coOp",
+        "date",
+        "name",
+        "noOfPlayers"
+      ],
+      type: "object",
+      properties: {
+        date: {
+          type: "string"
+        },
+        coOp: {
+          type: "string"
+        },
+        winner: {
+          type: "string"
+        },
+        name: {
+          type: "string"
+        },
+        noOfPlayers: {
+          type: "number"
+        },
+        key: {
+          type: "string"
+        }
+      }
+    },
+    PlayRecordsModel: {
+      title: "Play Records",
+      required: [
+        "playRecords"
+      ],
+      type: "object",
+      properties: {
+        playRecords: {
+          type: "array",
+          description: "An array of play records",
+          items: {
+            $ref: "#/components/schemas/PlayRecordModel"
+          }
+        }
+      }
+    }
+  },
+  securitySchemes: {
+    BoardgamesAPIBoardGamesAPIPrivateApiRequestAuthorizerB54985A8: {
+      type: "apiKey",
+      name: "Authorization",
+      "in": "header",
+      "x-amazon-apigateway-authtype": "custom"
+    }
+  }
 };
-const _hoisted_3 = ["onUpdate:modelValue", "placeholder"];
-const _hoisted_4 = { class: "row p5" };
-const _hoisted_5 = ["onClick"];
-const _hoisted_6 = { key: 1 };
-const _hoisted_7 = { key: 2 };
-const _hoisted_8 = { key: 4 };
-const _hoisted_9 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("h4", null, "Console Logs", -1));
-function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
-  const _component_icon = resolveComponent("icon");
-  const _component_ActionButton = resolveComponent("ActionButton");
-  const _component_SmartTable = resolveComponent("SmartTable");
-  return openBlock(), createElementBlock("div", _hoisted_1$1, [
-    (openBlock(true), createElementBlock(Fragment, null, renderList($options.signatures, (item) => {
-      var _a2, _b2, _c, _d, _e, _f, _g, _h;
-      return openBlock(), createElementBlock("div", {
-        key: `${item.description}_group`,
-        class: "object-action column p5"
-      }, [
-        createBaseVNode("h4", null, toDisplayString($options.sentenceCase(item.prop)), 1),
-        createBaseVNode("pre", null, [
-          createBaseVNode("code", null, toDisplayString(item.description), 1)
-        ]),
-        item.params ? (openBlock(), createElementBlock("div", _hoisted_2$1, [
-          (openBlock(true), createElementBlock(Fragment, null, renderList(item.params, (param) => {
-            return openBlock(), createElementBlock("div", {
-              key: `${item.description}_${param}_input`,
-              class: "input row"
-            }, [
-              createBaseVNode("label", null, toDisplayString($options.sentenceCase(param)), 1),
-              withDirectives(createBaseVNode("input", {
-                "onUpdate:modelValue": ($event) => item.inputs[param] = $event,
-                placeholder: param,
-                onInput: _cache[0] || (_cache[0] = ($event) => _ctx.$forceUpdate())
-              }, null, 40, _hoisted_3), [
-                [vModelText, item.inputs[param]]
-              ])
-            ]);
-          }), 128))
-        ])) : createCommentVNode("", true),
-        createBaseVNode("div", _hoisted_4, [
-          createBaseVNode("button", {
-            onClick: ($event) => item == null ? void 0 : item.action.reset()
-          }, [
-            createVNode(_component_icon, { icon: "recycle" }),
-            createTextVNode("Reset")
-          ], 8, _hoisted_5),
-          createVNode(_component_ActionButton, {
-            modelValue: item.action,
-            "onUpdate:modelValue": ($event) => item.action = $event,
-            params: $options.inputParams(item)
-          }, null, 8, ["modelValue", "onUpdate:modelValue", "params"])
-        ]),
-        ((_a2 = item == null ? void 0 : item.action) == null ? void 0 : _a2.loading) ? (openBlock(), createElementBlock("pre", _hoisted_6, "Loading...")) : createCommentVNode("", true),
-        ((_b2 = item == null ? void 0 : item.action) == null ? void 0 : _b2.errored) ? (openBlock(), createElementBlock("pre", _hoisted_7, "Error: " + toDisplayString((_c = item == null ? void 0 : item.action) == null ? void 0 : _c.error), 1)) : createCommentVNode("", true),
-        ((_d = item == null ? void 0 : item.action) == null ? void 0 : _d.finished) ? (openBlock(), createBlock(_component_SmartTable, {
-          key: 3,
-          value: $data.results[(_e = item.action) == null ? void 0 : _e.id] ?? "No result"
-        }, null, 8, ["value"])) : createCommentVNode("", true),
-        ((_g = (_f = item == null ? void 0 : item.action) == null ? void 0 : _f.spiedLogs) == null ? void 0 : _g.length) > 0 ? (openBlock(), createElementBlock("div", _hoisted_8, [
-          _hoisted_9,
-          createBaseVNode("pre", null, [
-            createBaseVNode("code", null, toDisplayString((_h = item == null ? void 0 : item.action) == null ? void 0 : _h.spiedLogs.map((n) => n.map((m) => JSON.stringify(m)).join(" ")).join("\n")), 1)
-          ])
-        ])) : createCommentVNode("", true)
-      ]);
-    }), 128))
-  ]);
-}
-const ObjectActions = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__scopeId", "data-v-5851f9ea"]]);
-const _sfc_main = {
-  components: { ObjectActions }
+const BoardgamesAPIDocument = {
+  openapi,
+  info,
+  servers,
+  paths,
+  components
 };
-const _hoisted_1 = { class: "api explorer page" };
-const _hoisted_2 = /* @__PURE__ */ createBaseVNode("h1", null, "Board Games API", -1);
-function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-  const _component_ObjectActions = resolveComponent("ObjectActions");
-  return openBlock(), createElementBlock("div", _hoisted_1, [
-    _hoisted_2,
-    createVNode(_component_ObjectActions)
-  ]);
-}
-const BoardGamesAPI = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render]]);
-const routes = [
-  { path: "/", component: Home },
-  { path: "/extras/icons", component: Icons },
-  { path: "/user/details", component: UserDetails },
-  { path: "/explore/boardgames-api", component: BoardGamesAPI }
-];
-const router = createRouter({
-  history: createWebHashHistory(),
-  routes
-});
-var noop$1 = function() {
+var noop3 = function() {
 };
-var _undefined$1 = noop$1();
+var _undefined$1 = noop3();
 var isValue$6 = function(val) {
   return val !== _undefined$1 && val !== null;
 };
 var isValue$5 = isValue$6;
-var forEach$3 = Array.prototype.forEach, create$1 = Object.create;
+var forEach$2 = Array.prototype.forEach, create$1 = Object.create;
 var process$1 = function(src, obj) {
   var key;
   for (key in src)
@@ -18491,7 +22853,7 @@ var process$1 = function(src, obj) {
 };
 var normalizeOptions = function(opts1) {
   var result = create$1(null);
-  forEach$3.call(arguments, function(options) {
+  forEach$2.call(arguments, function(options) {
     if (!isValue$5(options))
       return;
     process$1(Object(options), result);
@@ -18558,7 +22920,7 @@ var validValue = function(value2) {
     throw new TypeError("Cannot use null or undefined");
   return value2;
 };
-var callable$3 = validCallable, value = validValue, bind$1 = Function.prototype.bind, call$1 = Function.prototype.call, keys$1 = Object.keys, objPropertyIsEnumerable = Object.prototype.propertyIsEnumerable;
+var callable$3 = validCallable, value = validValue, bind = Function.prototype.bind, call$1 = Function.prototype.call, keys$1 = Object.keys, objPropertyIsEnumerable = Object.prototype.propertyIsEnumerable;
 var _iterate = function(method, defVal) {
   return function(obj, cb) {
     var list, thisArg = arguments[2], compareFn = arguments[3];
@@ -18566,7 +22928,7 @@ var _iterate = function(method, defVal) {
     callable$3(cb);
     list = keys$1(obj);
     if (compareFn) {
-      list.sort(typeof compareFn === "function" ? bind$1.call(compareFn, obj) : void 0);
+      list.sort(typeof compareFn === "function" ? bind.call(compareFn, obj) : void 0);
     }
     if (typeof method !== "function")
       method = list[method];
@@ -18577,7 +22939,7 @@ var _iterate = function(method, defVal) {
     });
   };
 };
-var forEach$2 = _iterate("forEach");
+var forEach$1 = _iterate("forEach");
 var registeredExtensions = {};
 var custom = { exports: {} };
 var isImplemented$6 = function() {
@@ -18815,10 +23177,10 @@ var is$1 = function(value2) {
   }
   return !isPrototype(value2);
 };
-var isFunction$2 = is$1;
+var isFunction$1 = is$1;
 var classRe = /^\s*class[\s{/}]/, functionToString = Function.prototype.toString;
 var is = function(value2) {
-  if (!isFunction$2(value2))
+  if (!isFunction$1(value2))
     return false;
   if (classRe.test(functionToString.call(value2)))
     return false;
@@ -18899,7 +23261,7 @@ var dExports = d$2.exports;
 var eventEmitter = { exports: {} };
 (function(module, exports) {
   var d2 = dExports, callable2 = validCallable, apply2 = Function.prototype.apply, call2 = Function.prototype.call, create2 = Object.create, defineProperty2 = Object.defineProperty, defineProperties2 = Object.defineProperties, hasOwnProperty2 = Object.prototype.hasOwnProperty, descriptor = { configurable: true, enumerable: false, writable: true }, on2, once, off, emit2, methods, descriptors2, base;
-  on2 = function(type, listener3) {
+  on2 = function(type2, listener3) {
     var data;
     callable2(listener3);
     if (!hasOwnProperty2.call(this, "__ee__")) {
@@ -18909,55 +23271,55 @@ var eventEmitter = { exports: {} };
     } else {
       data = this.__ee__;
     }
-    if (!data[type])
-      data[type] = listener3;
-    else if (typeof data[type] === "object")
-      data[type].push(listener3);
+    if (!data[type2])
+      data[type2] = listener3;
+    else if (typeof data[type2] === "object")
+      data[type2].push(listener3);
     else
-      data[type] = [data[type], listener3];
+      data[type2] = [data[type2], listener3];
     return this;
   };
-  once = function(type, listener3) {
+  once = function(type2, listener3) {
     var once2, self3;
     callable2(listener3);
     self3 = this;
-    on2.call(this, type, once2 = function() {
-      off.call(self3, type, once2);
+    on2.call(this, type2, once2 = function() {
+      off.call(self3, type2, once2);
       apply2.call(listener3, this, arguments);
     });
     once2.__eeOnceListener__ = listener3;
     return this;
   };
-  off = function(type, listener3) {
+  off = function(type2, listener3) {
     var data, listeners, candidate, i;
     callable2(listener3);
     if (!hasOwnProperty2.call(this, "__ee__"))
       return this;
     data = this.__ee__;
-    if (!data[type])
+    if (!data[type2])
       return this;
-    listeners = data[type];
+    listeners = data[type2];
     if (typeof listeners === "object") {
       for (i = 0; candidate = listeners[i]; ++i) {
         if (candidate === listener3 || candidate.__eeOnceListener__ === listener3) {
           if (listeners.length === 2)
-            data[type] = listeners[i ? 0 : 1];
+            data[type2] = listeners[i ? 0 : 1];
           else
             listeners.splice(i, 1);
         }
       }
     } else {
       if (listeners === listener3 || listeners.__eeOnceListener__ === listener3) {
-        delete data[type];
+        delete data[type2];
       }
     }
     return this;
   };
-  emit2 = function(type) {
+  emit2 = function(type2) {
     var i, l, listener3, listeners, args;
     if (!hasOwnProperty2.call(this, "__ee__"))
       return;
-    listeners = this.__ee__[type];
+    listeners = this.__ee__[type2];
     if (!listeners)
       return;
     if (typeof listeners === "object") {
@@ -19344,17 +23706,17 @@ function requireIsArguments() {
   };
   return isArguments;
 }
-var isFunction$1;
+var isFunction;
 var hasRequiredIsFunction;
 function requireIsFunction() {
   if (hasRequiredIsFunction)
-    return isFunction$1;
+    return isFunction;
   hasRequiredIsFunction = 1;
   var objToString = Object.prototype.toString, isFunctionStringTag = RegExp.prototype.test.bind(/^[object [A-Za-z0-9]*Function]$/);
-  isFunction$1 = function(value2) {
+  isFunction = function(value2) {
     return typeof value2 === "function" && isFunctionStringTag(objToString.call(value2));
   };
-  return isFunction$1;
+  return isFunction;
 }
 var isString$1;
 var hasRequiredIsString;
@@ -19475,10 +23837,10 @@ function requireFrom() {
   return from$1;
 }
 var from = requireFrom(), isArray$1 = Array.isArray;
-var toArray$2 = function(arrayLike) {
+var toArray$1 = function(arrayLike) {
   return isArray$1(arrayLike) ? arrayLike : from(arrayLike);
 };
-var toArray$1 = toArray$2, isValue = isValue$6, callable$2 = validCallable;
+var toArray = toArray$1, isValue = isValue$6, callable$2 = validCallable;
 var slice = Array.prototype.slice, resolveArgs;
 resolveArgs = function(args) {
   return this.map(function(resolve2, i) {
@@ -19486,7 +23848,7 @@ resolveArgs = function(args) {
   }).concat(slice.call(args, this.length));
 };
 var resolveResolve$1 = function(resolvers) {
-  resolvers = toArray$1(resolvers);
+  resolvers = toArray(resolvers);
   resolvers.forEach(function(resolve2) {
     if (isValue(resolve2))
       callable$2(resolve2);
@@ -19635,14 +23997,14 @@ var configureMap = function(original, length, options) {
       cache = create(null);
       conf.emit("clear", oldCache);
     },
-    on: function(type, listener3) {
-      if (type === "get")
+    on: function(type2, listener3) {
+      if (type2 === "get")
         getListeners = true;
-      else if (type === "set")
+      else if (type2 === "set")
         setListeners = true;
-      else if (type === "delete")
+      else if (type2 === "delete")
         deleteListeners = true;
-      return on.call(this, type, listener3);
+      return on.call(this, type2, listener3);
     },
     emit,
     updateEnv: function() {
@@ -19705,7 +24067,7 @@ var configureMap = function(original, length, options) {
   });
   return conf;
 };
-var callable = validCallable, forEach$1 = forEach$2, extensions = registeredExtensions, configure = configureMap, resolveLength$1 = resolveLength$2;
+var callable = validCallable, forEach = forEach$1, extensions = registeredExtensions, configure = configureMap, resolveLength$1 = resolveLength$2;
 var plain$1 = function self2(fn) {
   var options, length, conf;
   callable(fn);
@@ -19717,7 +24079,7 @@ var plain$1 = function self2(fn) {
     return fn;
   length = resolveLength$1(options.length, fn.length, options.async && extensions.async);
   conf = configure(fn, length, options);
-  forEach$1(extensions, function(extFn, name) {
+  forEach(extensions, function(extFn, name) {
     if (options[name])
       extFn(options[name], conf, options);
   });
@@ -19829,15 +24191,15 @@ function requireEIndexOf() {
   };
   return eIndexOf;
 }
-var get;
+var get$1;
 var hasRequiredGet;
 function requireGet() {
   if (hasRequiredGet)
-    return get;
+    return get$1;
   hasRequiredGet = 1;
   var indexOf = requireEIndexOf();
   var create2 = Object.create;
-  get = function() {
+  get$1 = function() {
     var lastId = 0, map2 = [], cache = create2(null);
     return {
       get: function(args) {
@@ -19887,7 +24249,7 @@ function requireGet() {
         return lastId;
       },
       delete: function(id) {
-        var index = 0, set2 = map2, i, args = cache[id], length = args.length, path = [];
+        var index = 0, set2 = map2, i, args = cache[id], length = args.length, path2 = [];
         if (length === 0) {
           delete set2[length];
         } else if (set2 = set2[length]) {
@@ -19896,7 +24258,7 @@ function requireGet() {
             if (i === -1) {
               return;
             }
-            path.push(set2, i);
+            path2.push(set2, i);
             set2 = set2[1][i];
             ++index;
           }
@@ -19907,9 +24269,9 @@ function requireGet() {
           id = set2[1][i];
           set2[0].splice(i, 1);
           set2[1].splice(i, 1);
-          while (!set2[0].length && path.length) {
-            i = path.pop();
-            set2 = path.pop();
+          while (!set2[0].length && path2.length) {
+            i = path2.pop();
+            set2 = path2.pop();
             set2[0].splice(i, 1);
             set2[1].splice(i, 1);
           }
@@ -19922,7 +24284,7 @@ function requireGet() {
       }
     };
   };
-  return get;
+  return get$1;
 }
 var get1;
 var hasRequiredGet1;
@@ -20002,13 +24364,13 @@ function requireGetFixed() {
         return lastId;
       },
       delete: function(id) {
-        var index = 0, set2 = map2, i, path = [], args = cache[id];
+        var index = 0, set2 = map2, i, path2 = [], args = cache[id];
         while (index < length - 1) {
           i = indexOf.call(set2[0], args[index]);
           if (i === -1) {
             return;
           }
-          path.push(set2, i);
+          path2.push(set2, i);
           set2 = set2[1][i];
           ++index;
         }
@@ -20019,9 +24381,9 @@ function requireGetFixed() {
         id = set2[1][i];
         set2[0].splice(i, 1);
         set2[1].splice(i, 1);
-        while (!set2[0].length && path.length) {
-          i = path.pop();
-          set2 = path.pop();
+        while (!set2[0].length && path2.length) {
+          i = path2.pop();
+          set2 = path2.pop();
           set2[0].splice(i, 1);
           set2[1].splice(i, 1);
         }
@@ -20042,7 +24404,7 @@ function requireMap() {
   if (hasRequiredMap)
     return map;
   hasRequiredMap = 1;
-  var callable2 = validCallable, forEach2 = forEach$2, call2 = Function.prototype.call;
+  var callable2 = validCallable, forEach2 = forEach$1, call2 = Function.prototype.call;
   map = function(obj, cb) {
     var result = {}, thisArg = arguments[2];
     callable2(cb);
@@ -20509,7 +24871,7 @@ function requireDispose() {
   if (hasRequiredDispose)
     return dispose;
   hasRequiredDispose = 1;
-  var callable2 = validCallable, forEach2 = forEach$2, extensions2 = registeredExtensions, apply2 = Function.prototype.apply;
+  var callable2 = validCallable, forEach2 = forEach$1, extensions2 = registeredExtensions, apply2 = Function.prototype.apply;
   extensions2.dispose = function(dispose2, conf, options) {
     var del;
     callable2(dispose2);
@@ -20565,7 +24927,7 @@ function requireMaxAge() {
   if (hasRequiredMaxAge)
     return maxAge;
   hasRequiredMaxAge = 1;
-  var aFrom = requireFrom(), forEach2 = forEach$2, nextTick2 = requireNextTick(), isPromise2 = requireIsPromise(), timeout = requireValidTimeout(), extensions2 = registeredExtensions;
+  var aFrom = requireFrom(), forEach2 = forEach$1, nextTick2 = requireNextTick(), isPromise2 = requireIsPromise(), timeout = requireValidTimeout(), extensions2 = registeredExtensions;
   var noop4 = Function.prototype, max2 = Math.max, min = Math.min, create2 = Object.create;
   extensions2.maxAge = function(maxAge2, conf, options) {
     var timeouts, postfix, preFetchAge, preFetchTimeouts;
@@ -20848,10 +25210,10 @@ function encodeBase64Url(input) {
 }
 function decodeBase64Url(input) {
   try {
-    const binary = atob(input.replace(/-/g, "+").replace(/_/g, "/").replace(/\s/g, ""));
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-      bytes[i] = binary.charCodeAt(i);
+    const binary2 = atob(input.replace(/-/g, "+").replace(/_/g, "/").replace(/\s/g, ""));
+    const bytes = new Uint8Array(binary2.length);
+    for (let i = 0; i < binary2.length; i++) {
+      bytes[i] = binary2.charCodeAt(i);
     }
     return bytes;
   } catch {
@@ -21020,22 +25382,22 @@ async function processDiscoveryResponse(expectedIssuerIdentifier, response) {
     throw new OPE('"response" is not a conform Authorization Server Metadata response');
   }
   assertReadableResponse(response);
-  let json;
+  let json2;
   try {
-    json = await response.json();
+    json2 = await response.json();
   } catch {
     throw new OPE('failed to parse "response" body as JSON');
   }
-  if (!isJsonObject(json)) {
+  if (!isJsonObject(json2)) {
     throw new OPE('"response" body must be a top level object');
   }
-  if (!validateString(json.issuer)) {
+  if (!validateString(json2.issuer)) {
     throw new OPE('"response" body "issuer" property must be a non-empty string');
   }
-  if (new URL(json.issuer).href !== expectedIssuerIdentifier.href) {
+  if (new URL(json2.issuer).href !== expectedIssuerIdentifier.href) {
     throw new OPE('"response" body "issuer" does not match "expectedIssuer"');
   }
-  return json;
+  return json2;
 }
 function randomBytes() {
   return b64u(crypto.getRandomValues(new Uint8Array(32)));
@@ -21121,14 +25483,14 @@ function keyToJws(key) {
       throw new UnsupportedOperationError("unsupported CryptoKey algorithm name");
   }
 }
-function getClockSkew(client) {
-  if (Number.isFinite(client[clockSkew])) {
-    return client[clockSkew];
+function getClockSkew(client2) {
+  if (Number.isFinite(client2[clockSkew])) {
+    return client2[clockSkew];
   }
   return 0;
 }
-function getClockTolerance(client) {
-  const tolerance = client[clockTolerance];
+function getClockTolerance(client2) {
+  const tolerance = client2[clockTolerance];
   if (Number.isFinite(tolerance) && Math.sign(tolerance) !== -1) {
     return tolerance;
   }
@@ -21137,23 +25499,23 @@ function getClockTolerance(client) {
 function epochTime() {
   return Math.floor(Date.now() / 1e3);
 }
-function clientAssertion(as, client) {
-  const now = epochTime() + getClockSkew(client);
+function clientAssertion(as, client2) {
+  const now = epochTime() + getClockSkew(client2);
   return {
     jti: randomBytes(),
     aud: [as.issuer, as.token_endpoint],
     exp: now + 60,
     iat: now,
     nbf: now,
-    iss: client.client_id,
-    sub: client.client_id
+    iss: client2.client_id,
+    sub: client2.client_id
   };
 }
-async function privateKeyJwt(as, client, key, kid) {
+async function privateKeyJwt(as, client2, key, kid) {
   return jwt({
     alg: keyToJws(key),
     kid
-  }, clientAssertion(as, client), key);
+  }, clientAssertion(as, client2), key);
 }
 function assertAs(as) {
   if (typeof as !== "object" || as === null) {
@@ -21164,11 +25526,11 @@ function assertAs(as) {
   }
   return true;
 }
-function assertClient(client) {
-  if (typeof client !== "object" || client === null) {
+function assertClient(client2) {
+  if (typeof client2 !== "object" || client2 === null) {
     throw new TypeError('"client" must be an object');
   }
-  if (!validateString(client.client_id)) {
+  if (!validateString(client2.client_id)) {
     throw new TypeError('"client.client_id" property must be a non-empty string');
   }
   return true;
@@ -21189,25 +25551,25 @@ function assertNoClientSecret(clientAuthMethod, clientSecret) {
     throw new TypeError(`"client.client_secret" property must not be provided when ${clientAuthMethod} client authentication method is used.`);
   }
 }
-async function clientAuthentication(as, client, body, headers, clientPrivateKey) {
+async function clientAuthentication(as, client2, body, headers, clientPrivateKey) {
   body.delete("client_secret");
   body.delete("client_assertion_type");
   body.delete("client_assertion");
-  switch (client.token_endpoint_auth_method) {
+  switch (client2.token_endpoint_auth_method) {
     case void 0:
     case "client_secret_basic": {
       assertNoClientPrivateKey("client_secret_basic", clientPrivateKey);
-      headers.set("authorization", clientSecretBasic(client.client_id, assertClientSecret(client.client_secret)));
+      headers.set("authorization", clientSecretBasic(client2.client_id, assertClientSecret(client2.client_secret)));
       break;
     }
     case "client_secret_post": {
       assertNoClientPrivateKey("client_secret_post", clientPrivateKey);
-      body.set("client_id", client.client_id);
-      body.set("client_secret", assertClientSecret(client.client_secret));
+      body.set("client_id", client2.client_id);
+      body.set("client_secret", assertClientSecret(client2.client_secret));
       break;
     }
     case "private_key_jwt": {
-      assertNoClientSecret("private_key_jwt", client.client_secret);
+      assertNoClientSecret("private_key_jwt", client2.client_secret);
       if (clientPrivateKey === void 0) {
         throw new TypeError('"options.clientPrivateKey" must be provided when "client.token_endpoint_auth_method" is "private_key_jwt"');
       }
@@ -21215,15 +25577,15 @@ async function clientAuthentication(as, client, body, headers, clientPrivateKey)
       if (!isPrivateKey(key)) {
         throw new TypeError('"options.clientPrivateKey.key" must be a private CryptoKey');
       }
-      body.set("client_id", client.client_id);
+      body.set("client_id", client2.client_id);
       body.set("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer");
-      body.set("client_assertion", await privateKeyJwt(as, client, key, kid));
+      body.set("client_assertion", await privateKeyJwt(as, client2, key, kid));
       break;
     }
     case "none": {
-      assertNoClientSecret("none", client.client_secret);
+      assertNoClientSecret("none", client2.client_secret);
       assertNoClientPrivateKey("none", clientPrivateKey);
-      body.set("client_id", client.client_id);
+      body.set("client_id", client2.client_id);
       break;
     }
     default:
@@ -21293,8 +25655,8 @@ function unquote(value2) {
 }
 const SPLIT_REGEXP = /((?:,|, )?[0-9a-zA-Z!#$%&'*+-.^_`|~]+=)/;
 const SCHEMES_REGEXP = /(?:^|, ?)([0-9a-zA-Z!#$%&'*+\-.^_`|~]+)(?=$|[ ,])/g;
-function wwwAuth(scheme, params) {
-  const arr = params.split(SPLIT_REGEXP).slice(1);
+function wwwAuth(scheme, params2) {
+  const arr = params2.split(SPLIT_REGEXP).slice(1);
   if (!arr.length) {
     return { scheme: scheme.toLowerCase(), parameters: {} };
   }
@@ -21342,8 +25704,8 @@ function parseWwwAuthenticateChallenges(response) {
   });
   return challenges;
 }
-async function authenticatedRequest(as, client, method, url, body, headers, options) {
-  await clientAuthentication(as, client, body, headers, options == null ? void 0 : options.clientPrivateKey);
+async function authenticatedRequest(as, client2, method, url, body, headers, options) {
+  await clientAuthentication(as, client2, body, headers, options == null ? void 0 : options.clientPrivateKey);
   headers.set("content-type", "application/x-www-form-urlencoded;charset=UTF-8");
   return fetch(url.href, {
     body,
@@ -21353,7 +25715,7 @@ async function authenticatedRequest(as, client, method, url, body, headers, opti
     signal: (options == null ? void 0 : options.signal) ? signal(options.signal) : null
   }).then(processDpopNonce);
 }
-async function tokenEndpointRequest(as, client, grantType, parameters, options) {
+async function tokenEndpointRequest(as, client2, grantType, parameters, options) {
   if (typeof as.token_endpoint !== "string") {
     throw new TypeError('"as.token_endpoint" must be a string');
   }
@@ -21362,19 +25724,19 @@ async function tokenEndpointRequest(as, client, grantType, parameters, options) 
   const headers = prepareHeaders(options == null ? void 0 : options.headers);
   headers.set("accept", "application/json");
   if ((options == null ? void 0 : options.DPoP) !== void 0) {
-    await dpopProofJwt(headers, options.DPoP, url, "POST", getClockSkew(client));
+    await dpopProofJwt(headers, options.DPoP, url, "POST", getClockSkew(client2));
   }
-  return authenticatedRequest(as, client, "POST", url, parameters, headers, options);
+  return authenticatedRequest(as, client2, "POST", url, parameters, headers, options);
 }
-async function refreshTokenGrantRequest(as, client, refreshToken, options) {
+async function refreshTokenGrantRequest(as, client2, refreshToken, options) {
   assertAs(as);
-  assertClient(client);
+  assertClient(client2);
   if (!validateString(refreshToken)) {
     throw new TypeError('"refreshToken" must be a non-empty string');
   }
   const parameters = new URLSearchParams(options == null ? void 0 : options.additionalParameters);
   parameters.set("refresh_token", refreshToken);
-  return tokenEndpointRequest(as, client, "refresh_token", parameters, options);
+  return tokenEndpointRequest(as, client2, "refresh_token", parameters, options);
 }
 const idTokenClaims = /* @__PURE__ */ new WeakMap();
 function getValidatedIdTokenClaims(ref2) {
@@ -21387,9 +25749,9 @@ function getValidatedIdTokenClaims(ref2) {
   }
   return claims;
 }
-async function processGenericAccessTokenResponse(as, client, response, ignoreIdToken = false, ignoreRefreshToken = false) {
+async function processGenericAccessTokenResponse(as, client2, response, ignoreIdToken = false, ignoreRefreshToken = false) {
   assertAs(as);
-  assertClient(client);
+  assertClient(client2);
   if (!(response instanceof Response)) {
     throw new TypeError('"response" must be an instance of Response');
   }
@@ -21401,53 +25763,53 @@ async function processGenericAccessTokenResponse(as, client, response, ignoreIdT
     throw new OPE('"response" is not a conform Token Endpoint response');
   }
   assertReadableResponse(response);
-  let json;
+  let json2;
   try {
-    json = await response.json();
+    json2 = await response.json();
   } catch {
     throw new OPE('failed to parse "response" body as JSON');
   }
-  if (!isJsonObject(json)) {
+  if (!isJsonObject(json2)) {
     throw new OPE('"response" body must be a top level object');
   }
-  if (!validateString(json.access_token)) {
+  if (!validateString(json2.access_token)) {
     throw new OPE('"response" body "access_token" property must be a non-empty string');
   }
-  if (!validateString(json.token_type)) {
+  if (!validateString(json2.token_type)) {
     throw new OPE('"response" body "token_type" property must be a non-empty string');
   }
-  json.token_type = json.token_type.toLowerCase();
-  if (json.token_type !== "dpop" && json.token_type !== "bearer") {
+  json2.token_type = json2.token_type.toLowerCase();
+  if (json2.token_type !== "dpop" && json2.token_type !== "bearer") {
     throw new UnsupportedOperationError("unsupported `token_type` value");
   }
-  if (json.expires_in !== void 0 && (typeof json.expires_in !== "number" || json.expires_in <= 0)) {
+  if (json2.expires_in !== void 0 && (typeof json2.expires_in !== "number" || json2.expires_in <= 0)) {
     throw new OPE('"response" body "expires_in" property must be a positive number');
   }
-  if (!ignoreRefreshToken && json.refresh_token !== void 0 && !validateString(json.refresh_token)) {
+  if (!ignoreRefreshToken && json2.refresh_token !== void 0 && !validateString(json2.refresh_token)) {
     throw new OPE('"response" body "refresh_token" property must be a non-empty string');
   }
-  if (json.scope !== void 0 && typeof json.scope !== "string") {
+  if (json2.scope !== void 0 && typeof json2.scope !== "string") {
     throw new OPE('"response" body "scope" property must be a string');
   }
   if (!ignoreIdToken) {
-    if (json.id_token !== void 0 && !validateString(json.id_token)) {
+    if (json2.id_token !== void 0 && !validateString(json2.id_token)) {
       throw new OPE('"response" body "id_token" property must be a non-empty string');
     }
-    if (json.id_token) {
-      const { claims } = await validateJwt(json.id_token, checkSigningAlgorithm.bind(void 0, client.id_token_signed_response_alg, as.id_token_signing_alg_values_supported), noSignatureCheck, getClockSkew(client), getClockTolerance(client)).then(validatePresence.bind(void 0, ["aud", "exp", "iat", "iss", "sub"])).then(validateIssuer.bind(void 0, as.issuer)).then(validateAudience.bind(void 0, client.client_id));
-      if (Array.isArray(claims.aud) && claims.aud.length !== 1 && claims.azp !== client.client_id) {
+    if (json2.id_token) {
+      const { claims } = await validateJwt(json2.id_token, checkSigningAlgorithm.bind(void 0, client2.id_token_signed_response_alg, as.id_token_signing_alg_values_supported), noSignatureCheck, getClockSkew(client2), getClockTolerance(client2)).then(validatePresence.bind(void 0, ["aud", "exp", "iat", "iss", "sub"])).then(validateIssuer.bind(void 0, as.issuer)).then(validateAudience.bind(void 0, client2.client_id));
+      if (Array.isArray(claims.aud) && claims.aud.length !== 1 && claims.azp !== client2.client_id) {
         throw new OPE('unexpected ID Token "azp" (authorized party) claim value');
       }
-      if (client.require_auth_time && typeof claims.auth_time !== "number") {
+      if (client2.require_auth_time && typeof claims.auth_time !== "number") {
         throw new OPE('unexpected ID Token "auth_time" (authentication time) claim value');
       }
-      idTokenClaims.set(json, claims);
+      idTokenClaims.set(json2, claims);
     }
   }
-  return json;
+  return json2;
 }
-async function processRefreshTokenResponse(as, client, response) {
-  return processGenericAccessTokenResponse(as, client, response);
+async function processRefreshTokenResponse(as, client2, response) {
+  return processGenericAccessTokenResponse(as, client2, response);
 }
 function validateAudience(expected, result) {
   if (Array.isArray(result.claims.aud)) {
@@ -21470,9 +25832,9 @@ function brand(searchParams) {
   branded.add(searchParams);
   return searchParams;
 }
-async function authorizationCodeGrantRequest(as, client, callbackParameters, redirectUri, codeVerifier, options) {
+async function authorizationCodeGrantRequest(as, client2, callbackParameters, redirectUri, codeVerifier, options) {
   assertAs(as);
-  assertClient(client);
+  assertClient(client2);
   if (!branded.has(callbackParameters)) {
     throw new TypeError('"callbackParameters" must be an instance of URLSearchParams obtained from "validateAuthResponse()", or "validateJwtAuthResponse()');
   }
@@ -21490,7 +25852,7 @@ async function authorizationCodeGrantRequest(as, client, callbackParameters, red
   parameters.set("redirect_uri", redirectUri);
   parameters.set("code_verifier", codeVerifier);
   parameters.set("code", code);
-  return tokenEndpointRequest(as, client, "authorization_code", parameters, options);
+  return tokenEndpointRequest(as, client2, "authorization_code", parameters, options);
 }
 const claimNames = {
   aud: "audience",
@@ -21509,25 +25871,25 @@ function validatePresence(required, result) {
 }
 const expectNoNonce = Symbol();
 const skipAuthTimeCheck = Symbol();
-async function processAuthorizationCodeOpenIDResponse(as, client, response, expectedNonce, maxAge2) {
-  const result = await processGenericAccessTokenResponse(as, client, response);
+async function processAuthorizationCodeOpenIDResponse(as, client2, response, expectedNonce, maxAge2) {
+  const result = await processGenericAccessTokenResponse(as, client2, response);
   if (isOAuth2Error(result)) {
     return result;
   }
   if (!validateString(result.id_token)) {
     throw new OPE('"response" body "id_token" property must be a non-empty string');
   }
-  maxAge2 ?? (maxAge2 = client.default_max_age ?? skipAuthTimeCheck);
+  maxAge2 ?? (maxAge2 = client2.default_max_age ?? skipAuthTimeCheck);
   const claims = getValidatedIdTokenClaims(result);
-  if ((client.require_auth_time || maxAge2 !== skipAuthTimeCheck) && claims.auth_time === void 0) {
+  if ((client2.require_auth_time || maxAge2 !== skipAuthTimeCheck) && claims.auth_time === void 0) {
     throw new OPE('ID Token "auth_time" (authentication time) claim missing');
   }
   if (maxAge2 !== skipAuthTimeCheck) {
     if (typeof maxAge2 !== "number" || maxAge2 < 0) {
       throw new TypeError('"options.max_age" must be a non-negative number');
     }
-    const now = epochTime() + getClockSkew(client);
-    const tolerance = getClockTolerance(client);
+    const now = epochTime() + getClockSkew(client2);
+    const tolerance = getClockTolerance(client2);
     if (claims.auth_time + maxAge2 < now - tolerance) {
       throw new OPE("too much time has elapsed since the last End-User authentication");
     }
@@ -21561,21 +25923,21 @@ async function handleOAuthBodyError(response) {
   if (response.status > 399 && response.status < 500) {
     assertReadableResponse(response);
     try {
-      const json = await response.json();
-      if (isJsonObject(json) && typeof json.error === "string" && json.error.length) {
-        if (json.error_description !== void 0 && typeof json.error_description !== "string") {
-          delete json.error_description;
+      const json2 = await response.json();
+      if (isJsonObject(json2) && typeof json2.error === "string" && json2.error.length) {
+        if (json2.error_description !== void 0 && typeof json2.error_description !== "string") {
+          delete json2.error_description;
         }
-        if (json.error_uri !== void 0 && typeof json.error_uri !== "string") {
-          delete json.error_uri;
+        if (json2.error_uri !== void 0 && typeof json2.error_uri !== "string") {
+          delete json2.error_uri;
         }
-        if (json.algs !== void 0 && typeof json.algs !== "string") {
-          delete json.algs;
+        if (json2.algs !== void 0 && typeof json2.algs !== "string") {
+          delete json2.algs;
         }
-        if (json.scope !== void 0 && typeof json.scope !== "string") {
-          delete json.scope;
+        if (json2.scope !== void 0 && typeof json2.scope !== "string") {
+          delete json2.scope;
         }
-        return json;
+        return json2;
       }
     } catch {
     }
@@ -21703,9 +26065,9 @@ async function validateJwt(jws, checkAlg, getKey, clockSkew2, clockTolerance2) {
   }
   return { header, claims, signature };
 }
-function checkSigningAlgorithm(client, issuer, header) {
-  if (client !== void 0) {
-    if (header.alg !== client) {
+function checkSigningAlgorithm(client2, issuer, header) {
+  if (client2 !== void 0) {
+    if (header.alg !== client2) {
       throw new OPE('unexpected JWT "alg" header parameter');
     }
     return;
@@ -21729,9 +26091,9 @@ function getURLSearchParameter(parameters, name) {
 }
 const skipStateCheck = Symbol();
 const expectNoState = Symbol();
-function validateAuthResponse(as, client, parameters, expectedState) {
+function validateAuthResponse(as, client2, parameters, expectedState) {
   assertAs(as);
-  assertClient(client);
+  assertClient(client2);
   if (parameters instanceof URL) {
     parameters = parameters.searchParams;
   }
@@ -21785,8 +26147,8 @@ function validateAuthResponse(as, client, parameters, expectedState) {
   return brand(new URLSearchParams(parameters));
 }
 var cryptoJs = { exports: {} };
-function commonjsRequire(path) {
-  throw new Error('Could not dynamically require "' + path + '". Please configure the dynamicRequireTargets or/and ignoreDynamicRequires option of @rollup/plugin-commonjs appropriately for this require call to work.');
+function commonjsRequire(path2) {
+  throw new Error('Could not dynamically require "' + path2 + '". Please configure the dynamicRequireTargets or/and ignoreDynamicRequires option of @rollup/plugin-commonjs appropriately for this require call to work.');
 }
 var core = { exports: {} };
 const __viteBrowserExternal = {};
@@ -27342,2005 +31704,6 @@ class LocalStorage extends Storage {
     }
   }
 }
-function bind(fn, thisArg) {
-  return function wrap() {
-    return fn.apply(thisArg, arguments);
-  };
-}
-const { toString } = Object.prototype;
-const { getPrototypeOf } = Object;
-const kindOf = ((cache) => (thing) => {
-  const str2 = toString.call(thing);
-  return cache[str2] || (cache[str2] = str2.slice(8, -1).toLowerCase());
-})(/* @__PURE__ */ Object.create(null));
-const kindOfTest = (type) => {
-  type = type.toLowerCase();
-  return (thing) => kindOf(thing) === type;
-};
-const typeOfTest = (type) => (thing) => typeof thing === type;
-const { isArray } = Array;
-const isUndefined = typeOfTest("undefined");
-function isBuffer(val) {
-  return val !== null && !isUndefined(val) && val.constructor !== null && !isUndefined(val.constructor) && isFunction(val.constructor.isBuffer) && val.constructor.isBuffer(val);
-}
-const isArrayBuffer = kindOfTest("ArrayBuffer");
-function isArrayBufferView(val) {
-  let result;
-  if (typeof ArrayBuffer !== "undefined" && ArrayBuffer.isView) {
-    result = ArrayBuffer.isView(val);
-  } else {
-    result = val && val.buffer && isArrayBuffer(val.buffer);
-  }
-  return result;
-}
-const isString = typeOfTest("string");
-const isFunction = typeOfTest("function");
-const isNumber = typeOfTest("number");
-const isObject = (thing) => thing !== null && typeof thing === "object";
-const isBoolean = (thing) => thing === true || thing === false;
-const isPlainObject = (val) => {
-  if (kindOf(val) !== "object") {
-    return false;
-  }
-  const prototype2 = getPrototypeOf(val);
-  return (prototype2 === null || prototype2 === Object.prototype || Object.getPrototypeOf(prototype2) === null) && !(Symbol.toStringTag in val) && !(Symbol.iterator in val);
-};
-const isDate = kindOfTest("Date");
-const isFile = kindOfTest("File");
-const isBlob = kindOfTest("Blob");
-const isFileList = kindOfTest("FileList");
-const isStream = (val) => isObject(val) && isFunction(val.pipe);
-const isFormData = (thing) => {
-  let kind;
-  return thing && (typeof FormData === "function" && thing instanceof FormData || isFunction(thing.append) && ((kind = kindOf(thing)) === "formdata" || // detect form-data instance
-  kind === "object" && isFunction(thing.toString) && thing.toString() === "[object FormData]"));
-};
-const isURLSearchParams = kindOfTest("URLSearchParams");
-const trim = (str2) => str2.trim ? str2.trim() : str2.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
-function forEach(obj, fn, { allOwnKeys = false } = {}) {
-  if (obj === null || typeof obj === "undefined") {
-    return;
-  }
-  let i;
-  let l;
-  if (typeof obj !== "object") {
-    obj = [obj];
-  }
-  if (isArray(obj)) {
-    for (i = 0, l = obj.length; i < l; i++) {
-      fn.call(null, obj[i], i, obj);
-    }
-  } else {
-    const keys2 = allOwnKeys ? Object.getOwnPropertyNames(obj) : Object.keys(obj);
-    const len = keys2.length;
-    let key;
-    for (i = 0; i < len; i++) {
-      key = keys2[i];
-      fn.call(null, obj[key], key, obj);
-    }
-  }
-}
-function findKey(obj, key) {
-  key = key.toLowerCase();
-  const keys2 = Object.keys(obj);
-  let i = keys2.length;
-  let _key;
-  while (i-- > 0) {
-    _key = keys2[i];
-    if (key === _key.toLowerCase()) {
-      return _key;
-    }
-  }
-  return null;
-}
-const _global = (() => {
-  if (typeof globalThis !== "undefined")
-    return globalThis;
-  return typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : global;
-})();
-const isContextDefined = (context) => !isUndefined(context) && context !== _global;
-function merge() {
-  const { caseless } = isContextDefined(this) && this || {};
-  const result = {};
-  const assignValue = (val, key) => {
-    const targetKey = caseless && findKey(result, key) || key;
-    if (isPlainObject(result[targetKey]) && isPlainObject(val)) {
-      result[targetKey] = merge(result[targetKey], val);
-    } else if (isPlainObject(val)) {
-      result[targetKey] = merge({}, val);
-    } else if (isArray(val)) {
-      result[targetKey] = val.slice();
-    } else {
-      result[targetKey] = val;
-    }
-  };
-  for (let i = 0, l = arguments.length; i < l; i++) {
-    arguments[i] && forEach(arguments[i], assignValue);
-  }
-  return result;
-}
-const extend = (a, b, thisArg, { allOwnKeys } = {}) => {
-  forEach(b, (val, key) => {
-    if (thisArg && isFunction(val)) {
-      a[key] = bind(val, thisArg);
-    } else {
-      a[key] = val;
-    }
-  }, { allOwnKeys });
-  return a;
-};
-const stripBOM = (content) => {
-  if (content.charCodeAt(0) === 65279) {
-    content = content.slice(1);
-  }
-  return content;
-};
-const inherits = (constructor, superConstructor, props, descriptors2) => {
-  constructor.prototype = Object.create(superConstructor.prototype, descriptors2);
-  constructor.prototype.constructor = constructor;
-  Object.defineProperty(constructor, "super", {
-    value: superConstructor.prototype
-  });
-  props && Object.assign(constructor.prototype, props);
-};
-const toFlatObject = (sourceObj, destObj, filter2, propFilter) => {
-  let props;
-  let i;
-  let prop;
-  const merged = {};
-  destObj = destObj || {};
-  if (sourceObj == null)
-    return destObj;
-  do {
-    props = Object.getOwnPropertyNames(sourceObj);
-    i = props.length;
-    while (i-- > 0) {
-      prop = props[i];
-      if ((!propFilter || propFilter(prop, sourceObj, destObj)) && !merged[prop]) {
-        destObj[prop] = sourceObj[prop];
-        merged[prop] = true;
-      }
-    }
-    sourceObj = filter2 !== false && getPrototypeOf(sourceObj);
-  } while (sourceObj && (!filter2 || filter2(sourceObj, destObj)) && sourceObj !== Object.prototype);
-  return destObj;
-};
-const endsWith = (str2, searchString, position) => {
-  str2 = String(str2);
-  if (position === void 0 || position > str2.length) {
-    position = str2.length;
-  }
-  position -= searchString.length;
-  const lastIndex = str2.indexOf(searchString, position);
-  return lastIndex !== -1 && lastIndex === position;
-};
-const toArray = (thing) => {
-  if (!thing)
-    return null;
-  if (isArray(thing))
-    return thing;
-  let i = thing.length;
-  if (!isNumber(i))
-    return null;
-  const arr = new Array(i);
-  while (i-- > 0) {
-    arr[i] = thing[i];
-  }
-  return arr;
-};
-const isTypedArray = ((TypedArray) => {
-  return (thing) => {
-    return TypedArray && thing instanceof TypedArray;
-  };
-})(typeof Uint8Array !== "undefined" && getPrototypeOf(Uint8Array));
-const forEachEntry = (obj, fn) => {
-  const generator = obj && obj[Symbol.iterator];
-  const iterator = generator.call(obj);
-  let result;
-  while ((result = iterator.next()) && !result.done) {
-    const pair = result.value;
-    fn.call(obj, pair[0], pair[1]);
-  }
-};
-const matchAll = (regExp, str2) => {
-  let matches;
-  const arr = [];
-  while ((matches = regExp.exec(str2)) !== null) {
-    arr.push(matches);
-  }
-  return arr;
-};
-const isHTMLForm = kindOfTest("HTMLFormElement");
-const toCamelCase = (str2) => {
-  return str2.toLowerCase().replace(
-    /[-_\s]([a-z\d])(\w*)/g,
-    function replacer2(m, p1, p2) {
-      return p1.toUpperCase() + p2;
-    }
-  );
-};
-const hasOwnProperty$1 = (({ hasOwnProperty: hasOwnProperty2 }) => (obj, prop) => hasOwnProperty2.call(obj, prop))(Object.prototype);
-const isRegExp = kindOfTest("RegExp");
-const reduceDescriptors = (obj, reducer) => {
-  const descriptors2 = Object.getOwnPropertyDescriptors(obj);
-  const reducedDescriptors = {};
-  forEach(descriptors2, (descriptor, name) => {
-    if (reducer(descriptor, name, obj) !== false) {
-      reducedDescriptors[name] = descriptor;
-    }
-  });
-  Object.defineProperties(obj, reducedDescriptors);
-};
-const freezeMethods = (obj) => {
-  reduceDescriptors(obj, (descriptor, name) => {
-    if (isFunction(obj) && ["arguments", "caller", "callee"].indexOf(name) !== -1) {
-      return false;
-    }
-    const value2 = obj[name];
-    if (!isFunction(value2))
-      return;
-    descriptor.enumerable = false;
-    if ("writable" in descriptor) {
-      descriptor.writable = false;
-      return;
-    }
-    if (!descriptor.set) {
-      descriptor.set = () => {
-        throw Error("Can not rewrite read-only method '" + name + "'");
-      };
-    }
-  });
-};
-const toObjectSet = (arrayOrString, delimiter) => {
-  const obj = {};
-  const define = (arr) => {
-    arr.forEach((value2) => {
-      obj[value2] = true;
-    });
-  };
-  isArray(arrayOrString) ? define(arrayOrString) : define(String(arrayOrString).split(delimiter));
-  return obj;
-};
-const noop3 = () => {
-};
-const toFiniteNumber = (value2, defaultValue) => {
-  value2 = +value2;
-  return Number.isFinite(value2) ? value2 : defaultValue;
-};
-const ALPHA = "abcdefghijklmnopqrstuvwxyz";
-const DIGIT = "0123456789";
-const ALPHABET = {
-  DIGIT,
-  ALPHA,
-  ALPHA_DIGIT: ALPHA + ALPHA.toUpperCase() + DIGIT
-};
-const generateString = (size2 = 16, alphabet = ALPHABET.ALPHA_DIGIT) => {
-  let str2 = "";
-  const { length } = alphabet;
-  while (size2--) {
-    str2 += alphabet[Math.random() * length | 0];
-  }
-  return str2;
-};
-function isSpecCompliantForm(thing) {
-  return !!(thing && isFunction(thing.append) && thing[Symbol.toStringTag] === "FormData" && thing[Symbol.iterator]);
-}
-const toJSONObject = (obj) => {
-  const stack = new Array(10);
-  const visit = (source, i) => {
-    if (isObject(source)) {
-      if (stack.indexOf(source) >= 0) {
-        return;
-      }
-      if (!("toJSON" in source)) {
-        stack[i] = source;
-        const target = isArray(source) ? [] : {};
-        forEach(source, (value2, key) => {
-          const reducedValue = visit(value2, i + 1);
-          !isUndefined(reducedValue) && (target[key] = reducedValue);
-        });
-        stack[i] = void 0;
-        return target;
-      }
-    }
-    return source;
-  };
-  return visit(obj, 0);
-};
-const isAsyncFn = kindOfTest("AsyncFunction");
-const isThenable = (thing) => thing && (isObject(thing) || isFunction(thing)) && isFunction(thing.then) && isFunction(thing.catch);
-const utils = {
-  isArray,
-  isArrayBuffer,
-  isBuffer,
-  isFormData,
-  isArrayBufferView,
-  isString,
-  isNumber,
-  isBoolean,
-  isObject,
-  isPlainObject,
-  isUndefined,
-  isDate,
-  isFile,
-  isBlob,
-  isRegExp,
-  isFunction,
-  isStream,
-  isURLSearchParams,
-  isTypedArray,
-  isFileList,
-  forEach,
-  merge,
-  extend,
-  trim,
-  stripBOM,
-  inherits,
-  toFlatObject,
-  kindOf,
-  kindOfTest,
-  endsWith,
-  toArray,
-  forEachEntry,
-  matchAll,
-  isHTMLForm,
-  hasOwnProperty: hasOwnProperty$1,
-  hasOwnProp: hasOwnProperty$1,
-  // an alias to avoid ESLint no-prototype-builtins detection
-  reduceDescriptors,
-  freezeMethods,
-  toObjectSet,
-  toCamelCase,
-  noop: noop3,
-  toFiniteNumber,
-  findKey,
-  global: _global,
-  isContextDefined,
-  ALPHABET,
-  generateString,
-  isSpecCompliantForm,
-  toJSONObject,
-  isAsyncFn,
-  isThenable
-};
-function AxiosError(message, code, config2, request, response) {
-  Error.call(this);
-  if (Error.captureStackTrace) {
-    Error.captureStackTrace(this, this.constructor);
-  } else {
-    this.stack = new Error().stack;
-  }
-  this.message = message;
-  this.name = "AxiosError";
-  code && (this.code = code);
-  config2 && (this.config = config2);
-  request && (this.request = request);
-  response && (this.response = response);
-}
-utils.inherits(AxiosError, Error, {
-  toJSON: function toJSON() {
-    return {
-      // Standard
-      message: this.message,
-      name: this.name,
-      // Microsoft
-      description: this.description,
-      number: this.number,
-      // Mozilla
-      fileName: this.fileName,
-      lineNumber: this.lineNumber,
-      columnNumber: this.columnNumber,
-      stack: this.stack,
-      // Axios
-      config: utils.toJSONObject(this.config),
-      code: this.code,
-      status: this.response && this.response.status ? this.response.status : null
-    };
-  }
-});
-const prototype$1 = AxiosError.prototype;
-const descriptors = {};
-[
-  "ERR_BAD_OPTION_VALUE",
-  "ERR_BAD_OPTION",
-  "ECONNABORTED",
-  "ETIMEDOUT",
-  "ERR_NETWORK",
-  "ERR_FR_TOO_MANY_REDIRECTS",
-  "ERR_DEPRECATED",
-  "ERR_BAD_RESPONSE",
-  "ERR_BAD_REQUEST",
-  "ERR_CANCELED",
-  "ERR_NOT_SUPPORT",
-  "ERR_INVALID_URL"
-  // eslint-disable-next-line func-names
-].forEach((code) => {
-  descriptors[code] = { value: code };
-});
-Object.defineProperties(AxiosError, descriptors);
-Object.defineProperty(prototype$1, "isAxiosError", { value: true });
-AxiosError.from = (error, code, config2, request, response, customProps) => {
-  const axiosError = Object.create(prototype$1);
-  utils.toFlatObject(error, axiosError, function filter2(obj) {
-    return obj !== Error.prototype;
-  }, (prop) => {
-    return prop !== "isAxiosError";
-  });
-  AxiosError.call(axiosError, error.message, code, config2, request, response);
-  axiosError.cause = error;
-  axiosError.name = error.name;
-  customProps && Object.assign(axiosError, customProps);
-  return axiosError;
-};
-const httpAdapter = null;
-function isVisitable(thing) {
-  return utils.isPlainObject(thing) || utils.isArray(thing);
-}
-function removeBrackets(key) {
-  return utils.endsWith(key, "[]") ? key.slice(0, -2) : key;
-}
-function renderKey(path, key, dots) {
-  if (!path)
-    return key;
-  return path.concat(key).map(function each(token, i) {
-    token = removeBrackets(token);
-    return !dots && i ? "[" + token + "]" : token;
-  }).join(dots ? "." : "");
-}
-function isFlatArray(arr) {
-  return utils.isArray(arr) && !arr.some(isVisitable);
-}
-const predicates = utils.toFlatObject(utils, {}, null, function filter(prop) {
-  return /^is[A-Z]/.test(prop);
-});
-function toFormData(obj, formData, options) {
-  if (!utils.isObject(obj)) {
-    throw new TypeError("target must be an object");
-  }
-  formData = formData || new FormData();
-  options = utils.toFlatObject(options, {
-    metaTokens: true,
-    dots: false,
-    indexes: false
-  }, false, function defined(option, source) {
-    return !utils.isUndefined(source[option]);
-  });
-  const metaTokens = options.metaTokens;
-  const visitor = options.visitor || defaultVisitor;
-  const dots = options.dots;
-  const indexes = options.indexes;
-  const _Blob = options.Blob || typeof Blob !== "undefined" && Blob;
-  const useBlob = _Blob && utils.isSpecCompliantForm(formData);
-  if (!utils.isFunction(visitor)) {
-    throw new TypeError("visitor must be a function");
-  }
-  function convertValue(value2) {
-    if (value2 === null)
-      return "";
-    if (utils.isDate(value2)) {
-      return value2.toISOString();
-    }
-    if (!useBlob && utils.isBlob(value2)) {
-      throw new AxiosError("Blob is not supported. Use a Buffer instead.");
-    }
-    if (utils.isArrayBuffer(value2) || utils.isTypedArray(value2)) {
-      return useBlob && typeof Blob === "function" ? new Blob([value2]) : Buffer.from(value2);
-    }
-    return value2;
-  }
-  function defaultVisitor(value2, key, path) {
-    let arr = value2;
-    if (value2 && !path && typeof value2 === "object") {
-      if (utils.endsWith(key, "{}")) {
-        key = metaTokens ? key : key.slice(0, -2);
-        value2 = JSON.stringify(value2);
-      } else if (utils.isArray(value2) && isFlatArray(value2) || (utils.isFileList(value2) || utils.endsWith(key, "[]")) && (arr = utils.toArray(value2))) {
-        key = removeBrackets(key);
-        arr.forEach(function each(el, index) {
-          !(utils.isUndefined(el) || el === null) && formData.append(
-            // eslint-disable-next-line no-nested-ternary
-            indexes === true ? renderKey([key], index, dots) : indexes === null ? key : key + "[]",
-            convertValue(el)
-          );
-        });
-        return false;
-      }
-    }
-    if (isVisitable(value2)) {
-      return true;
-    }
-    formData.append(renderKey(path, key, dots), convertValue(value2));
-    return false;
-  }
-  const stack = [];
-  const exposedHelpers = Object.assign(predicates, {
-    defaultVisitor,
-    convertValue,
-    isVisitable
-  });
-  function build3(value2, path) {
-    if (utils.isUndefined(value2))
-      return;
-    if (stack.indexOf(value2) !== -1) {
-      throw Error("Circular reference detected in " + path.join("."));
-    }
-    stack.push(value2);
-    utils.forEach(value2, function each(el, key) {
-      const result = !(utils.isUndefined(el) || el === null) && visitor.call(
-        formData,
-        el,
-        utils.isString(key) ? key.trim() : key,
-        path,
-        exposedHelpers
-      );
-      if (result === true) {
-        build3(el, path ? path.concat(key) : [key]);
-      }
-    });
-    stack.pop();
-  }
-  if (!utils.isObject(obj)) {
-    throw new TypeError("data must be an object");
-  }
-  build3(obj);
-  return formData;
-}
-function encode$1(str2) {
-  const charMap = {
-    "!": "%21",
-    "'": "%27",
-    "(": "%28",
-    ")": "%29",
-    "~": "%7E",
-    "%20": "+",
-    "%00": "\0"
-  };
-  return encodeURIComponent(str2).replace(/[!'()~]|%20|%00/g, function replacer2(match) {
-    return charMap[match];
-  });
-}
-function AxiosURLSearchParams(params, options) {
-  this._pairs = [];
-  params && toFormData(params, this, options);
-}
-const prototype = AxiosURLSearchParams.prototype;
-prototype.append = function append(name, value2) {
-  this._pairs.push([name, value2]);
-};
-prototype.toString = function toString2(encoder2) {
-  const _encode = encoder2 ? function(value2) {
-    return encoder2.call(this, value2, encode$1);
-  } : encode$1;
-  return this._pairs.map(function each(pair) {
-    return _encode(pair[0]) + "=" + _encode(pair[1]);
-  }, "").join("&");
-};
-function encode(val) {
-  return encodeURIComponent(val).replace(/%3A/gi, ":").replace(/%24/g, "$").replace(/%2C/gi, ",").replace(/%20/g, "+").replace(/%5B/gi, "[").replace(/%5D/gi, "]");
-}
-function buildURL(url, params, options) {
-  if (!params) {
-    return url;
-  }
-  const _encode = options && options.encode || encode;
-  const serializeFn = options && options.serialize;
-  let serializedParams;
-  if (serializeFn) {
-    serializedParams = serializeFn(params, options);
-  } else {
-    serializedParams = utils.isURLSearchParams(params) ? params.toString() : new AxiosURLSearchParams(params, options).toString(_encode);
-  }
-  if (serializedParams) {
-    const hashmarkIndex = url.indexOf("#");
-    if (hashmarkIndex !== -1) {
-      url = url.slice(0, hashmarkIndex);
-    }
-    url += (url.indexOf("?") === -1 ? "?" : "&") + serializedParams;
-  }
-  return url;
-}
-class InterceptorManager {
-  constructor() {
-    this.handlers = [];
-  }
-  /**
-   * Add a new interceptor to the stack
-   *
-   * @param {Function} fulfilled The function to handle `then` for a `Promise`
-   * @param {Function} rejected The function to handle `reject` for a `Promise`
-   *
-   * @return {Number} An ID used to remove interceptor later
-   */
-  use(fulfilled, rejected, options) {
-    this.handlers.push({
-      fulfilled,
-      rejected,
-      synchronous: options ? options.synchronous : false,
-      runWhen: options ? options.runWhen : null
-    });
-    return this.handlers.length - 1;
-  }
-  /**
-   * Remove an interceptor from the stack
-   *
-   * @param {Number} id The ID that was returned by `use`
-   *
-   * @returns {Boolean} `true` if the interceptor was removed, `false` otherwise
-   */
-  eject(id) {
-    if (this.handlers[id]) {
-      this.handlers[id] = null;
-    }
-  }
-  /**
-   * Clear all interceptors from the stack
-   *
-   * @returns {void}
-   */
-  clear() {
-    if (this.handlers) {
-      this.handlers = [];
-    }
-  }
-  /**
-   * Iterate over all the registered interceptors
-   *
-   * This method is particularly useful for skipping over any
-   * interceptors that may have become `null` calling `eject`.
-   *
-   * @param {Function} fn The function to call for each interceptor
-   *
-   * @returns {void}
-   */
-  forEach(fn) {
-    utils.forEach(this.handlers, function forEachHandler(h2) {
-      if (h2 !== null) {
-        fn(h2);
-      }
-    });
-  }
-}
-const InterceptorManager$1 = InterceptorManager;
-const transitionalDefaults = {
-  silentJSONParsing: true,
-  forcedJSONParsing: true,
-  clarifyTimeoutError: false
-};
-const URLSearchParams$1 = typeof URLSearchParams !== "undefined" ? URLSearchParams : AxiosURLSearchParams;
-const FormData$1 = typeof FormData !== "undefined" ? FormData : null;
-const Blob$1 = typeof Blob !== "undefined" ? Blob : null;
-const isStandardBrowserEnv = (() => {
-  let product;
-  if (typeof navigator !== "undefined" && ((product = navigator.product) === "ReactNative" || product === "NativeScript" || product === "NS")) {
-    return false;
-  }
-  return typeof window !== "undefined" && typeof document !== "undefined";
-})();
-const isStandardBrowserWebWorkerEnv = (() => {
-  return typeof WorkerGlobalScope !== "undefined" && // eslint-disable-next-line no-undef
-  self instanceof WorkerGlobalScope && typeof self.importScripts === "function";
-})();
-const platform = {
-  isBrowser: true,
-  classes: {
-    URLSearchParams: URLSearchParams$1,
-    FormData: FormData$1,
-    Blob: Blob$1
-  },
-  isStandardBrowserEnv,
-  isStandardBrowserWebWorkerEnv,
-  protocols: ["http", "https", "file", "blob", "url", "data"]
-};
-function toURLEncodedForm(data, options) {
-  return toFormData(data, new platform.classes.URLSearchParams(), Object.assign({
-    visitor: function(value2, key, path, helpers) {
-      if (platform.isNode && utils.isBuffer(value2)) {
-        this.append(key, value2.toString("base64"));
-        return false;
-      }
-      return helpers.defaultVisitor.apply(this, arguments);
-    }
-  }, options));
-}
-function parsePropPath(name) {
-  return utils.matchAll(/\w+|\[(\w*)]/g, name).map((match) => {
-    return match[0] === "[]" ? "" : match[1] || match[0];
-  });
-}
-function arrayToObject(arr) {
-  const obj = {};
-  const keys2 = Object.keys(arr);
-  let i;
-  const len = keys2.length;
-  let key;
-  for (i = 0; i < len; i++) {
-    key = keys2[i];
-    obj[key] = arr[key];
-  }
-  return obj;
-}
-function formDataToJSON(formData) {
-  function buildPath(path, value2, target, index) {
-    let name = path[index++];
-    const isNumericKey = Number.isFinite(+name);
-    const isLast = index >= path.length;
-    name = !name && utils.isArray(target) ? target.length : name;
-    if (isLast) {
-      if (utils.hasOwnProp(target, name)) {
-        target[name] = [target[name], value2];
-      } else {
-        target[name] = value2;
-      }
-      return !isNumericKey;
-    }
-    if (!target[name] || !utils.isObject(target[name])) {
-      target[name] = [];
-    }
-    const result = buildPath(path, value2, target[name], index);
-    if (result && utils.isArray(target[name])) {
-      target[name] = arrayToObject(target[name]);
-    }
-    return !isNumericKey;
-  }
-  if (utils.isFormData(formData) && utils.isFunction(formData.entries)) {
-    const obj = {};
-    utils.forEachEntry(formData, (name, value2) => {
-      buildPath(parsePropPath(name), value2, obj, 0);
-    });
-    return obj;
-  }
-  return null;
-}
-const DEFAULT_CONTENT_TYPE = {
-  "Content-Type": void 0
-};
-function stringifySafely(rawValue, parser, encoder2) {
-  if (utils.isString(rawValue)) {
-    try {
-      (parser || JSON.parse)(rawValue);
-      return utils.trim(rawValue);
-    } catch (e) {
-      if (e.name !== "SyntaxError") {
-        throw e;
-      }
-    }
-  }
-  return (encoder2 || JSON.stringify)(rawValue);
-}
-const defaults = {
-  transitional: transitionalDefaults,
-  adapter: ["xhr", "http"],
-  transformRequest: [function transformRequest(data, headers) {
-    const contentType = headers.getContentType() || "";
-    const hasJSONContentType = contentType.indexOf("application/json") > -1;
-    const isObjectPayload = utils.isObject(data);
-    if (isObjectPayload && utils.isHTMLForm(data)) {
-      data = new FormData(data);
-    }
-    const isFormData2 = utils.isFormData(data);
-    if (isFormData2) {
-      if (!hasJSONContentType) {
-        return data;
-      }
-      return hasJSONContentType ? JSON.stringify(formDataToJSON(data)) : data;
-    }
-    if (utils.isArrayBuffer(data) || utils.isBuffer(data) || utils.isStream(data) || utils.isFile(data) || utils.isBlob(data)) {
-      return data;
-    }
-    if (utils.isArrayBufferView(data)) {
-      return data.buffer;
-    }
-    if (utils.isURLSearchParams(data)) {
-      headers.setContentType("application/x-www-form-urlencoded;charset=utf-8", false);
-      return data.toString();
-    }
-    let isFileList2;
-    if (isObjectPayload) {
-      if (contentType.indexOf("application/x-www-form-urlencoded") > -1) {
-        return toURLEncodedForm(data, this.formSerializer).toString();
-      }
-      if ((isFileList2 = utils.isFileList(data)) || contentType.indexOf("multipart/form-data") > -1) {
-        const _FormData = this.env && this.env.FormData;
-        return toFormData(
-          isFileList2 ? { "files[]": data } : data,
-          _FormData && new _FormData(),
-          this.formSerializer
-        );
-      }
-    }
-    if (isObjectPayload || hasJSONContentType) {
-      headers.setContentType("application/json", false);
-      return stringifySafely(data);
-    }
-    return data;
-  }],
-  transformResponse: [function transformResponse(data) {
-    const transitional2 = this.transitional || defaults.transitional;
-    const forcedJSONParsing = transitional2 && transitional2.forcedJSONParsing;
-    const JSONRequested = this.responseType === "json";
-    if (data && utils.isString(data) && (forcedJSONParsing && !this.responseType || JSONRequested)) {
-      const silentJSONParsing = transitional2 && transitional2.silentJSONParsing;
-      const strictJSONParsing = !silentJSONParsing && JSONRequested;
-      try {
-        return JSON.parse(data);
-      } catch (e) {
-        if (strictJSONParsing) {
-          if (e.name === "SyntaxError") {
-            throw AxiosError.from(e, AxiosError.ERR_BAD_RESPONSE, this, null, this.response);
-          }
-          throw e;
-        }
-      }
-    }
-    return data;
-  }],
-  /**
-   * A timeout in milliseconds to abort a request. If set to 0 (default) a
-   * timeout is not created.
-   */
-  timeout: 0,
-  xsrfCookieName: "XSRF-TOKEN",
-  xsrfHeaderName: "X-XSRF-TOKEN",
-  maxContentLength: -1,
-  maxBodyLength: -1,
-  env: {
-    FormData: platform.classes.FormData,
-    Blob: platform.classes.Blob
-  },
-  validateStatus: function validateStatus(status) {
-    return status >= 200 && status < 300;
-  },
-  headers: {
-    common: {
-      "Accept": "application/json, text/plain, */*"
-    }
-  }
-};
-utils.forEach(["delete", "get", "head"], function forEachMethodNoData(method) {
-  defaults.headers[method] = {};
-});
-utils.forEach(["post", "put", "patch"], function forEachMethodWithData(method) {
-  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
-});
-const defaults$1 = defaults;
-const ignoreDuplicateOf = utils.toObjectSet([
-  "age",
-  "authorization",
-  "content-length",
-  "content-type",
-  "etag",
-  "expires",
-  "from",
-  "host",
-  "if-modified-since",
-  "if-unmodified-since",
-  "last-modified",
-  "location",
-  "max-forwards",
-  "proxy-authorization",
-  "referer",
-  "retry-after",
-  "user-agent"
-]);
-const parseHeaders = (rawHeaders) => {
-  const parsed = {};
-  let key;
-  let val;
-  let i;
-  rawHeaders && rawHeaders.split("\n").forEach(function parser(line) {
-    i = line.indexOf(":");
-    key = line.substring(0, i).trim().toLowerCase();
-    val = line.substring(i + 1).trim();
-    if (!key || parsed[key] && ignoreDuplicateOf[key]) {
-      return;
-    }
-    if (key === "set-cookie") {
-      if (parsed[key]) {
-        parsed[key].push(val);
-      } else {
-        parsed[key] = [val];
-      }
-    } else {
-      parsed[key] = parsed[key] ? parsed[key] + ", " + val : val;
-    }
-  });
-  return parsed;
-};
-const $internals = Symbol("internals");
-function normalizeHeader(header) {
-  return header && String(header).trim().toLowerCase();
-}
-function normalizeValue(value2) {
-  if (value2 === false || value2 == null) {
-    return value2;
-  }
-  return utils.isArray(value2) ? value2.map(normalizeValue) : String(value2);
-}
-function parseTokens(str2) {
-  const tokens = /* @__PURE__ */ Object.create(null);
-  const tokensRE = /([^\s,;=]+)\s*(?:=\s*([^,;]+))?/g;
-  let match;
-  while (match = tokensRE.exec(str2)) {
-    tokens[match[1]] = match[2];
-  }
-  return tokens;
-}
-const isValidHeaderName = (str2) => /^[-_a-zA-Z0-9^`|~,!#$%&'*+.]+$/.test(str2.trim());
-function matchHeaderValue(context, value2, header, filter2, isHeaderNameFilter) {
-  if (utils.isFunction(filter2)) {
-    return filter2.call(this, value2, header);
-  }
-  if (isHeaderNameFilter) {
-    value2 = header;
-  }
-  if (!utils.isString(value2))
-    return;
-  if (utils.isString(filter2)) {
-    return value2.indexOf(filter2) !== -1;
-  }
-  if (utils.isRegExp(filter2)) {
-    return filter2.test(value2);
-  }
-}
-function formatHeader(header) {
-  return header.trim().toLowerCase().replace(/([a-z\d])(\w*)/g, (w2, char, str2) => {
-    return char.toUpperCase() + str2;
-  });
-}
-function buildAccessors(obj, header) {
-  const accessorName = utils.toCamelCase(" " + header);
-  ["get", "set", "has"].forEach((methodName) => {
-    Object.defineProperty(obj, methodName + accessorName, {
-      value: function(arg1, arg2, arg3) {
-        return this[methodName].call(this, header, arg1, arg2, arg3);
-      },
-      configurable: true
-    });
-  });
-}
-class AxiosHeaders {
-  constructor(headers) {
-    headers && this.set(headers);
-  }
-  set(header, valueOrRewrite, rewrite) {
-    const self3 = this;
-    function setHeader(_value, _header, _rewrite) {
-      const lHeader = normalizeHeader(_header);
-      if (!lHeader) {
-        throw new Error("header name must be a non-empty string");
-      }
-      const key = utils.findKey(self3, lHeader);
-      if (!key || self3[key] === void 0 || _rewrite === true || _rewrite === void 0 && self3[key] !== false) {
-        self3[key || _header] = normalizeValue(_value);
-      }
-    }
-    const setHeaders = (headers, _rewrite) => utils.forEach(headers, (_value, _header) => setHeader(_value, _header, _rewrite));
-    if (utils.isPlainObject(header) || header instanceof this.constructor) {
-      setHeaders(header, valueOrRewrite);
-    } else if (utils.isString(header) && (header = header.trim()) && !isValidHeaderName(header)) {
-      setHeaders(parseHeaders(header), valueOrRewrite);
-    } else {
-      header != null && setHeader(valueOrRewrite, header, rewrite);
-    }
-    return this;
-  }
-  get(header, parser) {
-    header = normalizeHeader(header);
-    if (header) {
-      const key = utils.findKey(this, header);
-      if (key) {
-        const value2 = this[key];
-        if (!parser) {
-          return value2;
-        }
-        if (parser === true) {
-          return parseTokens(value2);
-        }
-        if (utils.isFunction(parser)) {
-          return parser.call(this, value2, key);
-        }
-        if (utils.isRegExp(parser)) {
-          return parser.exec(value2);
-        }
-        throw new TypeError("parser must be boolean|regexp|function");
-      }
-    }
-  }
-  has(header, matcher) {
-    header = normalizeHeader(header);
-    if (header) {
-      const key = utils.findKey(this, header);
-      return !!(key && this[key] !== void 0 && (!matcher || matchHeaderValue(this, this[key], key, matcher)));
-    }
-    return false;
-  }
-  delete(header, matcher) {
-    const self3 = this;
-    let deleted = false;
-    function deleteHeader(_header) {
-      _header = normalizeHeader(_header);
-      if (_header) {
-        const key = utils.findKey(self3, _header);
-        if (key && (!matcher || matchHeaderValue(self3, self3[key], key, matcher))) {
-          delete self3[key];
-          deleted = true;
-        }
-      }
-    }
-    if (utils.isArray(header)) {
-      header.forEach(deleteHeader);
-    } else {
-      deleteHeader(header);
-    }
-    return deleted;
-  }
-  clear(matcher) {
-    const keys2 = Object.keys(this);
-    let i = keys2.length;
-    let deleted = false;
-    while (i--) {
-      const key = keys2[i];
-      if (!matcher || matchHeaderValue(this, this[key], key, matcher, true)) {
-        delete this[key];
-        deleted = true;
-      }
-    }
-    return deleted;
-  }
-  normalize(format2) {
-    const self3 = this;
-    const headers = {};
-    utils.forEach(this, (value2, header) => {
-      const key = utils.findKey(headers, header);
-      if (key) {
-        self3[key] = normalizeValue(value2);
-        delete self3[header];
-        return;
-      }
-      const normalized = format2 ? formatHeader(header) : String(header).trim();
-      if (normalized !== header) {
-        delete self3[header];
-      }
-      self3[normalized] = normalizeValue(value2);
-      headers[normalized] = true;
-    });
-    return this;
-  }
-  concat(...targets) {
-    return this.constructor.concat(this, ...targets);
-  }
-  toJSON(asStrings) {
-    const obj = /* @__PURE__ */ Object.create(null);
-    utils.forEach(this, (value2, header) => {
-      value2 != null && value2 !== false && (obj[header] = asStrings && utils.isArray(value2) ? value2.join(", ") : value2);
-    });
-    return obj;
-  }
-  [Symbol.iterator]() {
-    return Object.entries(this.toJSON())[Symbol.iterator]();
-  }
-  toString() {
-    return Object.entries(this.toJSON()).map(([header, value2]) => header + ": " + value2).join("\n");
-  }
-  get [Symbol.toStringTag]() {
-    return "AxiosHeaders";
-  }
-  static from(thing) {
-    return thing instanceof this ? thing : new this(thing);
-  }
-  static concat(first, ...targets) {
-    const computed2 = new this(first);
-    targets.forEach((target) => computed2.set(target));
-    return computed2;
-  }
-  static accessor(header) {
-    const internals = this[$internals] = this[$internals] = {
-      accessors: {}
-    };
-    const accessors = internals.accessors;
-    const prototype2 = this.prototype;
-    function defineAccessor(_header) {
-      const lHeader = normalizeHeader(_header);
-      if (!accessors[lHeader]) {
-        buildAccessors(prototype2, _header);
-        accessors[lHeader] = true;
-      }
-    }
-    utils.isArray(header) ? header.forEach(defineAccessor) : defineAccessor(header);
-    return this;
-  }
-}
-AxiosHeaders.accessor(["Content-Type", "Content-Length", "Accept", "Accept-Encoding", "User-Agent", "Authorization"]);
-utils.freezeMethods(AxiosHeaders.prototype);
-utils.freezeMethods(AxiosHeaders);
-const AxiosHeaders$1 = AxiosHeaders;
-function transformData(fns, response) {
-  const config2 = this || defaults$1;
-  const context = response || config2;
-  const headers = AxiosHeaders$1.from(context.headers);
-  let data = context.data;
-  utils.forEach(fns, function transform2(fn) {
-    data = fn.call(config2, data, headers.normalize(), response ? response.status : void 0);
-  });
-  headers.normalize();
-  return data;
-}
-function isCancel(value2) {
-  return !!(value2 && value2.__CANCEL__);
-}
-function CanceledError(message, config2, request) {
-  AxiosError.call(this, message == null ? "canceled" : message, AxiosError.ERR_CANCELED, config2, request);
-  this.name = "CanceledError";
-}
-utils.inherits(CanceledError, AxiosError, {
-  __CANCEL__: true
-});
-function settle(resolve2, reject2, response) {
-  const validateStatus2 = response.config.validateStatus;
-  if (!response.status || !validateStatus2 || validateStatus2(response.status)) {
-    resolve2(response);
-  } else {
-    reject2(new AxiosError(
-      "Request failed with status code " + response.status,
-      [AxiosError.ERR_BAD_REQUEST, AxiosError.ERR_BAD_RESPONSE][Math.floor(response.status / 100) - 4],
-      response.config,
-      response.request,
-      response
-    ));
-  }
-}
-const cookies = platform.isStandardBrowserEnv ? (
-  // Standard browser envs support document.cookie
-  function standardBrowserEnv() {
-    return {
-      write: function write(name, value2, expires, path, domain, secure) {
-        const cookie = [];
-        cookie.push(name + "=" + encodeURIComponent(value2));
-        if (utils.isNumber(expires)) {
-          cookie.push("expires=" + new Date(expires).toGMTString());
-        }
-        if (utils.isString(path)) {
-          cookie.push("path=" + path);
-        }
-        if (utils.isString(domain)) {
-          cookie.push("domain=" + domain);
-        }
-        if (secure === true) {
-          cookie.push("secure");
-        }
-        document.cookie = cookie.join("; ");
-      },
-      read: function read(name) {
-        const match = document.cookie.match(new RegExp("(^|;\\s*)(" + name + ")=([^;]*)"));
-        return match ? decodeURIComponent(match[3]) : null;
-      },
-      remove: function remove2(name) {
-        this.write(name, "", Date.now() - 864e5);
-      }
-    };
-  }()
-) : (
-  // Non standard browser env (web workers, react-native) lack needed support.
-  function nonStandardBrowserEnv() {
-    return {
-      write: function write() {
-      },
-      read: function read() {
-        return null;
-      },
-      remove: function remove2() {
-      }
-    };
-  }()
-);
-function isAbsoluteURL(url) {
-  return /^([a-z][a-z\d+\-.]*:)?\/\//i.test(url);
-}
-function combineURLs(baseURL, relativeURL) {
-  return relativeURL ? baseURL.replace(/\/+$/, "") + "/" + relativeURL.replace(/^\/+/, "") : baseURL;
-}
-function buildFullPath(baseURL, requestedURL) {
-  if (baseURL && !isAbsoluteURL(requestedURL)) {
-    return combineURLs(baseURL, requestedURL);
-  }
-  return requestedURL;
-}
-const isURLSameOrigin = platform.isStandardBrowserEnv ? (
-  // Standard browser envs have full support of the APIs needed to test
-  // whether the request URL is of the same origin as current location.
-  function standardBrowserEnv2() {
-    const msie = /(msie|trident)/i.test(navigator.userAgent);
-    const urlParsingNode = document.createElement("a");
-    let originURL;
-    function resolveURL(url) {
-      let href = url;
-      if (msie) {
-        urlParsingNode.setAttribute("href", href);
-        href = urlParsingNode.href;
-      }
-      urlParsingNode.setAttribute("href", href);
-      return {
-        href: urlParsingNode.href,
-        protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, "") : "",
-        host: urlParsingNode.host,
-        search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, "") : "",
-        hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, "") : "",
-        hostname: urlParsingNode.hostname,
-        port: urlParsingNode.port,
-        pathname: urlParsingNode.pathname.charAt(0) === "/" ? urlParsingNode.pathname : "/" + urlParsingNode.pathname
-      };
-    }
-    originURL = resolveURL(window.location.href);
-    return function isURLSameOrigin2(requestURL) {
-      const parsed = utils.isString(requestURL) ? resolveURL(requestURL) : requestURL;
-      return parsed.protocol === originURL.protocol && parsed.host === originURL.host;
-    };
-  }()
-) : (
-  // Non standard browser envs (web workers, react-native) lack needed support.
-  function nonStandardBrowserEnv2() {
-    return function isURLSameOrigin2() {
-      return true;
-    };
-  }()
-);
-function parseProtocol(url) {
-  const match = /^([-+\w]{1,25})(:?\/\/|:)/.exec(url);
-  return match && match[1] || "";
-}
-function speedometer(samplesCount, min) {
-  samplesCount = samplesCount || 10;
-  const bytes = new Array(samplesCount);
-  const timestamps = new Array(samplesCount);
-  let head = 0;
-  let tail = 0;
-  let firstSampleTS;
-  min = min !== void 0 ? min : 1e3;
-  return function push(chunkLength) {
-    const now = Date.now();
-    const startedAt = timestamps[tail];
-    if (!firstSampleTS) {
-      firstSampleTS = now;
-    }
-    bytes[head] = chunkLength;
-    timestamps[head] = now;
-    let i = tail;
-    let bytesCount = 0;
-    while (i !== head) {
-      bytesCount += bytes[i++];
-      i = i % samplesCount;
-    }
-    head = (head + 1) % samplesCount;
-    if (head === tail) {
-      tail = (tail + 1) % samplesCount;
-    }
-    if (now - firstSampleTS < min) {
-      return;
-    }
-    const passed = startedAt && now - startedAt;
-    return passed ? Math.round(bytesCount * 1e3 / passed) : void 0;
-  };
-}
-function progressEventReducer(listener3, isDownloadStream) {
-  let bytesNotified = 0;
-  const _speedometer = speedometer(50, 250);
-  return (e) => {
-    const loaded2 = e.loaded;
-    const total = e.lengthComputable ? e.total : void 0;
-    const progressBytes = loaded2 - bytesNotified;
-    const rate = _speedometer(progressBytes);
-    const inRange = loaded2 <= total;
-    bytesNotified = loaded2;
-    const data = {
-      loaded: loaded2,
-      total,
-      progress: total ? loaded2 / total : void 0,
-      bytes: progressBytes,
-      rate: rate ? rate : void 0,
-      estimated: rate && total && inRange ? (total - loaded2) / rate : void 0,
-      event: e
-    };
-    data[isDownloadStream ? "download" : "upload"] = true;
-    listener3(data);
-  };
-}
-const isXHRAdapterSupported = typeof XMLHttpRequest !== "undefined";
-const xhrAdapter = isXHRAdapterSupported && function(config2) {
-  return new Promise(function dispatchXhrRequest(resolve2, reject2) {
-    let requestData = config2.data;
-    const requestHeaders = AxiosHeaders$1.from(config2.headers).normalize();
-    const responseType = config2.responseType;
-    let onCanceled;
-    function done() {
-      if (config2.cancelToken) {
-        config2.cancelToken.unsubscribe(onCanceled);
-      }
-      if (config2.signal) {
-        config2.signal.removeEventListener("abort", onCanceled);
-      }
-    }
-    if (utils.isFormData(requestData)) {
-      if (platform.isStandardBrowserEnv || platform.isStandardBrowserWebWorkerEnv) {
-        requestHeaders.setContentType(false);
-      } else {
-        requestHeaders.setContentType("multipart/form-data;", false);
-      }
-    }
-    let request = new XMLHttpRequest();
-    if (config2.auth) {
-      const username = config2.auth.username || "";
-      const password = config2.auth.password ? unescape(encodeURIComponent(config2.auth.password)) : "";
-      requestHeaders.set("Authorization", "Basic " + btoa(username + ":" + password));
-    }
-    const fullPath = buildFullPath(config2.baseURL, config2.url);
-    request.open(config2.method.toUpperCase(), buildURL(fullPath, config2.params, config2.paramsSerializer), true);
-    request.timeout = config2.timeout;
-    function onloadend() {
-      if (!request) {
-        return;
-      }
-      const responseHeaders = AxiosHeaders$1.from(
-        "getAllResponseHeaders" in request && request.getAllResponseHeaders()
-      );
-      const responseData = !responseType || responseType === "text" || responseType === "json" ? request.responseText : request.response;
-      const response = {
-        data: responseData,
-        status: request.status,
-        statusText: request.statusText,
-        headers: responseHeaders,
-        config: config2,
-        request
-      };
-      settle(function _resolve(value2) {
-        resolve2(value2);
-        done();
-      }, function _reject(err) {
-        reject2(err);
-        done();
-      }, response);
-      request = null;
-    }
-    if ("onloadend" in request) {
-      request.onloadend = onloadend;
-    } else {
-      request.onreadystatechange = function handleLoad() {
-        if (!request || request.readyState !== 4) {
-          return;
-        }
-        if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf("file:") === 0)) {
-          return;
-        }
-        setTimeout(onloadend);
-      };
-    }
-    request.onabort = function handleAbort() {
-      if (!request) {
-        return;
-      }
-      reject2(new AxiosError("Request aborted", AxiosError.ECONNABORTED, config2, request));
-      request = null;
-    };
-    request.onerror = function handleError2() {
-      reject2(new AxiosError("Network Error", AxiosError.ERR_NETWORK, config2, request));
-      request = null;
-    };
-    request.ontimeout = function handleTimeout() {
-      let timeoutErrorMessage = config2.timeout ? "timeout of " + config2.timeout + "ms exceeded" : "timeout exceeded";
-      const transitional2 = config2.transitional || transitionalDefaults;
-      if (config2.timeoutErrorMessage) {
-        timeoutErrorMessage = config2.timeoutErrorMessage;
-      }
-      reject2(new AxiosError(
-        timeoutErrorMessage,
-        transitional2.clarifyTimeoutError ? AxiosError.ETIMEDOUT : AxiosError.ECONNABORTED,
-        config2,
-        request
-      ));
-      request = null;
-    };
-    if (platform.isStandardBrowserEnv) {
-      const xsrfValue = (config2.withCredentials || isURLSameOrigin(fullPath)) && config2.xsrfCookieName && cookies.read(config2.xsrfCookieName);
-      if (xsrfValue) {
-        requestHeaders.set(config2.xsrfHeaderName, xsrfValue);
-      }
-    }
-    requestData === void 0 && requestHeaders.setContentType(null);
-    if ("setRequestHeader" in request) {
-      utils.forEach(requestHeaders.toJSON(), function setRequestHeader(val, key) {
-        request.setRequestHeader(key, val);
-      });
-    }
-    if (!utils.isUndefined(config2.withCredentials)) {
-      request.withCredentials = !!config2.withCredentials;
-    }
-    if (responseType && responseType !== "json") {
-      request.responseType = config2.responseType;
-    }
-    if (typeof config2.onDownloadProgress === "function") {
-      request.addEventListener("progress", progressEventReducer(config2.onDownloadProgress, true));
-    }
-    if (typeof config2.onUploadProgress === "function" && request.upload) {
-      request.upload.addEventListener("progress", progressEventReducer(config2.onUploadProgress));
-    }
-    if (config2.cancelToken || config2.signal) {
-      onCanceled = (cancel) => {
-        if (!request) {
-          return;
-        }
-        reject2(!cancel || cancel.type ? new CanceledError(null, config2, request) : cancel);
-        request.abort();
-        request = null;
-      };
-      config2.cancelToken && config2.cancelToken.subscribe(onCanceled);
-      if (config2.signal) {
-        config2.signal.aborted ? onCanceled() : config2.signal.addEventListener("abort", onCanceled);
-      }
-    }
-    const protocol = parseProtocol(fullPath);
-    if (protocol && platform.protocols.indexOf(protocol) === -1) {
-      reject2(new AxiosError("Unsupported protocol " + protocol + ":", AxiosError.ERR_BAD_REQUEST, config2));
-      return;
-    }
-    request.send(requestData || null);
-  });
-};
-const knownAdapters = {
-  http: httpAdapter,
-  xhr: xhrAdapter
-};
-utils.forEach(knownAdapters, (fn, value2) => {
-  if (fn) {
-    try {
-      Object.defineProperty(fn, "name", { value: value2 });
-    } catch (e) {
-    }
-    Object.defineProperty(fn, "adapterName", { value: value2 });
-  }
-});
-const adapters = {
-  getAdapter: (adapters2) => {
-    adapters2 = utils.isArray(adapters2) ? adapters2 : [adapters2];
-    const { length } = adapters2;
-    let nameOrAdapter;
-    let adapter;
-    for (let i = 0; i < length; i++) {
-      nameOrAdapter = adapters2[i];
-      if (adapter = utils.isString(nameOrAdapter) ? knownAdapters[nameOrAdapter.toLowerCase()] : nameOrAdapter) {
-        break;
-      }
-    }
-    if (!adapter) {
-      if (adapter === false) {
-        throw new AxiosError(
-          `Adapter ${nameOrAdapter} is not supported by the environment`,
-          "ERR_NOT_SUPPORT"
-        );
-      }
-      throw new Error(
-        utils.hasOwnProp(knownAdapters, nameOrAdapter) ? `Adapter '${nameOrAdapter}' is not available in the build` : `Unknown adapter '${nameOrAdapter}'`
-      );
-    }
-    if (!utils.isFunction(adapter)) {
-      throw new TypeError("adapter is not a function");
-    }
-    return adapter;
-  },
-  adapters: knownAdapters
-};
-function throwIfCancellationRequested(config2) {
-  if (config2.cancelToken) {
-    config2.cancelToken.throwIfRequested();
-  }
-  if (config2.signal && config2.signal.aborted) {
-    throw new CanceledError(null, config2);
-  }
-}
-function dispatchRequest(config2) {
-  throwIfCancellationRequested(config2);
-  config2.headers = AxiosHeaders$1.from(config2.headers);
-  config2.data = transformData.call(
-    config2,
-    config2.transformRequest
-  );
-  if (["post", "put", "patch"].indexOf(config2.method) !== -1) {
-    config2.headers.setContentType("application/x-www-form-urlencoded", false);
-  }
-  const adapter = adapters.getAdapter(config2.adapter || defaults$1.adapter);
-  return adapter(config2).then(function onAdapterResolution(response) {
-    throwIfCancellationRequested(config2);
-    response.data = transformData.call(
-      config2,
-      config2.transformResponse,
-      response
-    );
-    response.headers = AxiosHeaders$1.from(response.headers);
-    return response;
-  }, function onAdapterRejection(reason) {
-    if (!isCancel(reason)) {
-      throwIfCancellationRequested(config2);
-      if (reason && reason.response) {
-        reason.response.data = transformData.call(
-          config2,
-          config2.transformResponse,
-          reason.response
-        );
-        reason.response.headers = AxiosHeaders$1.from(reason.response.headers);
-      }
-    }
-    return Promise.reject(reason);
-  });
-}
-const headersToObject = (thing) => thing instanceof AxiosHeaders$1 ? thing.toJSON() : thing;
-function mergeConfig(config1, config2) {
-  config2 = config2 || {};
-  const config3 = {};
-  function getMergedValue(target, source, caseless) {
-    if (utils.isPlainObject(target) && utils.isPlainObject(source)) {
-      return utils.merge.call({ caseless }, target, source);
-    } else if (utils.isPlainObject(source)) {
-      return utils.merge({}, source);
-    } else if (utils.isArray(source)) {
-      return source.slice();
-    }
-    return source;
-  }
-  function mergeDeepProperties(a, b, caseless) {
-    if (!utils.isUndefined(b)) {
-      return getMergedValue(a, b, caseless);
-    } else if (!utils.isUndefined(a)) {
-      return getMergedValue(void 0, a, caseless);
-    }
-  }
-  function valueFromConfig2(a, b) {
-    if (!utils.isUndefined(b)) {
-      return getMergedValue(void 0, b);
-    }
-  }
-  function defaultToConfig2(a, b) {
-    if (!utils.isUndefined(b)) {
-      return getMergedValue(void 0, b);
-    } else if (!utils.isUndefined(a)) {
-      return getMergedValue(void 0, a);
-    }
-  }
-  function mergeDirectKeys(a, b, prop) {
-    if (prop in config2) {
-      return getMergedValue(a, b);
-    } else if (prop in config1) {
-      return getMergedValue(void 0, a);
-    }
-  }
-  const mergeMap = {
-    url: valueFromConfig2,
-    method: valueFromConfig2,
-    data: valueFromConfig2,
-    baseURL: defaultToConfig2,
-    transformRequest: defaultToConfig2,
-    transformResponse: defaultToConfig2,
-    paramsSerializer: defaultToConfig2,
-    timeout: defaultToConfig2,
-    timeoutMessage: defaultToConfig2,
-    withCredentials: defaultToConfig2,
-    adapter: defaultToConfig2,
-    responseType: defaultToConfig2,
-    xsrfCookieName: defaultToConfig2,
-    xsrfHeaderName: defaultToConfig2,
-    onUploadProgress: defaultToConfig2,
-    onDownloadProgress: defaultToConfig2,
-    decompress: defaultToConfig2,
-    maxContentLength: defaultToConfig2,
-    maxBodyLength: defaultToConfig2,
-    beforeRedirect: defaultToConfig2,
-    transport: defaultToConfig2,
-    httpAgent: defaultToConfig2,
-    httpsAgent: defaultToConfig2,
-    cancelToken: defaultToConfig2,
-    socketPath: defaultToConfig2,
-    responseEncoding: defaultToConfig2,
-    validateStatus: mergeDirectKeys,
-    headers: (a, b) => mergeDeepProperties(headersToObject(a), headersToObject(b), true)
-  };
-  utils.forEach(Object.keys(Object.assign({}, config1, config2)), function computeConfigValue(prop) {
-    const merge2 = mergeMap[prop] || mergeDeepProperties;
-    const configValue = merge2(config1[prop], config2[prop], prop);
-    utils.isUndefined(configValue) && merge2 !== mergeDirectKeys || (config3[prop] = configValue);
-  });
-  return config3;
-}
-const VERSION = "1.4.0";
-const validators$1 = {};
-["object", "boolean", "number", "function", "string", "symbol"].forEach((type, i) => {
-  validators$1[type] = function validator6(thing) {
-    return typeof thing === type || "a" + (i < 1 ? "n " : " ") + type;
-  };
-});
-const deprecatedWarnings = {};
-validators$1.transitional = function transitional(validator6, version2, message) {
-  function formatMessage(opt, desc2) {
-    return "[Axios v" + VERSION + "] Transitional option '" + opt + "'" + desc2 + (message ? ". " + message : "");
-  }
-  return (value2, opt, opts) => {
-    if (validator6 === false) {
-      throw new AxiosError(
-        formatMessage(opt, " has been removed" + (version2 ? " in " + version2 : "")),
-        AxiosError.ERR_DEPRECATED
-      );
-    }
-    if (version2 && !deprecatedWarnings[opt]) {
-      deprecatedWarnings[opt] = true;
-      console.warn(
-        formatMessage(
-          opt,
-          " has been deprecated since v" + version2 + " and will be removed in the near future"
-        )
-      );
-    }
-    return validator6 ? validator6(value2, opt, opts) : true;
-  };
-};
-function assertOptions(options, schema, allowUnknown) {
-  if (typeof options !== "object") {
-    throw new AxiosError("options must be an object", AxiosError.ERR_BAD_OPTION_VALUE);
-  }
-  const keys2 = Object.keys(options);
-  let i = keys2.length;
-  while (i-- > 0) {
-    const opt = keys2[i];
-    const validator6 = schema[opt];
-    if (validator6) {
-      const value2 = options[opt];
-      const result = value2 === void 0 || validator6(value2, opt, options);
-      if (result !== true) {
-        throw new AxiosError("option " + opt + " must be " + result, AxiosError.ERR_BAD_OPTION_VALUE);
-      }
-      continue;
-    }
-    if (allowUnknown !== true) {
-      throw new AxiosError("Unknown option " + opt, AxiosError.ERR_BAD_OPTION);
-    }
-  }
-}
-const validator5 = {
-  assertOptions,
-  validators: validators$1
-};
-const validators = validator5.validators;
-class Axios {
-  constructor(instanceConfig) {
-    this.defaults = instanceConfig;
-    this.interceptors = {
-      request: new InterceptorManager$1(),
-      response: new InterceptorManager$1()
-    };
-  }
-  /**
-   * Dispatch a request
-   *
-   * @param {String|Object} configOrUrl The config specific for this request (merged with this.defaults)
-   * @param {?Object} config
-   *
-   * @returns {Promise} The Promise to be fulfilled
-   */
-  request(configOrUrl, config2) {
-    if (typeof configOrUrl === "string") {
-      config2 = config2 || {};
-      config2.url = configOrUrl;
-    } else {
-      config2 = configOrUrl || {};
-    }
-    config2 = mergeConfig(this.defaults, config2);
-    const { transitional: transitional2, paramsSerializer, headers } = config2;
-    if (transitional2 !== void 0) {
-      validator5.assertOptions(transitional2, {
-        silentJSONParsing: validators.transitional(validators.boolean),
-        forcedJSONParsing: validators.transitional(validators.boolean),
-        clarifyTimeoutError: validators.transitional(validators.boolean)
-      }, false);
-    }
-    if (paramsSerializer != null) {
-      if (utils.isFunction(paramsSerializer)) {
-        config2.paramsSerializer = {
-          serialize: paramsSerializer
-        };
-      } else {
-        validator5.assertOptions(paramsSerializer, {
-          encode: validators.function,
-          serialize: validators.function
-        }, true);
-      }
-    }
-    config2.method = (config2.method || this.defaults.method || "get").toLowerCase();
-    let contextHeaders;
-    contextHeaders = headers && utils.merge(
-      headers.common,
-      headers[config2.method]
-    );
-    contextHeaders && utils.forEach(
-      ["delete", "get", "head", "post", "put", "patch", "common"],
-      (method) => {
-        delete headers[method];
-      }
-    );
-    config2.headers = AxiosHeaders$1.concat(contextHeaders, headers);
-    const requestInterceptorChain = [];
-    let synchronousRequestInterceptors = true;
-    this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
-      if (typeof interceptor.runWhen === "function" && interceptor.runWhen(config2) === false) {
-        return;
-      }
-      synchronousRequestInterceptors = synchronousRequestInterceptors && interceptor.synchronous;
-      requestInterceptorChain.unshift(interceptor.fulfilled, interceptor.rejected);
-    });
-    const responseInterceptorChain = [];
-    this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
-      responseInterceptorChain.push(interceptor.fulfilled, interceptor.rejected);
-    });
-    let promise2;
-    let i = 0;
-    let len;
-    if (!synchronousRequestInterceptors) {
-      const chain = [dispatchRequest.bind(this), void 0];
-      chain.unshift.apply(chain, requestInterceptorChain);
-      chain.push.apply(chain, responseInterceptorChain);
-      len = chain.length;
-      promise2 = Promise.resolve(config2);
-      while (i < len) {
-        promise2 = promise2.then(chain[i++], chain[i++]);
-      }
-      return promise2;
-    }
-    len = requestInterceptorChain.length;
-    let newConfig = config2;
-    i = 0;
-    while (i < len) {
-      const onFulfilled = requestInterceptorChain[i++];
-      const onRejected = requestInterceptorChain[i++];
-      try {
-        newConfig = onFulfilled(newConfig);
-      } catch (error) {
-        onRejected.call(this, error);
-        break;
-      }
-    }
-    try {
-      promise2 = dispatchRequest.call(this, newConfig);
-    } catch (error) {
-      return Promise.reject(error);
-    }
-    i = 0;
-    len = responseInterceptorChain.length;
-    while (i < len) {
-      promise2 = promise2.then(responseInterceptorChain[i++], responseInterceptorChain[i++]);
-    }
-    return promise2;
-  }
-  getUri(config2) {
-    config2 = mergeConfig(this.defaults, config2);
-    const fullPath = buildFullPath(config2.baseURL, config2.url);
-    return buildURL(fullPath, config2.params, config2.paramsSerializer);
-  }
-}
-utils.forEach(["delete", "get", "head", "options"], function forEachMethodNoData2(method) {
-  Axios.prototype[method] = function(url, config2) {
-    return this.request(mergeConfig(config2 || {}, {
-      method,
-      url,
-      data: (config2 || {}).data
-    }));
-  };
-});
-utils.forEach(["post", "put", "patch"], function forEachMethodWithData2(method) {
-  function generateHTTPMethod(isForm) {
-    return function httpMethod(url, data, config2) {
-      return this.request(mergeConfig(config2 || {}, {
-        method,
-        headers: isForm ? {
-          "Content-Type": "multipart/form-data"
-        } : {},
-        url,
-        data
-      }));
-    };
-  }
-  Axios.prototype[method] = generateHTTPMethod();
-  Axios.prototype[method + "Form"] = generateHTTPMethod(true);
-});
-const Axios$1 = Axios;
-class CancelToken {
-  constructor(executor) {
-    if (typeof executor !== "function") {
-      throw new TypeError("executor must be a function.");
-    }
-    let resolvePromise;
-    this.promise = new Promise(function promiseExecutor(resolve2) {
-      resolvePromise = resolve2;
-    });
-    const token = this;
-    this.promise.then((cancel) => {
-      if (!token._listeners)
-        return;
-      let i = token._listeners.length;
-      while (i-- > 0) {
-        token._listeners[i](cancel);
-      }
-      token._listeners = null;
-    });
-    this.promise.then = (onfulfilled) => {
-      let _resolve;
-      const promise2 = new Promise((resolve2) => {
-        token.subscribe(resolve2);
-        _resolve = resolve2;
-      }).then(onfulfilled);
-      promise2.cancel = function reject2() {
-        token.unsubscribe(_resolve);
-      };
-      return promise2;
-    };
-    executor(function cancel(message, config2, request) {
-      if (token.reason) {
-        return;
-      }
-      token.reason = new CanceledError(message, config2, request);
-      resolvePromise(token.reason);
-    });
-  }
-  /**
-   * Throws a `CanceledError` if cancellation has been requested.
-   */
-  throwIfRequested() {
-    if (this.reason) {
-      throw this.reason;
-    }
-  }
-  /**
-   * Subscribe to the cancel signal
-   */
-  subscribe(listener3) {
-    if (this.reason) {
-      listener3(this.reason);
-      return;
-    }
-    if (this._listeners) {
-      this._listeners.push(listener3);
-    } else {
-      this._listeners = [listener3];
-    }
-  }
-  /**
-   * Unsubscribe from the cancel signal
-   */
-  unsubscribe(listener3) {
-    if (!this._listeners) {
-      return;
-    }
-    const index = this._listeners.indexOf(listener3);
-    if (index !== -1) {
-      this._listeners.splice(index, 1);
-    }
-  }
-  /**
-   * Returns an object that contains a new `CancelToken` and a function that, when called,
-   * cancels the `CancelToken`.
-   */
-  static source() {
-    let cancel;
-    const token = new CancelToken(function executor(c) {
-      cancel = c;
-    });
-    return {
-      token,
-      cancel
-    };
-  }
-}
-const CancelToken$1 = CancelToken;
-function spread(callback) {
-  return function wrap(arr) {
-    return callback.apply(null, arr);
-  };
-}
-function isAxiosError(payload) {
-  return utils.isObject(payload) && payload.isAxiosError === true;
-}
-const HttpStatusCode = {
-  Continue: 100,
-  SwitchingProtocols: 101,
-  Processing: 102,
-  EarlyHints: 103,
-  Ok: 200,
-  Created: 201,
-  Accepted: 202,
-  NonAuthoritativeInformation: 203,
-  NoContent: 204,
-  ResetContent: 205,
-  PartialContent: 206,
-  MultiStatus: 207,
-  AlreadyReported: 208,
-  ImUsed: 226,
-  MultipleChoices: 300,
-  MovedPermanently: 301,
-  Found: 302,
-  SeeOther: 303,
-  NotModified: 304,
-  UseProxy: 305,
-  Unused: 306,
-  TemporaryRedirect: 307,
-  PermanentRedirect: 308,
-  BadRequest: 400,
-  Unauthorized: 401,
-  PaymentRequired: 402,
-  Forbidden: 403,
-  NotFound: 404,
-  MethodNotAllowed: 405,
-  NotAcceptable: 406,
-  ProxyAuthenticationRequired: 407,
-  RequestTimeout: 408,
-  Conflict: 409,
-  Gone: 410,
-  LengthRequired: 411,
-  PreconditionFailed: 412,
-  PayloadTooLarge: 413,
-  UriTooLong: 414,
-  UnsupportedMediaType: 415,
-  RangeNotSatisfiable: 416,
-  ExpectationFailed: 417,
-  ImATeapot: 418,
-  MisdirectedRequest: 421,
-  UnprocessableEntity: 422,
-  Locked: 423,
-  FailedDependency: 424,
-  TooEarly: 425,
-  UpgradeRequired: 426,
-  PreconditionRequired: 428,
-  TooManyRequests: 429,
-  RequestHeaderFieldsTooLarge: 431,
-  UnavailableForLegalReasons: 451,
-  InternalServerError: 500,
-  NotImplemented: 501,
-  BadGateway: 502,
-  ServiceUnavailable: 503,
-  GatewayTimeout: 504,
-  HttpVersionNotSupported: 505,
-  VariantAlsoNegotiates: 506,
-  InsufficientStorage: 507,
-  LoopDetected: 508,
-  NotExtended: 510,
-  NetworkAuthenticationRequired: 511
-};
-Object.entries(HttpStatusCode).forEach(([key, value2]) => {
-  HttpStatusCode[value2] = key;
-});
-const HttpStatusCode$1 = HttpStatusCode;
-function createInstance(defaultConfig) {
-  const context = new Axios$1(defaultConfig);
-  const instance = bind(Axios$1.prototype.request, context);
-  utils.extend(instance, Axios$1.prototype, context, { allOwnKeys: true });
-  utils.extend(instance, context, null, { allOwnKeys: true });
-  instance.create = function create2(instanceConfig) {
-    return createInstance(mergeConfig(defaultConfig, instanceConfig));
-  };
-  return instance;
-}
-const axios = createInstance(defaults$1);
-axios.Axios = Axios$1;
-axios.CanceledError = CanceledError;
-axios.CancelToken = CancelToken$1;
-axios.isCancel = isCancel;
-axios.VERSION = VERSION;
-axios.toFormData = toFormData;
-axios.AxiosError = AxiosError;
-axios.Cancel = axios.CanceledError;
-axios.all = function all(promises) {
-  return Promise.all(promises);
-};
-axios.spread = spread;
-axios.isAxiosError = isAxiosError;
-axios.mergeConfig = mergeConfig;
-axios.AxiosHeaders = AxiosHeaders$1;
-axios.formToJSON = (thing) => formDataToJSON(utils.isHTMLForm(thing) ? new FormData(thing) : thing);
-axios.HttpStatusCode = HttpStatusCode$1;
-axios.default = axios;
-const axios$1 = axios;
 function nullOrEmpty(value2) {
   return value2 === null || value2 === "" || value2 === void 0;
 }
@@ -29532,20 +31895,20 @@ class OAuthClient {
       this._codeVerifier = null;
       return false;
     }
-    const params = validateAuthResponse(
+    const params2 = validateAuthResponse(
       this._authorizationServer,
       this._client,
       urlParams,
       expectNoState
     );
-    if (isOAuth2Error(params)) {
+    if (isOAuth2Error(params2)) {
       this._codeVerifier = null;
       throw new Error("OAuth 2.0 redirect error");
     }
     const response = await authorizationCodeGrantRequest(
       this._authorizationServer,
       this._client,
-      params,
+      params2,
       this._redirectUri,
       this._codeVerifier
     );
@@ -29653,7 +32016,7 @@ class OAuthClient {
     const bearerToken = this.accessToken ?? "not-set";
     let response;
     try {
-      response = await axios$1.get(userInfoUrl.toString(), {
+      response = await axios$2.get(userInfoUrl.toString(), {
         headers: {
           Authorization: `Bearer ${bearerToken}`
         }
@@ -29919,6 +32282,2571 @@ class Auth {
     return prodIdentityDetails;
   }
 }
+async function getServerInfo() {
+  const authToken = await Auth.getLatestAccessToken();
+  const server = {
+    baseUrl: "https://boardgames-api.prod.connected-web.services",
+    headers: {
+      Authorization: `Bearer ${authToken}`
+    }
+  };
+  return server;
+}
+const _BoardGamesApiClient = class {
+  static getSingleton() {
+    return _BoardGamesApiClient.singleton;
+  }
+  async getInstance() {
+    const serverInfo = await getServerInfo();
+    const client2 = new OpenAPIClientAxios({
+      definition: BoardgamesAPIDocument,
+      axiosConfigDefaults: { headers: serverInfo.headers }
+    });
+    return await client2.getClient();
+  }
+};
+let BoardGamesApiClient = _BoardGamesApiClient;
+__publicField(BoardGamesApiClient, "singleton", new _BoardGamesApiClient());
+class ClientIndex {
+  constructor() {
+    __publicField(this, "boardGamesApi");
+    this.boardGamesApi = new BoardGamesApiClient();
+  }
+  get index() {
+    return {
+      boardGamesApi: this.boardGamesApi
+    };
+  }
+}
+class EventEmitter {
+  constructor() {
+    __publicField(this, "target");
+    this.target = new EventTarget();
+  }
+  on(eventName, listener3) {
+    this.target.addEventListener(eventName, listener3);
+    return this;
+  }
+  once(eventName, listener3) {
+    this.target.addEventListener(eventName, listener3, { once: true });
+    return this;
+  }
+  off(eventName, listener3) {
+    this.target.removeEventListener(eventName, listener3);
+    return this;
+  }
+  emit(eventName, detail) {
+    return this.target.dispatchEvent(
+      new CustomEvent(eventName, { detail, cancelable: true })
+    );
+  }
+}
+async function defaultActionFunction() {
+  const context = { resetLabelTimeout: 0 };
+  let succeed;
+  console.log("Action", { action: context }, "has been activated with the default actionFunction!");
+  const future = new Promise((resolve2, reject2) => {
+    succeed = resolve2;
+  });
+  clearTimeout(context.resetLabelTimeout);
+  context.resetLabelTimeout = setTimeout(() => {
+    console.log("Timeout of default actionFunction triggered!");
+    succeed("Timed out");
+  }, 5e3);
+  return await future;
+}
+class Action extends EventEmitter {
+  constructor(actionFunction) {
+    super();
+    __publicField(this, "id", crypto.randomUUID());
+    __publicField(this, "icon", "star");
+    __publicField(this, "loadingIcon", null);
+    __publicField(this, "loading", false);
+    __publicField(this, "finished", false);
+    __publicField(this, "errored", false);
+    __publicField(this, "error");
+    __publicField(this, "startLabel", "Action");
+    __publicField(this, "loadingLabel", null);
+    __publicField(this, "finishedLabel", null);
+    __publicField(this, "errorLabel", "Error");
+    __publicField(this, "actionResult");
+    __publicField(this, "actionFunction");
+    __publicField(this, "spiedLogs", []);
+    __publicField(this, "resetLabelTimeout", 0);
+    __publicField(this, "description", "");
+    this.actionFunction = actionFunction;
+  }
+  static get example() {
+    return new Action(defaultActionFunction);
+  }
+  get inReadyState() {
+    return !this.loading && !this.errored;
+  }
+  get inStartState() {
+    return !(this.loading || this.finished);
+  }
+  async activate(...params2) {
+    if (this.loading) {
+      return this.actionResult;
+    }
+    this.error = void 0;
+    this.errored = false;
+    this.loading = true;
+    this.emit("loading", this);
+    this.emit("updated", this);
+    const originalLogFn = console.log;
+    const spiedLogs = [];
+    console.log = function(...logArgs) {
+      originalLogFn(...logArgs);
+      spiedLogs.push(logArgs);
+    };
+    this.spiedLogs = spiedLogs;
+    const task = async () => {
+      let result;
+      try {
+        result = await this.actionFunction(...params2);
+      } catch (ex) {
+        const error = ex;
+        this.errored = true;
+        this.error = error;
+        this.emit("error", this);
+      }
+      this.actionResult = result;
+      this.emit("result", result);
+      setTimeout(() => {
+        this.loading = false;
+        this.finished = true;
+        this.emit("updated", this);
+      }, 25);
+      console.log = originalLogFn;
+      return result;
+    };
+    let work;
+    try {
+      work = task();
+    } catch (ex) {
+      const error = ex;
+      this.errored = true;
+      this.error = error;
+      this.emit("error", this);
+    }
+    return await work;
+  }
+  reset() {
+    this.actionResult = void 0;
+    this.finished = false;
+    this.errored = false;
+    this.error = void 0;
+    this.spiedLogs = [];
+    this.emit("result");
+  }
+}
+const LoadingSpinner_vue_vue_type_style_index_0_scoped_84eb515d_lang = "";
+const _sfc_main$8 = {};
+const _withScopeId$2 = (n) => (pushScopeId("data-v-84eb515d"), n = n(), popScopeId(), n);
+const _hoisted_1$8 = { class: "loading" };
+const _hoisted_2$7 = /* @__PURE__ */ _withScopeId$2(() => /* @__PURE__ */ createBaseVNode("div", { class: "spinner" }, null, -1));
+const _hoisted_3$5 = { class: "label" };
+function _sfc_render$8(_ctx, _cache) {
+  return openBlock(), createElementBlock("div", _hoisted_1$8, [
+    _hoisted_2$7,
+    createBaseVNode("div", _hoisted_3$5, [
+      renderSlot(_ctx.$slots, "default", {}, void 0, true)
+    ])
+  ]);
+}
+const LoadingSpinner = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8], ["__scopeId", "data-v-84eb515d"]]);
+const _sfc_main$7 = {
+  components: { LoadingSpinner },
+  data() {
+    return {
+      internalAction: Action.example
+    };
+  },
+  props: {
+    modelValue: {
+      type: Action,
+      default: null
+    },
+    params: {
+      type: Array,
+      default: () => []
+    }
+  },
+  computed: {
+    action() {
+      return this.modelValue ?? this.internalAction;
+    },
+    activationParams() {
+      const { params: params2 } = this;
+      if (!Array.isArray(params2)) {
+        console.warn("Activation params for", this, "have not been provided as an array:", { params: params2 });
+      }
+      return Array.isArray(params2) ? params2 : [];
+    },
+    disabled() {
+      var _a2;
+      return !((_a2 = this.action) == null ? void 0 : _a2.loading);
+    },
+    showLoadingSpinner() {
+      const { action } = this;
+      return (action == null ? void 0 : action.loading) && !(action == null ? void 0 : action.loadingIcon);
+    },
+    iconToShow() {
+      const { action } = this;
+      return (action == null ? void 0 : action.loading) ? action == null ? void 0 : action.loadingIcon : action == null ? void 0 : action.icon;
+    },
+    labelToShow() {
+      const { action } = this;
+      if (action == null ? void 0 : action.inStartState) {
+        return action == null ? void 0 : action.startLabel;
+      }
+      if (action == null ? void 0 : action.errored) {
+        return (action == null ? void 0 : action.errorLabel) ?? (action == null ? void 0 : action.startLabel);
+      }
+      if (action == null ? void 0 : action.loading) {
+        return (action == null ? void 0 : action.loadingLabel) ?? action.startLabel;
+      }
+      return (action == null ? void 0 : action.finishedLabel) ?? (action == null ? void 0 : action.startLabel);
+    }
+  },
+  mounted() {
+    this.registerAction(this.action);
+  },
+  methods: {
+    activateAction() {
+      const { action, activationParams } = this;
+      action.activate(...activationParams);
+      this.$forceUpdate();
+    },
+    registerAction(action) {
+      const self3 = this;
+      if (action) {
+        action.on("loading", () => {
+          self3.$emit("loading", action);
+          this.$forceUpdate();
+        });
+        action.on("updated", () => {
+          self3.$emit("update:modelValue", action);
+          this.$forceUpdate();
+        });
+        action.on("result", (result) => {
+          self3.$emit("result", result.detail);
+          this.$forceUpdate();
+        });
+        action.on("error", (error) => {
+          self3.$emit("error", error.detail);
+          this.$forceUpdate();
+        });
+      }
+    }
+  },
+  watch: {
+    modelValue(action) {
+      if (action) {
+        this.registerAction(action);
+      }
+    }
+  }
+};
+const ActionButton_vue_vue_type_style_index_0_scoped_5bc37754_lang = "";
+const _hoisted_1$7 = ["disabled", "title"];
+function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
+  var _a2, _b2, _c, _d;
+  const _component_LoadingSpinner = resolveComponent("LoadingSpinner");
+  const _component_Icon = resolveComponent("Icon");
+  return openBlock(), createElementBlock("button", {
+    variant: "tonal",
+    disabled: (_a2 = $options.action) == null ? void 0 : _a2.loading,
+    onClick: _cache[0] || (_cache[0] = (...args) => $options.activateAction && $options.activateAction(...args)),
+    class: "text-none action-button",
+    title: $options.action.errored ? (_b2 = $options.action.error) == null ? void 0 : _b2.message : $options.action.description
+  }, [
+    ((_c = $options.action) == null ? void 0 : _c.loading) && !((_d = $options.action) == null ? void 0 : _d.loadingIcon) ? (openBlock(), createBlock(_component_LoadingSpinner, { key: 0 })) : (openBlock(), createBlock(_component_Icon, {
+      key: 1,
+      icon: $options.iconToShow
+    }, null, 8, ["icon"])),
+    createBaseVNode("label", null, toDisplayString($options.labelToShow), 1)
+  ], 8, _hoisted_1$7);
+}
+const ActionButton = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7], ["__scopeId", "data-v-5bc37754"]]);
+function isArray(value2) {
+  return !Array.isArray ? getTag(value2) === "[object Array]" : Array.isArray(value2);
+}
+const INFINITY = 1 / 0;
+function baseToString(value2) {
+  if (typeof value2 == "string") {
+    return value2;
+  }
+  let result = value2 + "";
+  return result == "0" && 1 / value2 == -INFINITY ? "-0" : result;
+}
+function toString2(value2) {
+  return value2 == null ? "" : baseToString(value2);
+}
+function isString(value2) {
+  return typeof value2 === "string";
+}
+function isNumber(value2) {
+  return typeof value2 === "number";
+}
+function isBoolean(value2) {
+  return value2 === true || value2 === false || isObjectLike(value2) && getTag(value2) == "[object Boolean]";
+}
+function isObject(value2) {
+  return typeof value2 === "object";
+}
+function isObjectLike(value2) {
+  return isObject(value2) && value2 !== null;
+}
+function isDefined(value2) {
+  return value2 !== void 0 && value2 !== null;
+}
+function isBlank(value2) {
+  return !value2.trim().length;
+}
+function getTag(value2) {
+  return value2 == null ? value2 === void 0 ? "[object Undefined]" : "[object Null]" : Object.prototype.toString.call(value2);
+}
+const EXTENDED_SEARCH_UNAVAILABLE = "Extended search is not available";
+const INCORRECT_INDEX_TYPE = "Incorrect 'index' type";
+const LOGICAL_SEARCH_INVALID_QUERY_FOR_KEY = (key) => `Invalid value for key ${key}`;
+const PATTERN_LENGTH_TOO_LARGE = (max2) => `Pattern length exceeds max of ${max2}.`;
+const MISSING_KEY_PROPERTY = (name) => `Missing ${name} property in key`;
+const INVALID_KEY_WEIGHT_VALUE = (key) => `Property 'weight' in key '${key}' must be a positive integer`;
+const hasOwn = Object.prototype.hasOwnProperty;
+class KeyStore {
+  constructor(keys2) {
+    this._keys = [];
+    this._keyMap = {};
+    let totalWeight = 0;
+    keys2.forEach((key) => {
+      let obj = createKey(key);
+      totalWeight += obj.weight;
+      this._keys.push(obj);
+      this._keyMap[obj.id] = obj;
+      totalWeight += obj.weight;
+    });
+    this._keys.forEach((key) => {
+      key.weight /= totalWeight;
+    });
+  }
+  get(keyId) {
+    return this._keyMap[keyId];
+  }
+  keys() {
+    return this._keys;
+  }
+  toJSON() {
+    return JSON.stringify(this._keys);
+  }
+}
+function createKey(key) {
+  let path2 = null;
+  let id = null;
+  let src = null;
+  let weight = 1;
+  let getFn = null;
+  if (isString(key) || isArray(key)) {
+    src = key;
+    path2 = createKeyPath(key);
+    id = createKeyId(key);
+  } else {
+    if (!hasOwn.call(key, "name")) {
+      throw new Error(MISSING_KEY_PROPERTY("name"));
+    }
+    const name = key.name;
+    src = name;
+    if (hasOwn.call(key, "weight")) {
+      weight = key.weight;
+      if (weight <= 0) {
+        throw new Error(INVALID_KEY_WEIGHT_VALUE(name));
+      }
+    }
+    path2 = createKeyPath(name);
+    id = createKeyId(name);
+    getFn = key.getFn;
+  }
+  return { path: path2, id, weight, src, getFn };
+}
+function createKeyPath(key) {
+  return isArray(key) ? key : key.split(".");
+}
+function createKeyId(key) {
+  return isArray(key) ? key.join(".") : key;
+}
+function get(obj, path2) {
+  let list = [];
+  let arr = false;
+  const deepGet = (obj2, path3, index) => {
+    if (!isDefined(obj2)) {
+      return;
+    }
+    if (!path3[index]) {
+      list.push(obj2);
+    } else {
+      let key = path3[index];
+      const value2 = obj2[key];
+      if (!isDefined(value2)) {
+        return;
+      }
+      if (index === path3.length - 1 && (isString(value2) || isNumber(value2) || isBoolean(value2))) {
+        list.push(toString2(value2));
+      } else if (isArray(value2)) {
+        arr = true;
+        for (let i = 0, len = value2.length; i < len; i += 1) {
+          deepGet(value2[i], path3, index + 1);
+        }
+      } else if (path3.length) {
+        deepGet(value2, path3, index + 1);
+      }
+    }
+  };
+  deepGet(obj, isString(path2) ? path2.split(".") : path2, 0);
+  return arr ? list : list[0];
+}
+const MatchOptions = {
+  // Whether the matches should be included in the result set. When `true`, each record in the result
+  // set will include the indices of the matched characters.
+  // These can consequently be used for highlighting purposes.
+  includeMatches: false,
+  // When `true`, the matching function will continue to the end of a search pattern even if
+  // a perfect match has already been located in the string.
+  findAllMatches: false,
+  // Minimum number of characters that must be matched before a result is considered a match
+  minMatchCharLength: 1
+};
+const BasicOptions = {
+  // When `true`, the algorithm continues searching to the end of the input even if a perfect
+  // match is found before the end of the same input.
+  isCaseSensitive: false,
+  // When true, the matching function will continue to the end of a search pattern even if
+  includeScore: false,
+  // List of properties that will be searched. This also supports nested properties.
+  keys: [],
+  // Whether to sort the result list, by score
+  shouldSort: true,
+  // Default sort function: sort by ascending score, ascending index
+  sortFn: (a, b) => a.score === b.score ? a.idx < b.idx ? -1 : 1 : a.score < b.score ? -1 : 1
+};
+const FuzzyOptions = {
+  // Approximately where in the text is the pattern expected to be found?
+  location: 0,
+  // At what point does the match algorithm give up. A threshold of '0.0' requires a perfect match
+  // (of both letters and location), a threshold of '1.0' would match anything.
+  threshold: 0.6,
+  // Determines how close the match must be to the fuzzy location (specified above).
+  // An exact letter match which is 'distance' characters away from the fuzzy location
+  // would score as a complete mismatch. A distance of '0' requires the match be at
+  // the exact location specified, a threshold of '1000' would require a perfect match
+  // to be within 800 characters of the fuzzy location to be found using a 0.8 threshold.
+  distance: 100
+};
+const AdvancedOptions = {
+  // When `true`, it enables the use of unix-like search commands
+  useExtendedSearch: false,
+  // The get function to use when fetching an object's properties.
+  // The default will search nested paths *ie foo.bar.baz*
+  getFn: get,
+  // When `true`, search will ignore `location` and `distance`, so it won't matter
+  // where in the string the pattern appears.
+  // More info: https://fusejs.io/concepts/scoring-theory.html#fuzziness-score
+  ignoreLocation: false,
+  // When `true`, the calculation for the relevance score (used for sorting) will
+  // ignore the field-length norm.
+  // More info: https://fusejs.io/concepts/scoring-theory.html#field-length-norm
+  ignoreFieldNorm: false,
+  // The weight to determine how much field length norm effects scoring.
+  fieldNormWeight: 1
+};
+var Config = {
+  ...BasicOptions,
+  ...MatchOptions,
+  ...FuzzyOptions,
+  ...AdvancedOptions
+};
+const SPACE = /[^ ]+/g;
+function norm(weight = 1, mantissa = 3) {
+  const cache = /* @__PURE__ */ new Map();
+  const m = Math.pow(10, mantissa);
+  return {
+    get(value2) {
+      const numTokens = value2.match(SPACE).length;
+      if (cache.has(numTokens)) {
+        return cache.get(numTokens);
+      }
+      const norm2 = 1 / Math.pow(numTokens, 0.5 * weight);
+      const n = parseFloat(Math.round(norm2 * m) / m);
+      cache.set(numTokens, n);
+      return n;
+    },
+    clear() {
+      cache.clear();
+    }
+  };
+}
+class FuseIndex {
+  constructor({
+    getFn = Config.getFn,
+    fieldNormWeight = Config.fieldNormWeight
+  } = {}) {
+    this.norm = norm(fieldNormWeight, 3);
+    this.getFn = getFn;
+    this.isCreated = false;
+    this.setIndexRecords();
+  }
+  setSources(docs = []) {
+    this.docs = docs;
+  }
+  setIndexRecords(records = []) {
+    this.records = records;
+  }
+  setKeys(keys2 = []) {
+    this.keys = keys2;
+    this._keysMap = {};
+    keys2.forEach((key, idx) => {
+      this._keysMap[key.id] = idx;
+    });
+  }
+  create() {
+    if (this.isCreated || !this.docs.length) {
+      return;
+    }
+    this.isCreated = true;
+    if (isString(this.docs[0])) {
+      this.docs.forEach((doc2, docIndex) => {
+        this._addString(doc2, docIndex);
+      });
+    } else {
+      this.docs.forEach((doc2, docIndex) => {
+        this._addObject(doc2, docIndex);
+      });
+    }
+    this.norm.clear();
+  }
+  // Adds a doc to the end of the index
+  add(doc2) {
+    const idx = this.size();
+    if (isString(doc2)) {
+      this._addString(doc2, idx);
+    } else {
+      this._addObject(doc2, idx);
+    }
+  }
+  // Removes the doc at the specified index of the index
+  removeAt(idx) {
+    this.records.splice(idx, 1);
+    for (let i = idx, len = this.size(); i < len; i += 1) {
+      this.records[i].i -= 1;
+    }
+  }
+  getValueForItemAtKeyId(item, keyId) {
+    return item[this._keysMap[keyId]];
+  }
+  size() {
+    return this.records.length;
+  }
+  _addString(doc2, docIndex) {
+    if (!isDefined(doc2) || isBlank(doc2)) {
+      return;
+    }
+    let record = {
+      v: doc2,
+      i: docIndex,
+      n: this.norm.get(doc2)
+    };
+    this.records.push(record);
+  }
+  _addObject(doc2, docIndex) {
+    let record = { i: docIndex, $: {} };
+    this.keys.forEach((key, keyIndex) => {
+      let value2 = key.getFn ? key.getFn(doc2) : this.getFn(doc2, key.path);
+      if (!isDefined(value2)) {
+        return;
+      }
+      if (isArray(value2)) {
+        let subRecords = [];
+        const stack = [{ nestedArrIndex: -1, value: value2 }];
+        while (stack.length) {
+          const { nestedArrIndex, value: value3 } = stack.pop();
+          if (!isDefined(value3)) {
+            continue;
+          }
+          if (isString(value3) && !isBlank(value3)) {
+            let subRecord = {
+              v: value3,
+              i: nestedArrIndex,
+              n: this.norm.get(value3)
+            };
+            subRecords.push(subRecord);
+          } else if (isArray(value3)) {
+            value3.forEach((item, k) => {
+              stack.push({
+                nestedArrIndex: k,
+                value: item
+              });
+            });
+          } else
+            ;
+        }
+        record.$[keyIndex] = subRecords;
+      } else if (isString(value2) && !isBlank(value2)) {
+        let subRecord = {
+          v: value2,
+          n: this.norm.get(value2)
+        };
+        record.$[keyIndex] = subRecord;
+      }
+    });
+    this.records.push(record);
+  }
+  toJSON() {
+    return {
+      keys: this.keys,
+      records: this.records
+    };
+  }
+}
+function createIndex(keys2, docs, { getFn = Config.getFn, fieldNormWeight = Config.fieldNormWeight } = {}) {
+  const myIndex = new FuseIndex({ getFn, fieldNormWeight });
+  myIndex.setKeys(keys2.map(createKey));
+  myIndex.setSources(docs);
+  myIndex.create();
+  return myIndex;
+}
+function parseIndex(data, { getFn = Config.getFn, fieldNormWeight = Config.fieldNormWeight } = {}) {
+  const { keys: keys2, records } = data;
+  const myIndex = new FuseIndex({ getFn, fieldNormWeight });
+  myIndex.setKeys(keys2);
+  myIndex.setIndexRecords(records);
+  return myIndex;
+}
+function computeScore$1(pattern, {
+  errors = 0,
+  currentLocation = 0,
+  expectedLocation = 0,
+  distance = Config.distance,
+  ignoreLocation = Config.ignoreLocation
+} = {}) {
+  const accuracy = errors / pattern.length;
+  if (ignoreLocation) {
+    return accuracy;
+  }
+  const proximity = Math.abs(expectedLocation - currentLocation);
+  if (!distance) {
+    return proximity ? 1 : accuracy;
+  }
+  return accuracy + proximity / distance;
+}
+function convertMaskToIndices(matchmask = [], minMatchCharLength = Config.minMatchCharLength) {
+  let indices = [];
+  let start = -1;
+  let end = -1;
+  let i = 0;
+  for (let len = matchmask.length; i < len; i += 1) {
+    let match = matchmask[i];
+    if (match && start === -1) {
+      start = i;
+    } else if (!match && start !== -1) {
+      end = i - 1;
+      if (end - start + 1 >= minMatchCharLength) {
+        indices.push([start, end]);
+      }
+      start = -1;
+    }
+  }
+  if (matchmask[i - 1] && i - start >= minMatchCharLength) {
+    indices.push([start, i - 1]);
+  }
+  return indices;
+}
+const MAX_BITS = 32;
+function search(text, pattern, patternAlphabet, {
+  location: location2 = Config.location,
+  distance = Config.distance,
+  threshold = Config.threshold,
+  findAllMatches = Config.findAllMatches,
+  minMatchCharLength = Config.minMatchCharLength,
+  includeMatches = Config.includeMatches,
+  ignoreLocation = Config.ignoreLocation
+} = {}) {
+  if (pattern.length > MAX_BITS) {
+    throw new Error(PATTERN_LENGTH_TOO_LARGE(MAX_BITS));
+  }
+  const patternLen = pattern.length;
+  const textLen = text.length;
+  const expectedLocation = Math.max(0, Math.min(location2, textLen));
+  let currentThreshold = threshold;
+  let bestLocation = expectedLocation;
+  const computeMatches = minMatchCharLength > 1 || includeMatches;
+  const matchMask = computeMatches ? Array(textLen) : [];
+  let index;
+  while ((index = text.indexOf(pattern, bestLocation)) > -1) {
+    let score = computeScore$1(pattern, {
+      currentLocation: index,
+      expectedLocation,
+      distance,
+      ignoreLocation
+    });
+    currentThreshold = Math.min(score, currentThreshold);
+    bestLocation = index + patternLen;
+    if (computeMatches) {
+      let i = 0;
+      while (i < patternLen) {
+        matchMask[index + i] = 1;
+        i += 1;
+      }
+    }
+  }
+  bestLocation = -1;
+  let lastBitArr = [];
+  let finalScore = 1;
+  let binMax = patternLen + textLen;
+  const mask = 1 << patternLen - 1;
+  for (let i = 0; i < patternLen; i += 1) {
+    let binMin = 0;
+    let binMid = binMax;
+    while (binMin < binMid) {
+      const score2 = computeScore$1(pattern, {
+        errors: i,
+        currentLocation: expectedLocation + binMid,
+        expectedLocation,
+        distance,
+        ignoreLocation
+      });
+      if (score2 <= currentThreshold) {
+        binMin = binMid;
+      } else {
+        binMax = binMid;
+      }
+      binMid = Math.floor((binMax - binMin) / 2 + binMin);
+    }
+    binMax = binMid;
+    let start = Math.max(1, expectedLocation - binMid + 1);
+    let finish = findAllMatches ? textLen : Math.min(expectedLocation + binMid, textLen) + patternLen;
+    let bitArr = Array(finish + 2);
+    bitArr[finish + 1] = (1 << i) - 1;
+    for (let j = finish; j >= start; j -= 1) {
+      let currentLocation = j - 1;
+      let charMatch = patternAlphabet[text.charAt(currentLocation)];
+      if (computeMatches) {
+        matchMask[currentLocation] = +!!charMatch;
+      }
+      bitArr[j] = (bitArr[j + 1] << 1 | 1) & charMatch;
+      if (i) {
+        bitArr[j] |= (lastBitArr[j + 1] | lastBitArr[j]) << 1 | 1 | lastBitArr[j + 1];
+      }
+      if (bitArr[j] & mask) {
+        finalScore = computeScore$1(pattern, {
+          errors: i,
+          currentLocation,
+          expectedLocation,
+          distance,
+          ignoreLocation
+        });
+        if (finalScore <= currentThreshold) {
+          currentThreshold = finalScore;
+          bestLocation = currentLocation;
+          if (bestLocation <= expectedLocation) {
+            break;
+          }
+          start = Math.max(1, 2 * expectedLocation - bestLocation);
+        }
+      }
+    }
+    const score = computeScore$1(pattern, {
+      errors: i + 1,
+      currentLocation: expectedLocation,
+      expectedLocation,
+      distance,
+      ignoreLocation
+    });
+    if (score > currentThreshold) {
+      break;
+    }
+    lastBitArr = bitArr;
+  }
+  const result = {
+    isMatch: bestLocation >= 0,
+    // Count exact matches (those with a score of 0) to be "almost" exact
+    score: Math.max(1e-3, finalScore)
+  };
+  if (computeMatches) {
+    const indices = convertMaskToIndices(matchMask, minMatchCharLength);
+    if (!indices.length) {
+      result.isMatch = false;
+    } else if (includeMatches) {
+      result.indices = indices;
+    }
+  }
+  return result;
+}
+function createPatternAlphabet(pattern) {
+  let mask = {};
+  for (let i = 0, len = pattern.length; i < len; i += 1) {
+    const char = pattern.charAt(i);
+    mask[char] = (mask[char] || 0) | 1 << len - i - 1;
+  }
+  return mask;
+}
+class BitapSearch {
+  constructor(pattern, {
+    location: location2 = Config.location,
+    threshold = Config.threshold,
+    distance = Config.distance,
+    includeMatches = Config.includeMatches,
+    findAllMatches = Config.findAllMatches,
+    minMatchCharLength = Config.minMatchCharLength,
+    isCaseSensitive = Config.isCaseSensitive,
+    ignoreLocation = Config.ignoreLocation
+  } = {}) {
+    this.options = {
+      location: location2,
+      threshold,
+      distance,
+      includeMatches,
+      findAllMatches,
+      minMatchCharLength,
+      isCaseSensitive,
+      ignoreLocation
+    };
+    this.pattern = isCaseSensitive ? pattern : pattern.toLowerCase();
+    this.chunks = [];
+    if (!this.pattern.length) {
+      return;
+    }
+    const addChunk = (pattern2, startIndex) => {
+      this.chunks.push({
+        pattern: pattern2,
+        alphabet: createPatternAlphabet(pattern2),
+        startIndex
+      });
+    };
+    const len = this.pattern.length;
+    if (len > MAX_BITS) {
+      let i = 0;
+      const remainder = len % MAX_BITS;
+      const end = len - remainder;
+      while (i < end) {
+        addChunk(this.pattern.substr(i, MAX_BITS), i);
+        i += MAX_BITS;
+      }
+      if (remainder) {
+        const startIndex = len - MAX_BITS;
+        addChunk(this.pattern.substr(startIndex), startIndex);
+      }
+    } else {
+      addChunk(this.pattern, 0);
+    }
+  }
+  searchIn(text) {
+    const { isCaseSensitive, includeMatches } = this.options;
+    if (!isCaseSensitive) {
+      text = text.toLowerCase();
+    }
+    if (this.pattern === text) {
+      let result2 = {
+        isMatch: true,
+        score: 0
+      };
+      if (includeMatches) {
+        result2.indices = [[0, text.length - 1]];
+      }
+      return result2;
+    }
+    const {
+      location: location2,
+      distance,
+      threshold,
+      findAllMatches,
+      minMatchCharLength,
+      ignoreLocation
+    } = this.options;
+    let allIndices = [];
+    let totalScore = 0;
+    let hasMatches = false;
+    this.chunks.forEach(({ pattern, alphabet, startIndex }) => {
+      const { isMatch, score, indices } = search(text, pattern, alphabet, {
+        location: location2 + startIndex,
+        distance,
+        threshold,
+        findAllMatches,
+        minMatchCharLength,
+        includeMatches,
+        ignoreLocation
+      });
+      if (isMatch) {
+        hasMatches = true;
+      }
+      totalScore += score;
+      if (isMatch && indices) {
+        allIndices = [...allIndices, ...indices];
+      }
+    });
+    let result = {
+      isMatch: hasMatches,
+      score: hasMatches ? totalScore / this.chunks.length : 1
+    };
+    if (hasMatches && includeMatches) {
+      result.indices = allIndices;
+    }
+    return result;
+  }
+}
+class BaseMatch {
+  constructor(pattern) {
+    this.pattern = pattern;
+  }
+  static isMultiMatch(pattern) {
+    return getMatch(pattern, this.multiRegex);
+  }
+  static isSingleMatch(pattern) {
+    return getMatch(pattern, this.singleRegex);
+  }
+  search() {
+  }
+}
+function getMatch(pattern, exp) {
+  const matches = pattern.match(exp);
+  return matches ? matches[1] : null;
+}
+class ExactMatch extends BaseMatch {
+  constructor(pattern) {
+    super(pattern);
+  }
+  static get type() {
+    return "exact";
+  }
+  static get multiRegex() {
+    return /^="(.*)"$/;
+  }
+  static get singleRegex() {
+    return /^=(.*)$/;
+  }
+  search(text) {
+    const isMatch = text === this.pattern;
+    return {
+      isMatch,
+      score: isMatch ? 0 : 1,
+      indices: [0, this.pattern.length - 1]
+    };
+  }
+}
+class InverseExactMatch extends BaseMatch {
+  constructor(pattern) {
+    super(pattern);
+  }
+  static get type() {
+    return "inverse-exact";
+  }
+  static get multiRegex() {
+    return /^!"(.*)"$/;
+  }
+  static get singleRegex() {
+    return /^!(.*)$/;
+  }
+  search(text) {
+    const index = text.indexOf(this.pattern);
+    const isMatch = index === -1;
+    return {
+      isMatch,
+      score: isMatch ? 0 : 1,
+      indices: [0, text.length - 1]
+    };
+  }
+}
+class PrefixExactMatch extends BaseMatch {
+  constructor(pattern) {
+    super(pattern);
+  }
+  static get type() {
+    return "prefix-exact";
+  }
+  static get multiRegex() {
+    return /^\^"(.*)"$/;
+  }
+  static get singleRegex() {
+    return /^\^(.*)$/;
+  }
+  search(text) {
+    const isMatch = text.startsWith(this.pattern);
+    return {
+      isMatch,
+      score: isMatch ? 0 : 1,
+      indices: [0, this.pattern.length - 1]
+    };
+  }
+}
+class InversePrefixExactMatch extends BaseMatch {
+  constructor(pattern) {
+    super(pattern);
+  }
+  static get type() {
+    return "inverse-prefix-exact";
+  }
+  static get multiRegex() {
+    return /^!\^"(.*)"$/;
+  }
+  static get singleRegex() {
+    return /^!\^(.*)$/;
+  }
+  search(text) {
+    const isMatch = !text.startsWith(this.pattern);
+    return {
+      isMatch,
+      score: isMatch ? 0 : 1,
+      indices: [0, text.length - 1]
+    };
+  }
+}
+class SuffixExactMatch extends BaseMatch {
+  constructor(pattern) {
+    super(pattern);
+  }
+  static get type() {
+    return "suffix-exact";
+  }
+  static get multiRegex() {
+    return /^"(.*)"\$$/;
+  }
+  static get singleRegex() {
+    return /^(.*)\$$/;
+  }
+  search(text) {
+    const isMatch = text.endsWith(this.pattern);
+    return {
+      isMatch,
+      score: isMatch ? 0 : 1,
+      indices: [text.length - this.pattern.length, text.length - 1]
+    };
+  }
+}
+class InverseSuffixExactMatch extends BaseMatch {
+  constructor(pattern) {
+    super(pattern);
+  }
+  static get type() {
+    return "inverse-suffix-exact";
+  }
+  static get multiRegex() {
+    return /^!"(.*)"\$$/;
+  }
+  static get singleRegex() {
+    return /^!(.*)\$$/;
+  }
+  search(text) {
+    const isMatch = !text.endsWith(this.pattern);
+    return {
+      isMatch,
+      score: isMatch ? 0 : 1,
+      indices: [0, text.length - 1]
+    };
+  }
+}
+class FuzzyMatch extends BaseMatch {
+  constructor(pattern, {
+    location: location2 = Config.location,
+    threshold = Config.threshold,
+    distance = Config.distance,
+    includeMatches = Config.includeMatches,
+    findAllMatches = Config.findAllMatches,
+    minMatchCharLength = Config.minMatchCharLength,
+    isCaseSensitive = Config.isCaseSensitive,
+    ignoreLocation = Config.ignoreLocation
+  } = {}) {
+    super(pattern);
+    this._bitapSearch = new BitapSearch(pattern, {
+      location: location2,
+      threshold,
+      distance,
+      includeMatches,
+      findAllMatches,
+      minMatchCharLength,
+      isCaseSensitive,
+      ignoreLocation
+    });
+  }
+  static get type() {
+    return "fuzzy";
+  }
+  static get multiRegex() {
+    return /^"(.*)"$/;
+  }
+  static get singleRegex() {
+    return /^(.*)$/;
+  }
+  search(text) {
+    return this._bitapSearch.searchIn(text);
+  }
+}
+class IncludeMatch extends BaseMatch {
+  constructor(pattern) {
+    super(pattern);
+  }
+  static get type() {
+    return "include";
+  }
+  static get multiRegex() {
+    return /^'"(.*)"$/;
+  }
+  static get singleRegex() {
+    return /^'(.*)$/;
+  }
+  search(text) {
+    let location2 = 0;
+    let index;
+    const indices = [];
+    const patternLen = this.pattern.length;
+    while ((index = text.indexOf(this.pattern, location2)) > -1) {
+      location2 = index + patternLen;
+      indices.push([index, location2 - 1]);
+    }
+    const isMatch = !!indices.length;
+    return {
+      isMatch,
+      score: isMatch ? 0 : 1,
+      indices
+    };
+  }
+}
+const searchers = [
+  ExactMatch,
+  IncludeMatch,
+  PrefixExactMatch,
+  InversePrefixExactMatch,
+  InverseSuffixExactMatch,
+  SuffixExactMatch,
+  InverseExactMatch,
+  FuzzyMatch
+];
+const searchersLen = searchers.length;
+const SPACE_RE = / +(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/;
+const OR_TOKEN = "|";
+function parseQuery(pattern, options = {}) {
+  return pattern.split(OR_TOKEN).map((item) => {
+    let query = item.trim().split(SPACE_RE).filter((item2) => item2 && !!item2.trim());
+    let results = [];
+    for (let i = 0, len = query.length; i < len; i += 1) {
+      const queryItem = query[i];
+      let found = false;
+      let idx = -1;
+      while (!found && ++idx < searchersLen) {
+        const searcher = searchers[idx];
+        let token = searcher.isMultiMatch(queryItem);
+        if (token) {
+          results.push(new searcher(token, options));
+          found = true;
+        }
+      }
+      if (found) {
+        continue;
+      }
+      idx = -1;
+      while (++idx < searchersLen) {
+        const searcher = searchers[idx];
+        let token = searcher.isSingleMatch(queryItem);
+        if (token) {
+          results.push(new searcher(token, options));
+          break;
+        }
+      }
+    }
+    return results;
+  });
+}
+const MultiMatchSet = /* @__PURE__ */ new Set([FuzzyMatch.type, IncludeMatch.type]);
+class ExtendedSearch {
+  constructor(pattern, {
+    isCaseSensitive = Config.isCaseSensitive,
+    includeMatches = Config.includeMatches,
+    minMatchCharLength = Config.minMatchCharLength,
+    ignoreLocation = Config.ignoreLocation,
+    findAllMatches = Config.findAllMatches,
+    location: location2 = Config.location,
+    threshold = Config.threshold,
+    distance = Config.distance
+  } = {}) {
+    this.query = null;
+    this.options = {
+      isCaseSensitive,
+      includeMatches,
+      minMatchCharLength,
+      findAllMatches,
+      ignoreLocation,
+      location: location2,
+      threshold,
+      distance
+    };
+    this.pattern = isCaseSensitive ? pattern : pattern.toLowerCase();
+    this.query = parseQuery(this.pattern, this.options);
+  }
+  static condition(_, options) {
+    return options.useExtendedSearch;
+  }
+  searchIn(text) {
+    const query = this.query;
+    if (!query) {
+      return {
+        isMatch: false,
+        score: 1
+      };
+    }
+    const { includeMatches, isCaseSensitive } = this.options;
+    text = isCaseSensitive ? text : text.toLowerCase();
+    let numMatches = 0;
+    let allIndices = [];
+    let totalScore = 0;
+    for (let i = 0, qLen = query.length; i < qLen; i += 1) {
+      const searchers2 = query[i];
+      allIndices.length = 0;
+      numMatches = 0;
+      for (let j = 0, pLen = searchers2.length; j < pLen; j += 1) {
+        const searcher = searchers2[j];
+        const { isMatch, indices, score } = searcher.search(text);
+        if (isMatch) {
+          numMatches += 1;
+          totalScore += score;
+          if (includeMatches) {
+            const type2 = searcher.constructor.type;
+            if (MultiMatchSet.has(type2)) {
+              allIndices = [...allIndices, ...indices];
+            } else {
+              allIndices.push(indices);
+            }
+          }
+        } else {
+          totalScore = 0;
+          numMatches = 0;
+          allIndices.length = 0;
+          break;
+        }
+      }
+      if (numMatches) {
+        let result = {
+          isMatch: true,
+          score: totalScore / numMatches
+        };
+        if (includeMatches) {
+          result.indices = allIndices;
+        }
+        return result;
+      }
+    }
+    return {
+      isMatch: false,
+      score: 1
+    };
+  }
+}
+const registeredSearchers = [];
+function register(...args) {
+  registeredSearchers.push(...args);
+}
+function createSearcher(pattern, options) {
+  for (let i = 0, len = registeredSearchers.length; i < len; i += 1) {
+    let searcherClass = registeredSearchers[i];
+    if (searcherClass.condition(pattern, options)) {
+      return new searcherClass(pattern, options);
+    }
+  }
+  return new BitapSearch(pattern, options);
+}
+const LogicalOperator = {
+  AND: "$and",
+  OR: "$or"
+};
+const KeyType = {
+  PATH: "$path",
+  PATTERN: "$val"
+};
+const isExpression = (query) => !!(query[LogicalOperator.AND] || query[LogicalOperator.OR]);
+const isPath = (query) => !!query[KeyType.PATH];
+const isLeaf = (query) => !isArray(query) && isObject(query) && !isExpression(query);
+const convertToExplicit = (query) => ({
+  [LogicalOperator.AND]: Object.keys(query).map((key) => ({
+    [key]: query[key]
+  }))
+});
+function parse(query, options, { auto = true } = {}) {
+  const next = (query2) => {
+    let keys2 = Object.keys(query2);
+    const isQueryPath = isPath(query2);
+    if (!isQueryPath && keys2.length > 1 && !isExpression(query2)) {
+      return next(convertToExplicit(query2));
+    }
+    if (isLeaf(query2)) {
+      const key = isQueryPath ? query2[KeyType.PATH] : keys2[0];
+      const pattern = isQueryPath ? query2[KeyType.PATTERN] : query2[key];
+      if (!isString(pattern)) {
+        throw new Error(LOGICAL_SEARCH_INVALID_QUERY_FOR_KEY(key));
+      }
+      const obj = {
+        keyId: createKeyId(key),
+        pattern
+      };
+      if (auto) {
+        obj.searcher = createSearcher(pattern, options);
+      }
+      return obj;
+    }
+    let node = {
+      children: [],
+      operator: keys2[0]
+    };
+    keys2.forEach((key) => {
+      const value2 = query2[key];
+      if (isArray(value2)) {
+        value2.forEach((item) => {
+          node.children.push(next(item));
+        });
+      }
+    });
+    return node;
+  };
+  if (!isExpression(query)) {
+    query = convertToExplicit(query);
+  }
+  return next(query);
+}
+function computeScore(results, { ignoreFieldNorm = Config.ignoreFieldNorm }) {
+  results.forEach((result) => {
+    let totalScore = 1;
+    result.matches.forEach(({ key, norm: norm2, score }) => {
+      const weight = key ? key.weight : null;
+      totalScore *= Math.pow(
+        score === 0 && weight ? Number.EPSILON : score,
+        (weight || 1) * (ignoreFieldNorm ? 1 : norm2)
+      );
+    });
+    result.score = totalScore;
+  });
+}
+function transformMatches(result, data) {
+  const matches = result.matches;
+  data.matches = [];
+  if (!isDefined(matches)) {
+    return;
+  }
+  matches.forEach((match) => {
+    if (!isDefined(match.indices) || !match.indices.length) {
+      return;
+    }
+    const { indices, value: value2 } = match;
+    let obj = {
+      indices,
+      value: value2
+    };
+    if (match.key) {
+      obj.key = match.key.src;
+    }
+    if (match.idx > -1) {
+      obj.refIndex = match.idx;
+    }
+    data.matches.push(obj);
+  });
+}
+function transformScore(result, data) {
+  data.score = result.score;
+}
+function format(results, docs, {
+  includeMatches = Config.includeMatches,
+  includeScore = Config.includeScore
+} = {}) {
+  const transformers = [];
+  if (includeMatches)
+    transformers.push(transformMatches);
+  if (includeScore)
+    transformers.push(transformScore);
+  return results.map((result) => {
+    const { idx } = result;
+    const data = {
+      item: docs[idx],
+      refIndex: idx
+    };
+    if (transformers.length) {
+      transformers.forEach((transformer) => {
+        transformer(result, data);
+      });
+    }
+    return data;
+  });
+}
+class Fuse {
+  constructor(docs, options = {}, index) {
+    this.options = { ...Config, ...options };
+    if (this.options.useExtendedSearch && false) {
+      throw new Error(EXTENDED_SEARCH_UNAVAILABLE);
+    }
+    this._keyStore = new KeyStore(this.options.keys);
+    this.setCollection(docs, index);
+  }
+  setCollection(docs, index) {
+    this._docs = docs;
+    if (index && !(index instanceof FuseIndex)) {
+      throw new Error(INCORRECT_INDEX_TYPE);
+    }
+    this._myIndex = index || createIndex(this.options.keys, this._docs, {
+      getFn: this.options.getFn,
+      fieldNormWeight: this.options.fieldNormWeight
+    });
+  }
+  add(doc2) {
+    if (!isDefined(doc2)) {
+      return;
+    }
+    this._docs.push(doc2);
+    this._myIndex.add(doc2);
+  }
+  remove(predicate = () => false) {
+    const results = [];
+    for (let i = 0, len = this._docs.length; i < len; i += 1) {
+      const doc2 = this._docs[i];
+      if (predicate(doc2, i)) {
+        this.removeAt(i);
+        i -= 1;
+        len -= 1;
+        results.push(doc2);
+      }
+    }
+    return results;
+  }
+  removeAt(idx) {
+    this._docs.splice(idx, 1);
+    this._myIndex.removeAt(idx);
+  }
+  getIndex() {
+    return this._myIndex;
+  }
+  search(query, { limit = -1 } = {}) {
+    const {
+      includeMatches,
+      includeScore,
+      shouldSort,
+      sortFn,
+      ignoreFieldNorm
+    } = this.options;
+    let results = isString(query) ? isString(this._docs[0]) ? this._searchStringList(query) : this._searchObjectList(query) : this._searchLogical(query);
+    computeScore(results, { ignoreFieldNorm });
+    if (shouldSort) {
+      results.sort(sortFn);
+    }
+    if (isNumber(limit) && limit > -1) {
+      results = results.slice(0, limit);
+    }
+    return format(results, this._docs, {
+      includeMatches,
+      includeScore
+    });
+  }
+  _searchStringList(query) {
+    const searcher = createSearcher(query, this.options);
+    const { records } = this._myIndex;
+    const results = [];
+    records.forEach(({ v: text, i: idx, n: norm2 }) => {
+      if (!isDefined(text)) {
+        return;
+      }
+      const { isMatch, score, indices } = searcher.searchIn(text);
+      if (isMatch) {
+        results.push({
+          item: text,
+          idx,
+          matches: [{ score, value: text, norm: norm2, indices }]
+        });
+      }
+    });
+    return results;
+  }
+  _searchLogical(query) {
+    const expression = parse(query, this.options);
+    const evaluate = (node, item, idx) => {
+      if (!node.children) {
+        const { keyId, searcher } = node;
+        const matches = this._findMatches({
+          key: this._keyStore.get(keyId),
+          value: this._myIndex.getValueForItemAtKeyId(item, keyId),
+          searcher
+        });
+        if (matches && matches.length) {
+          return [
+            {
+              idx,
+              item,
+              matches
+            }
+          ];
+        }
+        return [];
+      }
+      const res = [];
+      for (let i = 0, len = node.children.length; i < len; i += 1) {
+        const child = node.children[i];
+        const result = evaluate(child, item, idx);
+        if (result.length) {
+          res.push(...result);
+        } else if (node.operator === LogicalOperator.AND) {
+          return [];
+        }
+      }
+      return res;
+    };
+    const records = this._myIndex.records;
+    const resultMap = {};
+    const results = [];
+    records.forEach(({ $: item, i: idx }) => {
+      if (isDefined(item)) {
+        let expResults = evaluate(expression, item, idx);
+        if (expResults.length) {
+          if (!resultMap[idx]) {
+            resultMap[idx] = { idx, item, matches: [] };
+            results.push(resultMap[idx]);
+          }
+          expResults.forEach(({ matches }) => {
+            resultMap[idx].matches.push(...matches);
+          });
+        }
+      }
+    });
+    return results;
+  }
+  _searchObjectList(query) {
+    const searcher = createSearcher(query, this.options);
+    const { keys: keys2, records } = this._myIndex;
+    const results = [];
+    records.forEach(({ $: item, i: idx }) => {
+      if (!isDefined(item)) {
+        return;
+      }
+      let matches = [];
+      keys2.forEach((key, keyIndex) => {
+        matches.push(
+          ...this._findMatches({
+            key,
+            value: item[keyIndex],
+            searcher
+          })
+        );
+      });
+      if (matches.length) {
+        results.push({
+          idx,
+          item,
+          matches
+        });
+      }
+    });
+    return results;
+  }
+  _findMatches({ key, value: value2, searcher }) {
+    if (!isDefined(value2)) {
+      return [];
+    }
+    let matches = [];
+    if (isArray(value2)) {
+      value2.forEach(({ v: text, i: idx, n: norm2 }) => {
+        if (!isDefined(text)) {
+          return;
+        }
+        const { isMatch, score, indices } = searcher.searchIn(text);
+        if (isMatch) {
+          matches.push({
+            score,
+            key,
+            value: text,
+            idx,
+            norm: norm2,
+            indices
+          });
+        }
+      });
+    } else {
+      const { v: text, n: norm2 } = value2;
+      const { isMatch, score, indices } = searcher.searchIn(text);
+      if (isMatch) {
+        matches.push({ score, key, value: text, norm: norm2, indices });
+      }
+    }
+    return matches;
+  }
+}
+Fuse.version = "6.6.2";
+Fuse.createIndex = createIndex;
+Fuse.parseIndex = parseIndex;
+Fuse.config = Config;
+{
+  Fuse.parseQuery = parse;
+}
+{
+  register(ExtendedSearch);
+}
+const store = { state: {} };
+function readFromLocalStorage() {
+  let storedData;
+  try {
+    storedData = localStorage.getItem("IconSearch");
+    store.state = JSON.parse(storedData ?? "{}");
+  } catch (ex) {
+    const error = ex;
+    console.warn("Icon Search data in local storage is corrupted; resetting.", { storedData, error: error.message });
+    updateLocalStorage();
+  }
+}
+function updateLocalStorage() {
+  localStorage.setItem("IconSearch", JSON.stringify(store.state ?? {}));
+}
+const icons = Object.values(_iconsCache);
+const fuse = new Fuse(icons, {
+  keys: [
+    "icon",
+    "iconName"
+  ]
+});
+class IconSearch {
+  constructor() {
+    readFromLocalStorage();
+  }
+  findIcon(searchString) {
+    var _a2, _b2, _c, _d;
+    const existing = (_b2 = (_a2 = store == null ? void 0 : store.state) == null ? void 0 : _a2.icons) == null ? void 0 : _b2[searchString];
+    if (existing !== void 0) {
+      return existing;
+    }
+    let bestMatch = (_c = fuse.search(searchString)) == null ? void 0 : _c[0];
+    if (bestMatch === void 0) {
+      const alts = searchString.split(" ").map((part) => {
+        var _a3;
+        const partMatch = (_a3 = fuse.search(part)) == null ? void 0 : _a3[0];
+        return partMatch;
+      }).filter((n) => n);
+      bestMatch = alts[0];
+    }
+    const newMatch = (_d = bestMatch == null ? void 0 : bestMatch.item) == null ? void 0 : _d.iconName;
+    store.state.icons = store.state.icons ?? {};
+    store.state.icons[searchString] = newMatch;
+    updateLocalStorage();
+    return newMatch;
+  }
+}
+const fnRegex = /(async\s)?([A-z][A-z0-9_]+)\((.*)\)/;
+function paramsForFunction(signature) {
+  const parts = signature.match(fnRegex) ?? [];
+  const middle = parts.pop() ?? "";
+  const params2 = middle.split(",").map((n) => n.trim()).filter((n) => n);
+  return params2;
+}
+const ignorable = ["length", "name", "arguments", "caller", "apply", "bind", "call", "toString"].sort();
+function describeObject(obj) {
+  const signatures = {
+    object: (objProp) => objProp,
+    function: (objProp) => {
+      const parts = (objProp + "").match(fnRegex);
+      return (parts == null ? void 0 : parts[0]) ?? objProp + "";
+    },
+    string: (objProp) => objProp,
+    number: (objProp) => objProp,
+    bigint: (objProp) => objProp,
+    boolean: (objProp) => objProp,
+    symbol: (objProp) => objProp,
+    undefined: (objProp) => objProp,
+    default: (objProp) => objProp + ""
+  };
+  const ignoreList = ["__defineGetter__", "__defineSetter__"];
+  const keys2 = Object.keys(obj);
+  const meta = [...Object.getOwnPropertyNames(Object.getPrototypeOf(obj)).filter((n) => n !== "constructor")].sort();
+  let properties;
+  if (JSON.stringify(ignorable) === JSON.stringify(meta)) {
+    console.log("Object matches pattern for wrapped object, switching to keys:", { keys: keys2, meta });
+    properties = keys2;
+  } else {
+    properties = meta;
+  }
+  return properties.map((prop) => {
+    if (ignoreList.includes(prop)) {
+      return null;
+    }
+    let value2, type2, signature, params2, description;
+    try {
+      value2 = obj[prop];
+      type2 = typeof value2;
+      signature = (signatures[type2] ?? signatures.default)(value2);
+      params2 = type2 === "function" ? paramsForFunction(signature) : null;
+      description = (signature + "").includes(prop) ? signature : `${type2} ${prop}`;
+    } catch (ex) {
+      const error = ex;
+      description = `Key: "${prop}", Error: "${error.message}"`;
+      console.warn("Object property not describable:", { prop, obj });
+    }
+    return {
+      prop,
+      type: type2,
+      signature,
+      params: params2,
+      description,
+      value: value2
+    };
+  }).filter((n) => n);
+}
+function sentenceCase(camelCase) {
+  return capitalizeFirstLetter(camelCase + "").replace(/([A-Z]+)/g, " $1").replace(/([A-Z][a-z])/g, " $1").replaceAll(/\s+/g, " ").trim();
+}
+function capitalizeFirstLetter(input) {
+  return input.charAt(0).toUpperCase() + input.slice(1);
+}
+const TabSelector_vue_vue_type_style_index_0_scoped_1efabf36_lang = "";
+const _sfc_main$6 = {
+  props: {
+    modelValue: {
+      type: null,
+      default: false
+    },
+    tabs: {
+      type: Array,
+      default: () => {
+        return [];
+      }
+    },
+    label: {
+      type: String,
+      default: ""
+    }
+  },
+  methods: {
+    selectedClass(actual, current) {
+      if (JSON.stringify(actual) === JSON.stringify(current)) {
+        return "button selected";
+      }
+      return "button";
+    },
+    tabIcon(tab) {
+      return (tab == null ? void 0 : tab.icon) ?? "star";
+    },
+    tabId(tab) {
+      const entry = Array.isArray(tab) ? tab[1] : null;
+      return entry ?? (tab == null ? void 0 : tab.id) ?? (tab == null ? void 0 : tab.key) ?? (tab == null ? void 0 : tab.label) ?? (tab == null ? void 0 : tab.name) ?? (tab == null ? void 0 : tab.value) ?? tab;
+    },
+    tabLabel(tab) {
+      const entry = Array.isArray(tab) ? tab[1] : null;
+      return entry ?? (tab == null ? void 0 : tab.label) ?? (tab == null ? void 0 : tab.name) ?? (tab == null ? void 0 : tab.value) ?? (tab == null ? void 0 : tab.name) ?? tab;
+    }
+  }
+};
+const _hoisted_1$6 = { class: "tab-selector buttons" };
+const _hoisted_2$6 = { key: 0 };
+const _hoisted_3$4 = ["onClick"];
+function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_icon = resolveComponent("icon");
+  return openBlock(), createElementBlock("div", _hoisted_1$6, [
+    $props.label ? (openBlock(), createElementBlock("label", _hoisted_2$6, toDisplayString($props.label), 1)) : createCommentVNode("", true),
+    renderSlot(_ctx.$slots, "default", { tabs: $props.tabs }, () => [
+      (openBlock(true), createElementBlock(Fragment, null, renderList($props.tabs, (tab) => {
+        return openBlock(), createElementBlock("div", {
+          key: `type_${$options.tabId(tab)}`,
+          class: normalizeClass($options.selectedClass($props.modelValue, tab)),
+          onClick: ($event) => _ctx.$emit("update:modelValue", tab)
+        }, [
+          createVNode(_component_icon, {
+            icon: $options.tabIcon(tab)
+          }, null, 8, ["icon"]),
+          createBaseVNode("span", null, toDisplayString($options.tabLabel(tab)), 1)
+        ], 10, _hoisted_3$4);
+      }), 128))
+    ], true)
+  ]);
+}
+const TabSelector = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__scopeId", "data-v-1efabf36"]]);
+function flattenObject(obj = {}, res = {}, extraKey = "") {
+  for (const key in obj) {
+    if (typeof obj[key] !== "object") {
+      res[extraKey + key] = obj[key];
+    } else {
+      flattenObject(obj[key], res, `${extraKey}${key}.`);
+    }
+  }
+  return res;
+}
+const HiddenByDefault_vue_vue_type_style_index_0_scoped_005de0bb_lang = "";
+const _sfc_main$5 = {
+  props: {
+    reason: {
+      type: String,
+      default: "Hidden value"
+    }
+  },
+  data() {
+    return {
+      hidden: true,
+      copied: false
+    };
+  },
+  computed: {
+    copyIcon() {
+      return this.copied ? "clipboard-check" : "clipboard";
+    }
+  },
+  methods: {
+    copy() {
+      const value2 = (this.$refs.dataslot.textContent + "").trim();
+      navigator.clipboard.writeText(value2);
+      this.copied = true;
+    }
+  }
+};
+const _withScopeId$1 = (n) => (pushScopeId("data-v-005de0bb"), n = n(), popScopeId(), n);
+const _hoisted_1$5 = { class: "hidden-by-default" };
+const _hoisted_2$5 = {
+  key: 1,
+  style: { "font-family": "monospace", "white-space": "nowrap" }
+};
+const _hoisted_3$3 = /* @__PURE__ */ _withScopeId$1(() => /* @__PURE__ */ createBaseVNode("span", { style: { "display": "none" } }, "Hide value", -1));
+const _hoisted_4$2 = { style: { "display": "none" } };
+const _hoisted_5$2 = {
+  ref: "dataslot",
+  style: { "display": "none" }
+};
+function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_Icon = resolveComponent("Icon");
+  return openBlock(), createElementBlock("div", _hoisted_1$5, [
+    $data.hidden ? (openBlock(), createElementBlock("b", {
+      key: 0,
+      class: "show button",
+      title: "Click to show hidden value",
+      onClick: _cache[0] || (_cache[0] = ($event) => $data.hidden = false)
+    }, [
+      createBaseVNode("span", null, toDisplayString($props.reason), 1),
+      createVNode(_component_Icon, { icon: "eye-low-vision" })
+    ])) : (openBlock(), createElementBlock("span", _hoisted_2$5, [
+      renderSlot(_ctx.$slots, "default", {}, void 0, true)
+    ])),
+    !$data.hidden ? (openBlock(), createElementBlock("b", {
+      key: 2,
+      class: "hide button",
+      title: "Hide value",
+      onClick: _cache[1] || (_cache[1] = ($event) => $data.hidden = true)
+    }, [
+      _hoisted_3$3,
+      createVNode(_component_Icon, { icon: "eye" })
+    ])) : createCommentVNode("", true),
+    createBaseVNode("b", {
+      class: "copy button",
+      title: "Copy value to clipboard",
+      onClick: _cache[2] || (_cache[2] = (...args) => $options.copy && $options.copy(...args))
+    }, [
+      createBaseVNode("span", _hoisted_4$2, toDisplayString($data.copied ? "Copied" : "Copy") + " to clipboard", 1),
+      createVNode(_component_Icon, { icon: $options.copyIcon }, null, 8, ["icon"])
+    ]),
+    createBaseVNode("div", _hoisted_5$2, [
+      renderSlot(_ctx.$slots, "default", {}, void 0, true)
+    ], 512)
+  ]);
+}
+const HiddenByDefault = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__scopeId", "data-v-005de0bb"]]);
+const SmartType_vue_vue_type_style_index_0_scoped_875acb94_lang = "";
+const keyTypes = {
+  icon: "icon",
+  color: "color"
+};
+const _sfc_main$4 = {
+  name: "SmartType",
+  components: { HiddenByDefault, RelativeDate },
+  props: {
+    name: {
+      type: String,
+      default: ""
+    },
+    value: {
+      type: null,
+      default() {
+        return "";
+      }
+    },
+    showName: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    smartClass() {
+      const { smartType, showName } = this;
+      const withName = showName ? "with-name" : false;
+      return ["smart", "property", smartType, withName].filter((n) => n).join(" ");
+    },
+    smartType() {
+      const { name, value: value2 } = this;
+      const keyString = (name + "").toLowerCase();
+      const valueString = (value2 + "").toLowerCase();
+      const knownKeyType = keyTypes[keyString];
+      if (knownKeyType) {
+        return knownKeyType;
+      }
+      if (valueString.includes("https://")) {
+        return "url";
+      }
+      if (valueString.includes("arn:")) {
+        return "aws-arn";
+      }
+      if (keyString.includes("date")) {
+        return "date";
+      }
+      if (keyString.includes("api") && keyString.includes("key")) {
+        return "apikey";
+      }
+      if (keyString.includes("timestamp")) {
+        return "datetime";
+      }
+      if (valueString.match(/^[0-9]{4}-(0[1-9]|1[0-2])/)) {
+        return "datetime";
+      }
+      return typeof value2;
+    }
+  },
+  methods: {
+    objectEntries(value2) {
+      const flattened = flattenObject(value2);
+      return Object.entries(flattened);
+    },
+    parseDate(value2) {
+      const date = new Date(value2);
+      return date.toString() === "Invalid Date" ? /* @__PURE__ */ new Date() : date;
+    }
+  }
+};
+const _hoisted_1$4 = { key: 0 };
+const _hoisted_2$4 = { key: 1 };
+const _hoisted_3$2 = { key: 2 };
+const _hoisted_4$1 = {
+  key: 3,
+  style: { "text-transform": "uppercase", "font-family": "monospace" }
+};
+const _hoisted_5$1 = {
+  key: 4,
+  style: { "font-family": "monospace", "white-space": "nowrap" }
+};
+const _hoisted_6$1 = ["href"];
+const _hoisted_7$1 = { key: 5 };
+const _hoisted_8$1 = { key: 1 };
+const _hoisted_9$1 = { key: 6 };
+const _hoisted_10$1 = { key: 1 };
+const _hoisted_11 = { key: 7 };
+const _hoisted_12 = { key: 8 };
+const _hoisted_13 = { key: 9 };
+const _hoisted_14 = { key: 10 };
+function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_smart_type = resolveComponent("smart-type", true);
+  const _component_icon = resolveComponent("icon");
+  const _component_RelativeDate = resolveComponent("RelativeDate");
+  const _component_HiddenByDefault = resolveComponent("HiddenByDefault");
+  const _component_hidden_by_default = resolveComponent("hidden-by-default");
+  return openBlock(), createElementBlock("div", {
+    class: normalizeClass($options.smartClass)
+  }, [
+    $props.showName ? (openBlock(), createElementBlock("b", _hoisted_1$4, toDisplayString($props.name), 1)) : createCommentVNode("", true),
+    $options.smartType === "object" ? (openBlock(), createElementBlock("div", _hoisted_2$4, [
+      (openBlock(true), createElementBlock(Fragment, null, renderList($options.objectEntries($props.value), ([entryKey, entryValue]) => {
+        return openBlock(), createBlock(_component_smart_type, {
+          key: `st_${entryKey}`,
+          name: entryKey,
+          value: entryValue,
+          "show-name": true
+        }, null, 8, ["name", "value"]);
+      }), 128))
+    ])) : $options.smartType === "icon" ? (openBlock(), createElementBlock("span", _hoisted_3$2, [
+      createVNode(_component_icon, { icon: $props.value }, null, 8, ["icon"])
+    ])) : $options.smartType === "color" ? (openBlock(), createElementBlock("div", _hoisted_4$1, [
+      createBaseVNode("span", null, toDisplayString($props.value), 1),
+      createVNode(_component_icon, {
+        icon: "square",
+        style: normalizeStyle(`color: ${$props.value}`)
+      }, null, 8, ["style"])
+    ])) : $options.smartType === "url" ? (openBlock(), createElementBlock("div", _hoisted_5$1, [
+      createVNode(_component_icon, { icon: "earth-americas" }),
+      createBaseVNode("a", { href: $props.value }, "/" + toDisplayString($props.value.split("/").pop().split("?")[0]), 9, _hoisted_6$1)
+    ])) : $options.smartType === "date" ? (openBlock(), createElementBlock("div", _hoisted_7$1, [
+      $options.parseDate($props.value) ? (openBlock(), createBlock(_component_RelativeDate, {
+        key: 0,
+        date: $options.parseDate($props.value)
+      }, {
+        default: withCtx(() => [
+          createTextVNode(" (" + toDisplayString($props.value) + ") ", 1)
+        ]),
+        _: 1
+      }, 8, ["date"])) : (openBlock(), createElementBlock("b", _hoisted_8$1, toDisplayString($props.value), 1))
+    ])) : $options.smartType === "datetime" ? (openBlock(), createElementBlock("div", _hoisted_9$1, [
+      $options.parseDate($props.value) ? (openBlock(), createBlock(_component_RelativeDate, {
+        key: 0,
+        date: $options.parseDate($props.value)
+      }, {
+        default: withCtx(() => [
+          createTextVNode(" (" + toDisplayString($props.value) + ") ", 1)
+        ]),
+        _: 1
+      }, 8, ["date"])) : (openBlock(), createElementBlock("b", _hoisted_10$1, toDisplayString($props.value), 1))
+    ])) : $options.smartType === "apikey" ? (openBlock(), createElementBlock("div", _hoisted_11, [
+      createVNode(_component_HiddenByDefault, null, {
+        default: withCtx(() => [
+          createTextVNode(toDisplayString($props.value), 1)
+        ]),
+        _: 1
+      })
+    ])) : $options.smartType === "aws-arn" ? (openBlock(), createElementBlock("span", _hoisted_12, [
+      createVNode(_component_hidden_by_default, { reason: "Long value" }, {
+        default: withCtx(() => [
+          createTextVNode(toDisplayString($props.value), 1)
+        ]),
+        _: 1
+      })
+    ])) : $options.smartType === "string" && $props.value.length > 30 && !$props.value.match(/\s/) ? (openBlock(), createElementBlock("span", _hoisted_13, [
+      createVNode(_component_hidden_by_default, { reason: "Long value" }, {
+        default: withCtx(() => [
+          createTextVNode(toDisplayString($props.value), 1)
+        ]),
+        _: 1
+      })
+    ])) : (openBlock(), createElementBlock("span", _hoisted_14, toDisplayString($props.value), 1))
+  ], 2);
+}
+const SmartType = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__scopeId", "data-v-875acb94"]]);
+const Tabulation_vue_vue_type_style_index_0_scoped_2934aaf4_lang = "";
+function removeArrayListeners(data) {
+  return JSON.parse(JSON.stringify(data));
+}
+const _sfc_main$3 = {
+  components: { SmartType },
+  props: {
+    items: {
+      type: Array,
+      default: () => []
+    },
+    columns: {
+      type: Array,
+      default: () => []
+    },
+    groupItems: {
+      type: Boolean,
+      default: false
+    },
+    sortedColumn: {
+      type: String,
+      default: ""
+    },
+    sortAscending: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      internalSortedColumn: "",
+      internalSortAscending: true
+    };
+  },
+  computed: {
+    firstHeading() {
+      return this.items[0];
+    },
+    columnHeadings() {
+      return this.columnKeys.map((n) => n.label || n);
+    },
+    columnKeys() {
+      const columns = this.columns && this.columns.length ? this.columns : false;
+      return (columns || this.listAllProperties).map((n) => n.key || n);
+    },
+    groupedRows() {
+      const index = this.items.reduce((acc, item) => {
+        const lookup = item[this.row] ?? item;
+        const entry = acc[lookup] ?? [];
+        entry.push(item);
+        acc[lookup] = entry;
+        return acc;
+      }, {});
+      const result = Object.entries(index).map(([key, values]) => {
+        const nonEmpty = values.map((n) => n);
+        return [].concat([key], ...nonEmpty);
+      });
+      return result;
+    },
+    listAllProperties() {
+      const index = this.items.reduce((acc, item) => {
+        acc = typeof item === "string" ? { text: item } : Object.assign(acc, Object.keys(item));
+        return acc;
+      }, {});
+      return Object.values(index);
+    },
+    plainRows() {
+      return this.items.map((item) => {
+        return this.columnKeys.map(() => item);
+      });
+    },
+    row() {
+      return this.columnKeys[0];
+    },
+    rows() {
+      return this.groupItems ? this.groupedRows : this.plainRows;
+    },
+    computedSortedColumn() {
+      return this.sortedColumn ?? this.internalSortedColumn;
+    },
+    computedSortAscending() {
+      return this.sortedColumn ? this.sortAscending : this.internalSortAscending;
+    },
+    sortedRows() {
+      const { rows, sortedColumn, internalSortedColumn, internalSortAscending } = this;
+      const dataPreSorted = sortedColumn ? true : false;
+      if (dataPreSorted) {
+        return rows;
+      }
+      if (!Array.isArray(rows)) {
+        return [];
+      }
+      const col = internalSortedColumn;
+      const asc = internalSortAscending;
+      const clonedRows = removeArrayListeners(rows);
+      if (col) {
+        clonedRows.sort((a, b) => {
+          const sa = JSON.stringify(a[0][col]);
+          const sb = JSON.stringify(b[0][col]);
+          return asc ? sa.localeCompare(sb) : sb.localeCompare(sa);
+        });
+      }
+      return clonedRows;
+    }
+  },
+  methods: {
+    cellEntries(cell, column) {
+      const value2 = this.contentsOf(cell, column);
+      const flattened = flattenObject(value2);
+      return Object.entries(flattened);
+    },
+    columnHeadingClass(columnHeading) {
+      return columnHeading === this.computedSortedColumn ? "sorted" : "unsorted";
+    },
+    columnIcon(columnHeading) {
+      const direction = this.computedSortAscending ? "sort-amount-up" : "sort-amount-down";
+      return this.computedSortedColumn === columnHeading ? direction : "sort";
+    },
+    contentsOf(cell, column) {
+      const columnKey = this.columnKeys[column] ?? column;
+      return cell[columnKey] ?? "";
+    },
+    columnKey(column) {
+      return this.columnKeys[column] ?? column;
+    },
+    sortByColumnEvent(columnHeading) {
+      const same = columnHeading === this.computedSortedColumn;
+      this.internalSortedColumn = columnHeading;
+      this.internalSortAscending = same ? !this.internalSortAscending : true;
+      const reset = same && this.internalSortAscending;
+      if (reset) {
+        this.internalSortedColumn = "";
+      }
+      this.$emit("sortByColumn", {
+        columnHeading,
+        sortAscending: same ? !this.computedSortAscending : true
+      });
+    },
+    valueAsArray(value2) {
+      if (Array.isArray(value2)) {
+        return value2;
+      }
+      if (Object.keys(value2).length === 1) {
+        const onlyKey = Object.keys(value2)[0];
+        return this.valueAsArray(value2[onlyKey]);
+      }
+      return [value2];
+    }
+  }
+};
+const _hoisted_1$3 = {
+  key: 0,
+  class: "tabulation"
+};
+const _hoisted_2$3 = ["onClick"];
+function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_icon = resolveComponent("icon");
+  const _component_smart_type = resolveComponent("smart-type");
+  return $options.rows.length ? (openBlock(), createElementBlock("table", _hoisted_1$3, [
+    createBaseVNode("thead", null, [
+      createBaseVNode("tr", null, [
+        (openBlock(true), createElementBlock(Fragment, null, renderList($options.columnHeadings, (columnHeading, i) => {
+          return openBlock(), createElementBlock("th", {
+            key: `colHeading-${columnHeading}-${i}`,
+            class: normalizeClass($options.columnHeadingClass(columnHeading, i)),
+            onClick: ($event) => $options.sortByColumnEvent(columnHeading, i)
+          }, [
+            createBaseVNode("div", null, [
+              createBaseVNode("label", null, toDisplayString(columnHeading), 1),
+              createVNode(_component_icon, {
+                icon: $options.columnIcon(columnHeading)
+              }, null, 8, ["icon"])
+            ])
+          ], 10, _hoisted_2$3);
+        }), 128))
+      ])
+    ]),
+    createBaseVNode("tbody", null, [
+      (openBlock(true), createElementBlock(Fragment, null, renderList($options.sortedRows, (rowItem, j) => {
+        return openBlock(), createElementBlock("tr", {
+          key: `row-${j}`
+        }, [
+          (openBlock(true), createElementBlock(Fragment, null, renderList(rowItem, (cell, column) => {
+            return openBlock(), createElementBlock("td", {
+              key: `cell-${column}`
+            }, [
+              renderSlot(_ctx.$slots, "default", {
+                cell,
+                column,
+                columnKey: $options.columnKey(column)
+              }, () => [
+                (openBlock(), createBlock(_component_smart_type, {
+                  key: $options.columnKey(column),
+                  value: $options.contentsOf(cell, column)
+                }, null, 8, ["value"]))
+              ], true)
+            ]);
+          }), 128))
+        ]);
+      }), 128))
+    ])
+  ])) : createCommentVNode("", true);
+}
+const Tabulation = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__scopeId", "data-v-2934aaf4"]]);
+function tabulate(item, filter2 = []) {
+  item = item ?? {};
+  return Object.entries(item).map(([key, value2]) => {
+    return { key, value: value2 };
+  }).filter((item2) => !filter2.includes(item2.key));
+}
+const SmartTable_vue_vue_type_style_index_0_scoped_487dc2b1_lang = "";
+const modes = [
+  { label: "table", icon: "table" },
+  { label: "json", icon: "code" },
+  { label: "paged", icon: "list-alt" },
+  { label: "paged json", icon: "file-code" }
+];
+const _sfc_main$2 = {
+  components: { TabSelector, Tabulation, PaginatedItems },
+  props: {
+    value: {
+      type: null,
+      default: null
+    }
+  },
+  data() {
+    return {
+      mode: modes[0],
+      modes
+    };
+  },
+  methods: {
+    tabulate,
+    valueAsArray(value2) {
+      if (Array.isArray(value2)) {
+        return value2;
+      }
+      if (Object.keys(value2).length === 1) {
+        const onlyKey = Object.keys(value2)[0];
+        return this.valueAsArray(value2[onlyKey]);
+      }
+      return [value2];
+    }
+  }
+};
+const _hoisted_1$2 = { class: "smart-table column p5" };
+const _hoisted_2$2 = { key: 1 };
+function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_TabSelector = resolveComponent("TabSelector");
+  const _component_Tabulation = resolveComponent("Tabulation");
+  const _component_PaginatedItems = resolveComponent("PaginatedItems");
+  return openBlock(), createElementBlock("div", _hoisted_1$2, [
+    $props.value ? (openBlock(), createBlock(_component_TabSelector, {
+      key: 0,
+      tabs: $data.modes,
+      modelValue: $data.mode,
+      "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $data.mode = $event)
+    }, null, 8, ["tabs", "modelValue"])) : createCommentVNode("", true),
+    $data.mode.label === "json" ? (openBlock(), createElementBlock("pre", _hoisted_2$2, [
+      createBaseVNode("code", null, toDisplayString($props.value), 1)
+    ])) : createCommentVNode("", true),
+    $data.mode.label === "table" ? (openBlock(), createBlock(_component_Tabulation, {
+      key: 2,
+      items: $options.valueAsArray($props.value)
+    }, null, 8, ["items"])) : createCommentVNode("", true),
+    $data.mode.label === "paged" ? (openBlock(), createBlock(_component_PaginatedItems, {
+      key: 3,
+      items: $options.valueAsArray($props.value),
+      "page-size": 5
+    }, {
+      default: withCtx(({ paginatedItems }) => [
+        (openBlock(true), createElementBlock(Fragment, null, renderList(paginatedItems, (item) => {
+          return openBlock(), createElementBlock("div", {
+            key: (item == null ? void 0 : item.id) ?? JSON.stringify(item),
+            class: "paged-item"
+          }, [
+            createVNode(_component_Tabulation, {
+              items: $options.valueAsArray(item)
+            }, null, 8, ["items"])
+          ]);
+        }), 128))
+      ]),
+      _: 1
+    }, 8, ["items"])) : createCommentVNode("", true),
+    $data.mode.label === "paged json" ? (openBlock(), createBlock(_component_PaginatedItems, {
+      key: 4,
+      items: $options.valueAsArray($props.value),
+      "page-size": 5
+    }, {
+      default: withCtx(({ paginatedItems }) => [
+        (openBlock(true), createElementBlock(Fragment, null, renderList(paginatedItems, (item) => {
+          return openBlock(), createElementBlock("div", {
+            key: (item == null ? void 0 : item.id) ?? JSON.stringify(item),
+            class: "paged-item"
+          }, [
+            createBaseVNode("pre", null, [
+              createBaseVNode("code", null, toDisplayString(item), 1)
+            ])
+          ]);
+        }), 128))
+      ]),
+      _: 1
+    }, 8, ["items"])) : createCommentVNode("", true)
+  ]);
+}
+const SmartTable = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__scopeId", "data-v-487dc2b1"]]);
+class HelloWorld {
+  helloWorld(success = true) {
+    let succeed, fail;
+    const future = new Promise((resolve2, reject2) => {
+      succeed = resolve2;
+      fail = reject2;
+    });
+    setTimeout(() => {
+      if (success) {
+        succeed("Hello world");
+      } else {
+        fail("Error world");
+      }
+    }, 2500);
+    return future;
+  }
+}
+const _sfc_main$1 = {
+  components: { ActionButton, SmartTable },
+  data() {
+    return {
+      iconSearch: new IconSearch(),
+      actions: {},
+      results: {},
+      resolved: {}
+    };
+  },
+  props: {
+    modelValue: {
+      type: Object,
+      default: () => {
+        return new HelloWorld();
+      }
+    }
+  },
+  computed: {
+    signatures() {
+      const { resolved } = this;
+      const items = describeObject(resolved);
+      console.log("Describing", { resolved, items, keys: Object.keys(resolved) });
+      return items.map((item) => {
+        return { ...item, inputs: {}, action: this.createActionFor(item, resolved) };
+      });
+    }
+  },
+  methods: {
+    describeObject,
+    sentenceCase,
+    createActionFor(item, context) {
+      var _a2;
+      const { actions, iconSearch } = this;
+      const actionFunction = item.type === "function" ? async (...args) => {
+        return item.value.apply(context, args);
+      } : () => item.value;
+      const action = ((_a2 = actions[item.prop]) == null ? void 0 : _a2.on) ? actions[item.prop] : new Action(actionFunction);
+      action.startLabel = sentenceCase(item.prop);
+      const suggestedIcon = iconSearch.findIcon(action.startLabel);
+      action.icon = suggestedIcon ?? "star";
+      actions[item.prop] = action;
+      this.actions = actions;
+      try {
+        action.on("loading", () => {
+          this.$forceUpdate();
+        });
+        action.on("updated", () => {
+          this.$forceUpdate();
+        });
+        action.on("result", async (result) => {
+          this.results[action.id] = await action.actionResult;
+          this.$forceUpdate();
+        });
+        action.on("error", (error) => {
+          console.log("Action errored");
+          this.$forceUpdate();
+        });
+      } catch (error) {
+        console.log("Action:", action, "Error:", { error });
+      }
+      return action;
+    },
+    inputParams(item) {
+      return (item.params ?? []).map((param) => {
+        let value2 = item.inputs[param];
+        try {
+          value2 = JSON.parse(value2);
+          console.log("Converted", param, "from JSON into", { value: value2 });
+        } catch (ex) {
+        }
+        return value2;
+      });
+    }
+  },
+  async mounted() {
+    const resolved = await Promise.resolve(this.modelValue);
+    this.resolved = resolved;
+  },
+  watch: {
+    async modelValue() {
+      this.actions = {};
+      this.results = {};
+      this.resolved = await Promise.resolve(this.modelValue);
+    }
+  }
+};
+const ObjectActions_vue_vue_type_style_index_0_scoped_76136c24_lang = "";
+const _withScopeId = (n) => (pushScopeId("data-v-76136c24"), n = n(), popScopeId(), n);
+const _hoisted_1$1 = { class: "object-actions" };
+const _hoisted_2$1 = {
+  key: 0,
+  class: "inputs"
+};
+const _hoisted_3$1 = ["onUpdate:modelValue", "placeholder"];
+const _hoisted_4 = { class: "row p5" };
+const _hoisted_5 = ["onClick"];
+const _hoisted_6 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", { class: "spacer" }, null, -1));
+const _hoisted_7 = { key: 1 };
+const _hoisted_8 = { key: 2 };
+const _hoisted_9 = { key: 4 };
+const _hoisted_10 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("h4", null, "Console Logs", -1));
+function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_icon = resolveComponent("icon");
+  const _component_ActionButton = resolveComponent("ActionButton");
+  const _component_SmartTable = resolveComponent("SmartTable");
+  return openBlock(), createElementBlock("div", _hoisted_1$1, [
+    (openBlock(true), createElementBlock(Fragment, null, renderList($options.signatures, (item) => {
+      var _a2, _b2, _c, _d, _e, _f, _g, _h;
+      return openBlock(), createElementBlock("div", {
+        key: `${item.description}_group`,
+        class: "object-action column p5"
+      }, [
+        createBaseVNode("h4", null, toDisplayString($options.sentenceCase(item.prop)), 1),
+        createBaseVNode("pre", null, [
+          createBaseVNode("code", null, toDisplayString(item.description), 1)
+        ]),
+        item.params ? (openBlock(), createElementBlock("div", _hoisted_2$1, [
+          (openBlock(true), createElementBlock(Fragment, null, renderList(item.params, (param) => {
+            return openBlock(), createElementBlock("div", {
+              key: `${item.description}_${param}_input`,
+              class: "input row"
+            }, [
+              createBaseVNode("label", null, toDisplayString($options.sentenceCase(param)), 1),
+              withDirectives(createBaseVNode("input", {
+                "onUpdate:modelValue": ($event) => item.inputs[param] = $event,
+                placeholder: param,
+                onInput: _cache[0] || (_cache[0] = ($event) => _ctx.$forceUpdate())
+              }, null, 40, _hoisted_3$1), [
+                [vModelText, item.inputs[param]]
+              ])
+            ]);
+          }), 128))
+        ])) : createCommentVNode("", true),
+        createBaseVNode("div", _hoisted_4, [
+          createBaseVNode("button", {
+            onClick: ($event) => item == null ? void 0 : item.action.reset()
+          }, [
+            createVNode(_component_icon, { icon: "recycle" }),
+            createTextVNode("Reset")
+          ], 8, _hoisted_5),
+          _hoisted_6,
+          createVNode(_component_ActionButton, {
+            modelValue: item.action,
+            "onUpdate:modelValue": ($event) => item.action = $event,
+            params: $options.inputParams(item)
+          }, null, 8, ["modelValue", "onUpdate:modelValue", "params"])
+        ]),
+        ((_a2 = item == null ? void 0 : item.action) == null ? void 0 : _a2.loading) ? (openBlock(), createElementBlock("pre", _hoisted_7, "Loading...")) : createCommentVNode("", true),
+        ((_b2 = item == null ? void 0 : item.action) == null ? void 0 : _b2.errored) ? (openBlock(), createElementBlock("pre", _hoisted_8, "Error: " + toDisplayString((_c = item == null ? void 0 : item.action) == null ? void 0 : _c.error), 1)) : createCommentVNode("", true),
+        ((_d = item == null ? void 0 : item.action) == null ? void 0 : _d.finished) ? (openBlock(), createBlock(_component_SmartTable, {
+          key: 3,
+          value: $data.results[(_e = item.action) == null ? void 0 : _e.id] ?? "No result"
+        }, null, 8, ["value"])) : createCommentVNode("", true),
+        ((_g = (_f = item == null ? void 0 : item.action) == null ? void 0 : _f.spiedLogs) == null ? void 0 : _g.length) > 0 ? (openBlock(), createElementBlock("div", _hoisted_9, [
+          _hoisted_10,
+          createBaseVNode("pre", null, [
+            createBaseVNode("code", null, toDisplayString((_h = item == null ? void 0 : item.action) == null ? void 0 : _h.spiedLogs.map((n) => n.map((m) => JSON.stringify(m)).join(" ")).join("\n")), 1)
+          ])
+        ])) : createCommentVNode("", true)
+      ]);
+    }), 128))
+  ]);
+}
+const ObjectActions = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__scopeId", "data-v-76136c24"]]);
+const _sfc_main = {
+  components: { ObjectActions },
+  props: {
+    clientId: {
+      type: String,
+      default: null
+    }
+  },
+  data() {
+    return {
+      clientIndex: new ClientIndex()
+    };
+  },
+  computed: {
+    clients() {
+      return this.clientIndex.index;
+    }
+  }
+};
+const _hoisted_1 = { class: "api explorer page" };
+const _hoisted_2 = /* @__PURE__ */ createBaseVNode("h1", null, "Explorer Index", -1);
+const _hoisted_3 = { class: "clients" };
+function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_ObjectActions = resolveComponent("ObjectActions");
+  return openBlock(), createElementBlock("div", _hoisted_1, [
+    _hoisted_2,
+    createBaseVNode("div", _hoisted_3, [
+      (openBlock(true), createElementBlock(Fragment, null, renderList($options.clients, (client2, key) => {
+        return openBlock(), createElementBlock("div", {
+          key: `client_${key}`
+        }, [
+          createBaseVNode("pre", null, [
+            createBaseVNode("code", null, toDisplayString({ client: client2, key }), 1)
+          ]),
+          createVNode(_component_ObjectActions, {
+            "model-value": (client2 == null ? void 0 : client2.getInstance()) ?? client2
+          }, null, 8, ["model-value"])
+        ]);
+      }), 128))
+    ])
+  ]);
+}
+const ExplorerIndex = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render]]);
+const routes = [
+  { path: "/", component: Home },
+  { path: "/extras/icons", component: Icons },
+  { path: "/user/details", component: UserDetails },
+  { path: "/explore", component: ExplorerIndex },
+  { path: "/explore/:clientId", component: ExplorerIndex, props: true }
+];
+const router = createRouter({
+  history: createWebHashHistory(),
+  routes
+});
 const app = createApp(App);
 try {
   const authClient = Auth.getOAuthClient();

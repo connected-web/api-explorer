@@ -166,7 +166,7 @@ a.selected:hover {
   display: flex;
   flex-direction: row;
   gap: 0;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .row.left {
@@ -873,25 +873,25 @@ th.sorted > div > .icon.wrapper[data-v-2934aaf4] {
   margin: 0.5em 0;
 }
 
-.input.row[data-v-5851f9ea] {
+.input.row[data-v-76136c24] {
   margin: 4px 0;
 }
-.input.row > label[data-v-5851f9ea] {
+.input.row > label[data-v-76136c24] {
   min-width: 250px; 
   font-weight: bold;
 }
-.input.row > input[data-v-5851f9ea] {
+.input.row > input[data-v-76136c24] {
   flex: 1 1;
   padding: 0.5em;
 }
-.object-action[data-v-5851f9ea] {
+.object-action[data-v-76136c24] {
   border-radius: 0.5em;
   box-shadow: 2px #ddd;
   background: #eee;
   padding: 0.5em;
   margin: 0.5em 0;
 }
-.object-action pre[data-v-5851f9ea] {
+.object-action pre[data-v-76136c24] {
   overflow-y: clip;
   overflow-x: auto;
 }
