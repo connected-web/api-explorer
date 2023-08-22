@@ -3,6 +3,7 @@
     <h1>Explorer Index</h1>
     <div class="clients">
       <div v-for="(client, key) in clients" :key="`client_${key}`">
+        <h3>{{ sentenceCase(String(key)) }}</h3>
         <pre><code>{{ { client, key } }}</code></pre>
         <ObjectActions :model-value="client?.getInstance() ?? client" />
       </div>
@@ -14,6 +15,8 @@
 import ClientIndex from '../clients/ClientIndex'
 
 import ObjectActions from '../actions/ObjectActions.vue'
+
+import sentenceCase from '../actions/SentenceCase'
 
 export default {
   components: { ObjectActions },
@@ -32,6 +35,9 @@ export default {
     clients() {
       return this.clientIndex.index
     }
+  },
+  methods: {
+    sentenceCase
   }
 }
 </script>

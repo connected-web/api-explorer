@@ -54,7 +54,12 @@ export default {
     },
     iconToShow() {
       const { action } = this
-      return action?.loading ? action?.loadingIcon : action?.icon
+      const icon = action?.loading ? action?.loadingIcon : action?.icon
+      if (typeof icon !== 'string') {
+        console.warn('Unexpected icon key; expected string:', { icon, action, loading: action?.loading, loadingIcon: action?.loadingIcon })
+        return 'cloud-sun-rain'
+      }
+      return icon
     },
     labelToShow() {
       const { action } = this

@@ -15,8 +15,12 @@ export default {
   components: { FontAwesomeIcon },
   computed: {
     iconOptions() {
-      const icon = this.icon || 'dice'
-      return ['fas', icon]
+      const { icon } = this
+      if (typeof icon !== 'string') {
+        console.error('Supplied icon key is not a string:', { icon }, 'Please stop that.')
+        throw new Error(`Supplied icon key is not a string: ${typeof icon}`)
+      }
+      return ['fas', icon ?? dice]
     }
   }
 }

@@ -33,13 +33,17 @@ export default class IconSearch {
   }
 
   findIcon (searchString: string): string {
-    const existing = store?.state?.icons?.[searchString]
+    if (typeof searchString !== 'string') {
+      throw new Error('Can only search for icons using string')
+    }
+    const sanitizedString = searchString.replaceAll('__', '')
+    const existing = store?.state?.icons?.[sanitizedString]
     if (existing !== undefined) {
       return existing
     }
     let bestMatch = fuse.search(searchString)?.[0]
     if (bestMatch === undefined) {
-      const alts = searchString.split(' ').map(part => {
+      const alts = sanitizedString.split(' ').map(part => {
         const partMatch = fuse.search(part)?.[0]
         return partMatch
       }).filter(n => n)
@@ -47,7 +51,7 @@ export default class IconSearch {
     }
     const newMatch = bestMatch?.item?.iconName
     store.state.icons = store.state.icons ?? {}
-    store.state.icons[searchString] = newMatch
+    store.state.icons[sanitizedString] = newMatch
     updateLocalStorage()
     return newMatch
   }

@@ -69,7 +69,7 @@ export default {
       iconSearch: new IconSearch(),
       actions: {} as { [key: string]: Action<unknown> },
       results: {} as { [key: string]: any },
-      resolved: {} as unknown
+      resolved: {} as any
     }
   },
   props: {
@@ -101,6 +101,9 @@ export default {
       const action = actions[item.prop]?.on ? actions[item.prop] : new Action(actionFunction)
       action.startLabel = sentenceCase(item.prop)
       const suggestedIcon = iconSearch.findIcon(action.startLabel)
+      if (typeof suggestedIcon !== 'string') {
+        console.log('Suggested icon:', { suggestedIcon, startLabel: action.startLabel })
+      }
       action.icon = suggestedIcon ?? 'star'
       actions[item.prop] = action
       this.actions = actions
