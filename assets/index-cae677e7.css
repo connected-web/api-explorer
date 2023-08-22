@@ -452,7 +452,7 @@ button > span[data-v-9a4a7987] {
   display: none;
 }
 
-.icon[data-v-318e571b] {
+.icon[data-v-4ce3c955] {
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -757,7 +757,7 @@ to {
   margin-left: 0.5em;
 }
 
-.action-button .loading[data-v-5bc37754] {
+.action-button .loading[data-v-2f4b0956] {
   margin-right: 5px;
 }
 
@@ -873,25 +873,25 @@ th.sorted > div > .icon.wrapper[data-v-2934aaf4] {
   margin: 0.5em 0;
 }
 
-.input.row[data-v-76136c24] {
+.input.row[data-v-7d04f649] {
   margin: 4px 0;
 }
-.input.row > label[data-v-76136c24] {
+.input.row > label[data-v-7d04f649] {
   min-width: 250px; 
   font-weight: bold;
 }
-.input.row > input[data-v-76136c24] {
+.input.row > input[data-v-7d04f649] {
   flex: 1 1;
   padding: 0.5em;
 }
-.object-action[data-v-76136c24] {
+.object-action[data-v-7d04f649] {
   border-radius: 0.5em;
   box-shadow: 2px #ddd;
   background: #eee;
   padding: 0.5em;
   margin: 0.5em 0;
 }
-.object-action pre[data-v-76136c24] {
+.object-action pre[data-v-7d04f649] {
   overflow-y: clip;
   overflow-x: auto;
 }
