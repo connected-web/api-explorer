@@ -1,10 +1,10 @@
 import OpenAPIClientAxios, { OpenAPIV3 } from 'openapi-client-axios'
-import BoardgamesAPIDocument from './boardgames-api-services.json'
-import Auth from '../login/Auth'
+import OpenAPIDocument from './boardgames-api-services.json'
+import Auth from '../../login/Auth'
 import { Client, Components } from './BoardGamesAPIClientTypes'
 
 interface ServerInfo {
-  baseUrl: string
+  baseURL: string
   headers: {
     [param: string]: string
   }
@@ -13,7 +13,7 @@ interface ServerInfo {
 async function getServerInfo (): Promise<ServerInfo> {
   const authToken = await Auth.getLatestAccessToken()
   const server: ServerInfo = {
-    baseUrl: 'https://boardgames-api.prod.connected-web.services',
+    baseURL: 'https://boardgames-api.prod.connected-web.services',
     headers: {
       Authorization: `Bearer ${authToken as string}`
     }
@@ -34,8 +34,8 @@ export default class BoardGamesApiClient {
   async getInstance (): Promise<Client> {
     const serverInfo = await getServerInfo()
     const client = new OpenAPIClientAxios({
-      definition: BoardgamesAPIDocument as OpenAPIV3.Document,
-      axiosConfigDefaults: { headers: serverInfo.headers }
+      definition: OpenAPIDocument as OpenAPIV3.Document,
+      axiosConfigDefaults: serverInfo
     })
 
     return await client.getClient<Client>()
@@ -59,7 +59,7 @@ export default class BoardGamesApiClient {
     return response.data
   }
 
-  async createPlayRecord (playRecord: any): Promise<Components.Schemas.PlayRecordsModel> {
+  async createPlayRecord (playRecord: any): Promise<Components.Schemas.BasicObjectModel> {
     const client = await this.getInstance()
     const response = await client.createPlayRecord(null, playRecord)
     return response.data
@@ -67,7 +67,7 @@ export default class BoardGamesApiClient {
 
   async deletePlayRecord (keypath: string): Promise<Components.Schemas.BasicObjectModel> {
     const client = await this.getInstance()
-    const response = await client.deletePlayRecord(null, { keypath: key })
+    const response = await client.deletePlayRecord(null, { keypath })
     return response.data
   }
 

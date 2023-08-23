@@ -1,3 +1,5 @@
+const acronyms = ['API', 'DB']
+
 export default function sentenceCase (camelCase: string): string {
   return camelCase.replaceAll('-', ' ')
     .replace(/([A-Z]+)/g, ' $1')
@@ -5,7 +7,7 @@ export default function sentenceCase (camelCase: string): string {
     .replaceAll(/\s+/g, ' ').trim()
     .split(' ')
     .map(part => capitalizeFirstLetter(part))
-    .map(part => part === 'Api' ? 'API' : part)
+    .map(part => acronyms.includes(part.toUpperCase()) ? part.toUpperCase() : part)
     .join(' ')
 }
 

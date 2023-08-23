@@ -8,6 +8,7 @@
     <label>Explore</label>
     <router-link to="/explore">Index</router-link>
     <router-link to="/explore/board-games-api">Board Games API</router-link>
+    <router-link to="/explore/schema-api-db">Schema API DB</router-link>
 
     <label>Extras</label>
     <router-link to="/extras/icons">Icon Browser</router-link>

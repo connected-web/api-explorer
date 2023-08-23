@@ -60,6 +60,7 @@ export default {
 <style>
 li {
   list-style: disc;
-  margin-left: 2em;
+  margin: 5px 0 5px 2em;
+  line-height: normal;
 }
 </style>
