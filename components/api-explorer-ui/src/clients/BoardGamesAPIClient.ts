@@ -1,7 +1,7 @@
 import OpenAPIClientAxios, { OpenAPIV3 } from 'openapi-client-axios'
 import BoardgamesAPIDocument from './boardgames-api-services.json'
 import Auth from '../login/Auth'
-import { Client } from './BoardGamesAPIClientTypes'
+import { Client, Components } from './BoardGamesAPIClientTypes'
 
 interface ServerInfo {
   baseUrl: string
@@ -39,5 +39,41 @@ export default class BoardGamesApiClient {
     })
 
     return await client.getClient<Client>()
+  }
+
+  async getStatus (): Promise<Components.Schemas.StatusResponseModel> {
+    const client = await this.getInstance()
+    const response = await client.getStatus()
+    return response.data
+  }
+
+  async listPlayRecords (): Promise<Components.Schemas.PlayRecordsModel> {
+    const client = await this.getInstance()
+    const response = await client.listPlayRecords()
+    return response.data
+  }
+
+  async listPlayRecordsByDate (dateCode: string): Promise<Components.Schemas.PlayRecordsModel> {
+    const client = await this.getInstance()
+    const response = await client.listPlayRecordsByDate({ dateCode })
+    return response.data
+  }
+
+  async createPlayRecord (playRecord: any): Promise<Components.Schemas.PlayRecordsModel> {
+    const client = await this.getInstance()
+    const response = await client.createPlayRecord(null, playRecord)
+    return response.data
+  }
+
+  async deletePlayRecord (keypath: string): Promise<Components.Schemas.BasicObjectModel> {
+    const client = await this.getInstance()
+    const response = await client.deletePlayRecord(null, { keypath: key })
+    return response.data
+  }
+
+  async helloWorld (name: string): Promise<Components.Schemas.MessageResponseModel> {
+    const client = await this.getInstance()
+    const response = await client.helloWorld({ name })
+    return response.data
   }
 }

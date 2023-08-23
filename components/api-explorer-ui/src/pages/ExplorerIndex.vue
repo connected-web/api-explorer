@@ -5,7 +5,7 @@
       <div v-for="(client, key) in clients" :key="`client_${key}`">
         <h3>{{ sentenceCase(String(key)) }}</h3>
         <pre><code>{{ { client, key } }}</code></pre>
-        <ObjectActions :model-value="client?.getInstance() ?? client" />
+        <ObjectActions :model-value="client" />
       </div>
     </div>
   </div>
