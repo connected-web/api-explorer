@@ -9,7 +9,7 @@ export default class ClientIndex {
 
   get index (): { [key: string]: any } {
     return {
-      boardGamesApi: this.boardGamesApi
+      'board-games-api': this.boardGamesApi
     }
   }
 }

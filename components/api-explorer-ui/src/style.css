@@ -214,8 +214,9 @@ div.circle-icon {
 }
 
 .breadcrumbs {
-  padding-bottom: 5px;
+  padding-bottom: 10px;
   border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
 }
 
 .continuations {
