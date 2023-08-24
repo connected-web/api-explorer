@@ -134,7 +134,7 @@ export default {
         let value = item.inputs[param]
         try {
           value = JSON.parse(value)
-          console.log('Converted', param, 'from JSON into', { value })
+          // console.log('Converted', param, 'from JSON into', { value })
         } catch (ex) {
           // leave value as is
         }

@@ -22,6 +22,10 @@ async function getServerInfo (): Promise<ServerInfo> {
   return server
 }
 
+function validateStatus (status: number): boolean {
+  return status >= 200 && status < 600; // default
+}
+
 export type BoardGamesApiClientType = Client
 
 export default class BoardGamesApiClient {
@@ -35,7 +39,7 @@ export default class BoardGamesApiClient {
     const serverInfo = await getServerInfo()
     const client = new OpenAPIClientAxios({
       definition: OpenAPIDocument as OpenAPIV3.Document,
-      axiosConfigDefaults: serverInfo
+      axiosConfigDefaults: Object.assign({}, serverInfo, { validateStatus }),
     })
 
     return await client.getClient<Client>()
