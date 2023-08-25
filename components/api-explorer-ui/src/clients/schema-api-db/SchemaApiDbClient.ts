@@ -23,9 +23,8 @@ async function getServerInfo (): Promise<ServerInfo> {
 }
 
 function validateStatus (status: number): boolean {
-  return status >= 200 && status < 600; // default
+  return status >= 200 && status < 600 // default
 }
-
 
 export type BoardGamesApiClientType = Client
 
@@ -40,7 +39,7 @@ export default class BoardGamesApiClient {
     const serverInfo = await getServerInfo()
     const client = new OpenAPIClientAxios({
       definition: OpenAPIDocument as OpenAPIV3.Document,
-      axiosConfigDefaults: Object.assign({}, serverInfo, { validateStatus }),
+      axiosConfigDefaults: Object.assign({}, serverInfo, { validateStatus })
     })
 
     return await client.getClient<Client>()
@@ -64,13 +63,13 @@ export default class BoardGamesApiClient {
     return response.data
   }
 
-  async deleteSchema(schemaId: string): Promise<Components.Schemas.SchemaDeleteResponseModel> {
+  async deleteSchema (schemaId: string): Promise<Components.Schemas.SchemaDeleteResponseModel> {
     const client = await this.getInstance()
     const response = await client.deleteSchema({ schemaId })
     return response.data
   }
 
-  async listSchemas(): Promise<Components.Schemas.SchemaListResponseModel> {
+  async listSchemas (): Promise<Components.Schemas.SchemaListResponseModel> {
     const client = await this.getInstance()
     const response = await client.listSchemas()
     return response.data
