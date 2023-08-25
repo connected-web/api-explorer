@@ -21919,8 +21919,8 @@ utils.inherits(CanceledError$1, AxiosError$1, {
   __CANCEL__: true
 });
 function settle(resolve2, reject, response) {
-  const validateStatus2 = response.config.validateStatus;
-  if (!response.status || !validateStatus2 || validateStatus2(response.status)) {
+  const validateStatus3 = response.config.validateStatus;
+  if (!response.status || !validateStatus3 || validateStatus3(response.status)) {
     resolve2(response);
   } else {
     reject(new AxiosError$1(
@@ -37078,6 +37078,9 @@ async function getServerInfo$1() {
   };
   return server;
 }
+function validateStatus$1(status) {
+  return status >= 200 && status < 600;
+}
 let BoardGamesApiClient$1 = (_c = class {
   static getSingleton() {
     return _c.singleton;
@@ -37086,7 +37089,7 @@ let BoardGamesApiClient$1 = (_c = class {
     const serverInfo = await getServerInfo$1();
     const client2 = new OpenAPIClientAxios({
       definition: OpenAPIDocument$1,
-      axiosConfigDefaults: serverInfo
+      axiosConfigDefaults: Object.assign({}, serverInfo, { validateStatus: validateStatus$1 })
     });
     return await client2.getClient();
   }
@@ -37728,6 +37731,9 @@ async function getServerInfo() {
   };
   return server;
 }
+function validateStatus2(status) {
+  return status >= 200 && status < 600;
+}
 const _BoardGamesApiClient = class {
   static getSingleton() {
     return _BoardGamesApiClient.singleton;
@@ -37736,13 +37742,33 @@ const _BoardGamesApiClient = class {
     const serverInfo = await getServerInfo();
     const client2 = new OpenAPIClientAxios({
       definition: OpenAPIDocument,
-      axiosConfigDefaults: serverInfo
+      axiosConfigDefaults: Object.assign({}, serverInfo, { validateStatus: validateStatus2 })
     });
     return await client2.getClient();
   }
   async getStatus() {
     const client2 = await this.getInstance();
     const response = await client2.getStatus();
+    return response.data;
+  }
+  async getSchema(schemaId) {
+    const client2 = await this.getInstance();
+    const response = await client2.getSchema({ schemaId });
+    return response.data;
+  }
+  async putSchema(schemaId, schemaDoc) {
+    const client2 = await this.getInstance();
+    const response = await client2.putSchema({ schemaId }, schemaDoc);
+    return response.data;
+  }
+  async deleteSchema(schemaId) {
+    const client2 = await this.getInstance();
+    const response = await client2.deleteSchema({ schemaId });
+    return response.data;
+  }
+  async listSchemas() {
+    const client2 = await this.getInstance();
+    const response = await client2.listSchemas();
     return response.data;
   }
 };
@@ -40154,7 +40180,6 @@ const _sfc_main$1 = {
         let value2 = item.inputs[param];
         try {
           value2 = JSON.parse(value2);
-          console.log("Converted", param, "from JSON into", { value: value2 });
         } catch (ex) {
         }
         return value2;
@@ -40173,8 +40198,8 @@ const _sfc_main$1 = {
     }
   }
 };
-const ObjectActions_vue_vue_type_style_index_0_scoped_7d04f649_lang = "";
-const _withScopeId = (n) => (pushScopeId("data-v-7d04f649"), n = n(), popScopeId(), n);
+const ObjectActions_vue_vue_type_style_index_0_scoped_642e5593_lang = "";
+const _withScopeId = (n) => (pushScopeId("data-v-642e5593"), n = n(), popScopeId(), n);
 const _hoisted_1$1 = { class: "object-actions" };
 const _hoisted_2$1 = {
   key: 0,
@@ -40250,7 +40275,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
     }), 128))
   ]);
 }
-const ObjectActions = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__scopeId", "data-v-7d04f649"]]);
+const ObjectActions = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__scopeId", "data-v-642e5593"]]);
 const _sfc_main = {
   components: { ObjectActions },
   props: {
