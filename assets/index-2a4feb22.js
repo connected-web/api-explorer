@@ -39446,7 +39446,6 @@ function describeObject(obj) {
     let value2, type2, signature, params2, description;
     try {
       value2 = obj[prop];
-      console.log("Value for:", { obj, prop, value: obj[prop] });
       type2 = typeof value2;
       signature = (signatures[type2] ?? signatures.default)(value2);
       params2 = type2 === "function" ? paramsForFunction(signature) : null;
@@ -40131,7 +40130,6 @@ const _sfc_main$1 = {
     signatures() {
       const { resolved } = this;
       const items = describeObject(resolved);
-      console.log("Describing", { resolved, items, keys: Object.keys(resolved) });
       return items.map((item) => {
         return { ...item, inputs: {}, action: this.createActionFor(item, resolved) };
       });
@@ -40198,8 +40196,8 @@ const _sfc_main$1 = {
     }
   }
 };
-const ObjectActions_vue_vue_type_style_index_0_scoped_642e5593_lang = "";
-const _withScopeId = (n) => (pushScopeId("data-v-642e5593"), n = n(), popScopeId(), n);
+const ObjectActions_vue_vue_type_style_index_0_scoped_dc4eeef5_lang = "";
+const _withScopeId = (n) => (pushScopeId("data-v-dc4eeef5"), n = n(), popScopeId(), n);
 const _hoisted_1$1 = { class: "object-actions" };
 const _hoisted_2$1 = {
   key: 0,
@@ -40275,7 +40273,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
     }), 128))
   ]);
 }
-const ObjectActions = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__scopeId", "data-v-642e5593"]]);
+const ObjectActions = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__scopeId", "data-v-dc4eeef5"]]);
 const _sfc_main = {
   components: { ObjectActions },
   props: {

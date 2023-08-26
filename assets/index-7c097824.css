@@ -874,25 +874,25 @@ th.sorted > div > .icon.wrapper[data-v-2934aaf4] {
   margin: 0.5em 0;
 }
 
-.input.row[data-v-642e5593] {
+.input.row[data-v-dc4eeef5] {
   margin: 4px 0;
 }
-.input.row > label[data-v-642e5593] {
+.input.row > label[data-v-dc4eeef5] {
   min-width: 250px; 
   font-weight: bold;
 }
-.input.row > input[data-v-642e5593] {
+.input.row > input[data-v-dc4eeef5] {
   flex: 1 1;
   padding: 0.5em;
 }
-.object-action[data-v-642e5593] {
+.object-action[data-v-dc4eeef5] {
   border-radius: 0.5em;
   box-shadow: 2px #ddd;
   background: #eee;
   padding: 0.5em;
   margin: 0.5em 0;
 }
-.object-action pre[data-v-642e5593] {
+.object-action pre[data-v-dc4eeef5] {
   overflow-y: clip;
   overflow-x: auto;
 }
