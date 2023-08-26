@@ -84,7 +84,7 @@ export default {
     signatures():Array<ObjectSignature> {
       const { resolved } = this
       const items = describeObject(resolved)
-      console.log('Describing', { resolved, items, keys: Object.keys(resolved) })
+      // console.log('Describing', { resolved, items, keys: Object.keys(resolved) })
       return items.map(item => {
         return { ...item, inputs: {}, action: this.createActionFor(item, resolved) } as ObjectSignature
       })
