@@ -37128,14 +37128,88 @@ const openapi = "3.0.1";
 const info = {
   title: "Schema API DB",
   description: "Schema API DB - https://github.com/connected-web/schema-api-db",
-  version: "2023-08-13T20:35:59Z"
+  version: "2023-08-27T23:42:53Z"
 };
 const servers = [
   {
-    url: "https://schema-api-db.prod.connected-web.services"
+    url: "https://schema-api-db.dev.connected-web.services"
   }
 ];
 const paths = {
+  "/items": {
+    options: {
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
+    }
+  },
+  "/data/{schemaId}": {
+    options: {
+      parameters: [
+        {
+          name: "schemaId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        }
+      ],
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
+    }
+  },
   "/schema/{schemaId}": {
     get: {
       operationId: "getSchema",
@@ -37172,7 +37246,7 @@ const paths = {
           content: {
             "application/json": {
               schema: {
-                $ref: "#/components/schemas/SchemaGetResponseModel"
+                $ref: "#/components/schemas/StorableSchemaModel"
               }
             }
           }
@@ -37199,7 +37273,7 @@ const paths = {
           content: {
             "application/json": {
               schema: {
-                $ref: "#/components/schemas/SchemaGetNotFoundModel"
+                $ref: "#/components/schemas/SchemaNotFoundModel"
               }
             }
           }
@@ -37223,6 +37297,16 @@ const paths = {
           }
         }
       ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              $ref: "#/components/schemas/StorableSchemaModel"
+            }
+          }
+        },
+        required: true
+      },
       responses: {
         "200": {
           description: "200 response",
@@ -37246,7 +37330,7 @@ const paths = {
           content: {
             "application/json": {
               schema: {
-                $ref: "#/components/schemas/SchemaPutResponseModel"
+                $ref: "#/components/schemas/SchemaStoredModel"
               }
             }
           }
@@ -37293,7 +37377,7 @@ const paths = {
           content: {
             "application/json": {
               schema: {
-                $ref: "#/components/schemas/SchemaDeleteResponseModel"
+                $ref: "#/components/schemas/SchemaDeletedModel"
               }
             }
           }
@@ -37415,7 +37499,380 @@ const paths = {
       }
     }
   },
+  "/data/{schemaId}/{itemId}": {
+    get: {
+      operationId: "getData",
+      parameters: [
+        {
+          name: "schemaId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        },
+        {
+          name: "itemId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        }
+      ],
+      responses: {
+        "200": {
+          description: "200 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/DataItemModel"
+              }
+            }
+          }
+        },
+        "404": {
+          description: "404 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/DataItemNotFoundModel"
+              }
+            }
+          }
+        }
+      },
+      security: [
+        {
+          SchemaAPIDBSchemaAPIDBPrivateApiRequestAuthorizer7B3FD292: []
+        }
+      ]
+    },
+    put: {
+      operationId: "putData",
+      parameters: [
+        {
+          name: "schemaId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        },
+        {
+          name: "itemId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        }
+      ],
+      requestBody: {
+        content: {
+          "application/json": {
+            schema: {
+              $ref: "#/components/schemas/DataItemModel"
+            }
+          }
+        },
+        required: true
+      },
+      responses: {
+        "200": {
+          description: "200 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/DataItemStoredModel"
+              }
+            }
+          }
+        }
+      },
+      security: [
+        {
+          SchemaAPIDBSchemaAPIDBPrivateApiRequestAuthorizer7B3FD292: []
+        }
+      ]
+    },
+    "delete": {
+      operationId: "deleteData",
+      parameters: [
+        {
+          name: "schemaId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        },
+        {
+          name: "itemId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        }
+      ],
+      responses: {
+        "200": {
+          description: "200 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/DataItemDeletedModel"
+              }
+            }
+          }
+        }
+      },
+      security: [
+        {
+          SchemaAPIDBSchemaAPIDBPrivateApiRequestAuthorizer7B3FD292: []
+        }
+      ]
+    },
+    options: {
+      parameters: [
+        {
+          name: "schemaId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        },
+        {
+          name: "itemId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        }
+      ],
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
+    }
+  },
   "/schema": {
+    options: {
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
+    }
+  },
+  "/items/{schemaId}": {
+    get: {
+      operationId: "listItems",
+      parameters: [
+        {
+          name: "schemaId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        }
+      ],
+      responses: {
+        "200": {
+          description: "200 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/DataItemListModel"
+              }
+            }
+          }
+        }
+      },
+      security: [
+        {
+          SchemaAPIDBSchemaAPIDBPrivateApiRequestAuthorizer7B3FD292: []
+        }
+      ]
+    },
+    options: {
+      parameters: [
+        {
+          name: "schemaId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        }
+      ],
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
+    }
+  },
+  "/data": {
     options: {
       responses: {
         "204": {
@@ -37516,6 +37973,38 @@ const paths = {
       }
     }
   },
+  "/": {
+    options: {
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
+    }
+  },
   "/schemas": {
     get: {
       operationId: "listSchemas",
@@ -37542,7 +38031,7 @@ const paths = {
           content: {
             "application/json": {
               schema: {
-                $ref: "#/components/schemas/SchemaListResponseModel"
+                $ref: "#/components/schemas/SchemaListModel"
               }
             }
           }
@@ -37584,75 +38073,11 @@ const paths = {
         }
       }
     }
-  },
-  "/": {
-    options: {
-      responses: {
-        "204": {
-          description: "204 response",
-          headers: {
-            "Access-Control-Allow-Origin": {
-              schema: {
-                type: "string"
-              }
-            },
-            "Access-Control-Allow-Methods": {
-              schema: {
-                type: "string"
-              }
-            },
-            "Access-Control-Allow-Credentials": {
-              schema: {
-                type: "string"
-              }
-            },
-            "Access-Control-Allow-Headers": {
-              schema: {
-                type: "string"
-              }
-            }
-          },
-          content: {}
-        }
-      }
-    }
   }
 };
 const components = {
   schemas: {
-    StatusResponseModel: {
-      title: "Status",
-      required: [
-        "deploymentTime"
-      ],
-      type: "object",
-      properties: {
-        deploymentTime: {
-          type: "string",
-          description: "The UTC timestamp representing the last time the server was updated"
-        }
-      }
-    },
-    BasicObjectModel: {
-      title: "Basic Object",
-      type: "object",
-      properties: {},
-      additionalProperties: true,
-      description: "A basic JSON object with key value pairs"
-    },
-    SchemaListResponseModel: {
-      title: "List Schemas",
-      type: "object",
-      properties: {
-        schemaIds: {
-          type: "array",
-          items: {
-            type: "string"
-          }
-        }
-      }
-    },
-    SchemaGetResponseModel: {
+    StorableSchemaModel: {
       title: "Stored Schema",
       required: [
         "$schema",
@@ -37668,32 +38093,121 @@ const components = {
         }
       }
     },
-    SchemaPutResponseModel: {
-      title: "Schema Put",
+    StatusResponseModel: {
+      title: "Status",
       required: [
-        "message"
+        "deploymentTime"
       ],
       type: "object",
       properties: {
-        message: {
-          type: "string"
+        deploymentTime: {
+          type: "string",
+          description: "The UTC timestamp representing the last time the server was updated"
         }
       }
     },
-    SchemaDeleteResponseModel: {
-      title: "Schema Delete",
-      required: [
-        "message"
-      ],
+    SchemaListModel: {
+      title: "List Schemas",
       type: "object",
       properties: {
-        message: {
-          type: "string"
+        schemaIds: {
+          type: "array",
+          items: {
+            type: "string"
+          }
         }
       }
     },
-    SchemaGetNotFoundModel: {
+    SchemaNotFoundModel: {
       title: "Schema Not Found",
+      required: [
+        "message"
+      ],
+      type: "object",
+      properties: {
+        message: {
+          type: "string"
+        }
+      }
+    },
+    BasicObjectModel: {
+      title: "Basic Object",
+      type: "object",
+      properties: {},
+      additionalProperties: true,
+      description: "A basic JSON object with key value pairs"
+    },
+    DataItemNotFoundModel: {
+      title: "Data Item Not Found",
+      required: [
+        "message"
+      ],
+      type: "object",
+      properties: {
+        message: {
+          type: "string"
+        }
+      }
+    },
+    DataItemDeletedModel: {
+      title: "Data Item Deleted",
+      required: [
+        "message"
+      ],
+      type: "object",
+      properties: {
+        message: {
+          type: "string"
+        }
+      }
+    },
+    SchemaStoredModel: {
+      title: "Schema Stored",
+      required: [
+        "message"
+      ],
+      type: "object",
+      properties: {
+        message: {
+          type: "string"
+        }
+      }
+    },
+    DataItemModel: {
+      title: "Data Item",
+      type: "object",
+      properties: {},
+      additionalProperties: true
+    },
+    SchemaDeletedModel: {
+      title: "Schema Deleted",
+      required: [
+        "message"
+      ],
+      type: "object",
+      properties: {
+        message: {
+          type: "string"
+        }
+      }
+    },
+    DataItemListModel: {
+      title: "List Data Items",
+      required: [
+        "itemIds"
+      ],
+      type: "object",
+      properties: {
+        itemIds: {
+          type: "array",
+          items: {
+            type: "string"
+          }
+        }
+      }
+    },
+    DataItemStoredModel: {
+      title: "Data Item Stored",
       required: [
         "message"
       ],
@@ -37769,6 +38283,26 @@ const _BoardGamesApiClient = class {
   async listSchemas() {
     const client2 = await this.getInstance();
     const response = await client2.listSchemas();
+    return response.data;
+  }
+  async getData(schemaId, itemId) {
+    const client2 = await this.getInstance();
+    const response = await client2.getData({ schemaId, itemId });
+    return response.data;
+  }
+  async putData(schemaId, itemId, dataDoc) {
+    const client2 = await this.getInstance();
+    const response = await client2.putData({ schemaId, itemId }, dataDoc);
+    return response.data;
+  }
+  async deleteData(schemaId, itemId) {
+    const client2 = await this.getInstance();
+    const response = await client2.deleteData({ schemaId, itemId });
+    return response.data;
+  }
+  async listData(schemaId) {
+    const client2 = await this.getInstance();
+    const response = await client2.listItems({ schemaId });
     return response.data;
   }
 };
