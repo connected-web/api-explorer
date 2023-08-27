@@ -16,34 +16,57 @@ declare namespace Components {
       [name: string]: any
     }
     /**
-         * Schema Delete
+         * Data Item Deleted
          */
-    export interface SchemaDeleteResponseModel {
+    export interface DataItemDeletedModel {
       message: string
     }
     /**
-         * Schema Not Found
+         * List Data Items
          */
-    export interface SchemaGetNotFoundModel {
+    export interface DataItemListModel {
+      items: /* Data Item */ DataItemModel[]
+    }
+    /**
+         * Data Item
+         */
+    export interface DataItemModel {
+      [name: string]: any
+    }
+    /**
+         * Data Item Not Found
+         */
+    export interface DataItemNotFoundModel {
       message: string
     }
     /**
-         * Stored Schema
+         * Data Item Stored
          */
-    export interface SchemaGetResponseModel {
-      $schema: string
-      title: string
+    export interface DataItemStoredModel {
+      message: string
+    }
+    /**
+         * Schema Deleted
+         */
+    export interface SchemaDeletedModel {
+      message: string
     }
     /**
          * List Schemas
          */
-    export interface SchemaListResponseModel {
+    export interface SchemaListModel {
       schemaIds?: string[]
     }
     /**
-         * Schema Put
+         * Schema Not Found
          */
-    export interface SchemaPutResponseModel {
+    export interface SchemaNotFoundModel {
+      message: string
+    }
+    /**
+         * Schema Stored
+         */
+    export interface SchemaStoredModel {
       message: string
     }
     /**
@@ -55,9 +78,51 @@ declare namespace Components {
              */
       deploymentTime: string
     }
+    /**
+         * Stored Schema
+         */
+    export interface StorableSchemaModel {
+      $schema: string
+      title: string
+    }
   }
 }
 declare namespace Paths {
+  namespace Data$SchemaId {
+    namespace Options {
+      namespace Parameters {
+        export type SchemaId = string
+      }
+      export interface PathParameters {
+        schemaId: Parameters.SchemaId
+      }
+    }
+  }
+  namespace Data$SchemaId$ItemId {
+    namespace Options {
+      namespace Parameters {
+        export type ItemId = string
+        export type SchemaId = string
+      }
+      export interface PathParameters {
+        schemaId: Parameters.SchemaId
+        itemId: Parameters.ItemId
+      }
+    }
+  }
+  namespace DeleteData {
+    namespace Parameters {
+      export type ItemId = string
+      export type SchemaId = string
+    }
+    export interface PathParameters {
+      schemaId: Parameters.SchemaId
+      itemId: Parameters.ItemId
+    }
+    namespace Responses {
+      export type $200 = /* Data Item Deleted */ Components.Schemas.DataItemDeletedModel
+    }
+  }
   namespace DeleteSchema {
     namespace Parameters {
       export type SchemaId = string
@@ -66,7 +131,21 @@ declare namespace Paths {
       schemaId: Parameters.SchemaId
     }
     namespace Responses {
-      export type $200 = /* Schema Delete */ Components.Schemas.SchemaDeleteResponseModel
+      export type $200 = /* Schema Deleted */ Components.Schemas.SchemaDeletedModel
+    }
+  }
+  namespace GetData {
+    namespace Parameters {
+      export type ItemId = string
+      export type SchemaId = string
+    }
+    export interface PathParameters {
+      schemaId: Parameters.SchemaId
+      itemId: Parameters.ItemId
+    }
+    namespace Responses {
+      export type $200 = /* Data Item */ Components.Schemas.DataItemModel
+      export type $404 = /* Data Item Not Found */ Components.Schemas.DataItemNotFoundModel
     }
   }
   namespace GetOpenAPISpec {
@@ -86,8 +165,8 @@ declare namespace Paths {
       schemaId: Parameters.SchemaId
     }
     namespace Responses {
-      export type $200 = /* Stored Schema */ Components.Schemas.SchemaGetResponseModel
-      export type $404 = /* Schema Not Found */ Components.Schemas.SchemaGetNotFoundModel
+      export type $200 = /* Stored Schema */ Components.Schemas.StorableSchemaModel
+      export type $404 = /* Schema Not Found */ Components.Schemas.SchemaNotFoundModel
     }
   }
   namespace GetStatus {
@@ -95,9 +174,44 @@ declare namespace Paths {
       export type $200 = /* Status */ Components.Schemas.StatusResponseModel
     }
   }
+  namespace Items$SchemaId {
+    namespace Options {
+      namespace Parameters {
+        export type SchemaId = string
+      }
+      export interface PathParameters {
+        schemaId: Parameters.SchemaId
+      }
+    }
+  }
+  namespace ListItems {
+    namespace Parameters {
+      export type SchemaId = string
+    }
+    export interface PathParameters {
+      schemaId: Parameters.SchemaId
+    }
+    namespace Responses {
+      export type $200 = /* List Data Items */ Components.Schemas.DataItemListModel
+    }
+  }
   namespace ListSchemas {
     namespace Responses {
-      export type $200 = /* List Schemas */ Components.Schemas.SchemaListResponseModel
+      export type $200 = /* List Schemas */ Components.Schemas.SchemaListModel
+    }
+  }
+  namespace PutData {
+    namespace Parameters {
+      export type ItemId = string
+      export type SchemaId = string
+    }
+    export interface PathParameters {
+      schemaId: Parameters.SchemaId
+      itemId: Parameters.ItemId
+    }
+    export type RequestBody = /* Data Item */ Components.Schemas.DataItemModel
+    namespace Responses {
+      export type $200 = /* Data Item Stored */ Components.Schemas.DataItemStoredModel
     }
   }
   namespace PutSchema {
@@ -107,8 +221,9 @@ declare namespace Paths {
     export interface PathParameters {
       schemaId: Parameters.SchemaId
     }
+    export type RequestBody = /* Stored Schema */ Components.Schemas.StorableSchemaModel
     namespace Responses {
-      export type $200 = /* Schema Put */ Components.Schemas.SchemaPutResponseModel
+      export type $200 = /* Schema Stored */ Components.Schemas.SchemaStoredModel
     }
   }
   namespace Schema$SchemaId {
@@ -137,7 +252,7 @@ export interface OperationMethods {
    */
   'putSchema': (
     parameters?: Parameters<Paths.PutSchema.PathParameters> | null,
-    data?: any,
+    data?: Paths.PutSchema.RequestBody,
     config?: AxiosRequestConfig
   ) => OperationResponse<Paths.PutSchema.Responses.$200>
   /**
@@ -157,6 +272,38 @@ export interface OperationMethods {
     config?: AxiosRequestConfig
   ) => OperationResponse<Paths.GetStatus.Responses.$200>
   /**
+   * getData
+   */
+  'getData': (
+    parameters?: Parameters<Paths.GetData.PathParameters> | null,
+    data?: any,
+    config?: AxiosRequestConfig
+  ) => OperationResponse<Paths.GetData.Responses.$200>
+  /**
+   * putData
+   */
+  'putData': (
+    parameters?: Parameters<Paths.PutData.PathParameters> | null,
+    data?: Paths.PutData.RequestBody,
+    config?: AxiosRequestConfig
+  ) => OperationResponse<Paths.PutData.Responses.$200>
+  /**
+   * deleteData
+   */
+  'deleteData': (
+    parameters?: Parameters<Paths.DeleteData.PathParameters> | null,
+    data?: any,
+    config?: AxiosRequestConfig
+  ) => OperationResponse<Paths.DeleteData.Responses.$200>
+  /**
+   * listItems
+   */
+  'listItems': (
+    parameters?: Parameters<Paths.ListItems.PathParameters> | null,
+    data?: any,
+    config?: AxiosRequestConfig
+  ) => OperationResponse<Paths.ListItems.Responses.$200>
+  /**
    * getOpenAPISpec
    */
   'getOpenAPISpec': (
@@ -175,6 +322,10 @@ export interface OperationMethods {
 }
 
 export interface PathsDictionary {
+  ['/items']: {
+  }
+  ['/data/{schemaId}']: {
+  }
   ['/schema/{schemaId}']: {
     /**
      * getSchema
@@ -189,7 +340,7 @@ export interface PathsDictionary {
      */
     'put': (
       parameters?: Parameters<Paths.PutSchema.PathParameters> | null,
-      data?: any,
+      data?: Paths.PutSchema.RequestBody,
       config?: AxiosRequestConfig
     ) => OperationResponse<Paths.PutSchema.Responses.$200>
     /**
@@ -211,7 +362,45 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ) => OperationResponse<Paths.GetStatus.Responses.$200>
   }
+  ['/data/{schemaId}/{itemId}']: {
+    /**
+     * getData
+     */
+    'get': (
+      parameters?: Parameters<Paths.GetData.PathParameters> | null,
+      data?: any,
+      config?: AxiosRequestConfig
+    ) => OperationResponse<Paths.GetData.Responses.$200>
+    /**
+     * putData
+     */
+    'put': (
+      parameters?: Parameters<Paths.PutData.PathParameters> | null,
+      data?: Paths.PutData.RequestBody,
+      config?: AxiosRequestConfig
+    ) => OperationResponse<Paths.PutData.Responses.$200>
+    /**
+     * deleteData
+     */
+    'delete': (
+      parameters?: Parameters<Paths.DeleteData.PathParameters> | null,
+      data?: any,
+      config?: AxiosRequestConfig
+    ) => OperationResponse<Paths.DeleteData.Responses.$200>
+  }
   ['/schema']: {
+  }
+  ['/items/{schemaId}']: {
+    /**
+     * listItems
+     */
+    'get': (
+      parameters?: Parameters<Paths.ListItems.PathParameters> | null,
+      data?: any,
+      config?: AxiosRequestConfig
+    ) => OperationResponse<Paths.ListItems.Responses.$200>
+  }
+  ['/data']: {
   }
   ['/openapi']: {
     /**
@@ -223,6 +412,8 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig
     ) => OperationResponse<Paths.GetOpenAPISpec.Responses.$200>
   }
+  ['/']: {
+  }
   ['/schemas']: {
     /**
      * listSchemas
@@ -232,8 +423,6 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig
     ) => OperationResponse<Paths.ListSchemas.Responses.$200>
-  }
-  ['/']: {
   }
 }
 

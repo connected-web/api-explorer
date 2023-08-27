@@ -51,27 +51,51 @@ export default class BoardGamesApiClient {
     return response.data
   }
 
-  async getSchema (schemaId: string): Promise<Components.Schemas.SchemaGetResponseModel> {
+  async getSchema (schemaId: string): Promise<Components.Schemas.StorableSchemaModel> {
     const client = await this.getInstance()
     const response = await client.getSchema({ schemaId })
     return response.data
   }
 
-  async putSchema (schemaId: string, schemaDoc: any): Promise<Components.Schemas.SchemaPutResponseModel> {
+  async putSchema (schemaId: string, schemaDoc: any): Promise<Components.Schemas.SchemaStoredModel> {
     const client = await this.getInstance()
     const response = await client.putSchema({ schemaId }, schemaDoc)
     return response.data
   }
 
-  async deleteSchema (schemaId: string): Promise<Components.Schemas.SchemaDeleteResponseModel> {
+  async deleteSchema (schemaId: string): Promise<Components.Schemas.SchemaDeletedModel> {
     const client = await this.getInstance()
     const response = await client.deleteSchema({ schemaId })
     return response.data
   }
 
-  async listSchemas (): Promise<Components.Schemas.SchemaListResponseModel> {
+  async listSchemas (): Promise<Components.Schemas.SchemaListModel> {
     const client = await this.getInstance()
     const response = await client.listSchemas()
+    return response.data
+  }
+
+  async getData (schemaId: string, itemId: string): Promise<Components.Schemas.DataItemModel> {
+    const client = await this.getInstance()
+    const response = await client.getData({ schemaId, itemId })
+    return response.data
+  }
+
+  async putData (schemaId: string, itemId: string, dataDoc: any): Promise<Components.Schemas.DataItemStoredModel> {
+    const client = await this.getInstance()
+    const response = await client.putData({ schemaId, itemId }, dataDoc)
+    return response.data
+  }
+
+  async deleteData (schemaId: string, itemId: string): Promise<Components.Schemas.DataItemDeletedModel> {
+    const client = await this.getInstance()
+    const response = await client.deleteData({ schemaId, itemId })
+    return response.data
+  }
+
+  async listData (schemaId: string): Promise<Components.Schemas.DataItemListModel> {
+    const client = await this.getInstance()
+    const response = await client.listItems({ schemaId })
     return response.data
   }
 }
