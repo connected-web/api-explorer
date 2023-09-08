@@ -1,9 +1,14 @@
 const fnRegex = /(async\s)?([A-z][A-z0-9_]+)\((.*)\)/
-function paramsForFunction (signature: string): string[] {
-  const parts = signature.match(fnRegex) ?? []
-  const middle = parts.pop() ?? ''
-  const params = middle.split(',').map(n => n.trim()).filter(n => n)
-  return params
+function paramsForFunction(signature: Function): string[] {
+  const funcString = signature.toString()
+  const match = funcString.match(/\(([^)]*)\)/)
+  
+  if (match) {
+    const params = match[1].split(/\s*,\s*/)
+    return params.filter(Boolean)
+  }
+  
+  return []
 }
 
 export interface ObjectDescription {
@@ -34,7 +39,7 @@ export default function describeObject (obj: any): ObjectDescription[] {
   }
   const ignoreList = ['constructor', '__defineGetter__', '__defineSetter__']
   const keys = Object.keys(obj)
-  const meta = Object.getOwnPropertyNames(Object.getPrototypeOf(obj)).sort()
+  const meta = Object.getOwnPropertyNames(obj).sort()
   let properties
   if (JSON.stringify(ignorable) === JSON.stringify(meta)) {
     console.log('Object matches pattern for wrapped object, switching to keys:', { keys, meta })
@@ -49,10 +54,10 @@ export default function describeObject (obj: any): ObjectDescription[] {
     let value, type, signature, params, description
     try {
       value = obj[prop]
-      // console.log('Value for:', { obj, prop, value: obj[prop] })
+      console.log('Value for:', { obj, prop, value: obj[prop] })
       type = typeof value
       signature = (signatures[type] ?? signatures.default)(value)
-      params = type === 'function' ? paramsForFunction(signature) : null
+      params = type === 'function' ? paramsForFunction(value) : null
       description = ((signature + '').includes(prop)) ? signature : `${type} ${prop}`
     } catch (ex) {
       const error = ex as Error

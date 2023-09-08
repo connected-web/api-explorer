@@ -8,6 +8,7 @@
       </div>
       <h1>{{ sentenceCase(clientId) }}</h1>
       <ObjectActions :model-value="clients[clientId]" />
+      <pre><code>{{ documents[clientId] }}</code></pre>
     </div>
     <div v-else>
       <div class="breadcrumbs row p5 left">
@@ -33,6 +34,8 @@ import ObjectActions from '../actions/ObjectActions.vue'
 
 import sentenceCase from '../actions/SentenceCase'
 
+const clientIndex = new ClientIndex()
+
 export default {
   components: { ObjectActions },
   props: {
@@ -42,13 +45,14 @@ export default {
     }
   },
   data() {
-    return {
-      clientIndex: new ClientIndex()
-    }
+    return {}
   },
   computed: {
     clients() {
-      return this.clientIndex.index
+      return clientIndex.index
+    },
+    documents() {
+      return clientIndex.documents
     }
   },
   methods: {
