@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://schema-api-db.dev.connected-web.services"
+      "url": "https://schema-api-db.prod.connected-web.services"
     }
   ],
   "paths": {

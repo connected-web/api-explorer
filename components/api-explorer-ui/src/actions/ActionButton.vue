@@ -6,9 +6,9 @@
     class="text-none action-button"
     :title="action.errored ? action.error?.message : action.description"
   >
+    <label>{{ labelToShow }}</label>
     <LoadingSpinner v-if="action?.loading && !action?.loadingIcon" />
     <Icon v-else :icon="iconToShow" />
-    <label>{{ labelToShow }}</label>
   </button>
 </template>
 

@@ -1,13 +1,13 @@
 const fnRegex = /(async\s)?([A-z][A-z0-9_]+)\((.*)\)/
-function paramsForFunction(signature: Function): string[] {
+function paramsForFunction (signature: Function): string[] {
   const funcString = signature.toString()
   const match = funcString.match(/\(([^)]*)\)/)
-  
-  if (match) {
+
+  if (match != null) {
     const params = match[1].split(/\s*,\s*/)
     return params.filter(Boolean)
   }
-  
+
   return []
 }
 
