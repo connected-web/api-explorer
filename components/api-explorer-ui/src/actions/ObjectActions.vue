@@ -2,7 +2,6 @@
   <div class="object-actions">
     <div v-for="item in signatures" :key="`${item.description}_group`" class="object-action column p5">
       <h4>{{ sentenceCase(item.prop) }}</h4>
-      <pre><code>{{ item.description }}</code></pre>
       <div v-if="item.params" class="inputs">
         <div v-for="param in item.params" :key="`${item.description}_${param}_input`" class="input row">
           <label>{{ sentenceCase(param) }}</label>
@@ -10,7 +9,10 @@
         </div>
       </div>
       <div class="row p5">
-        <button @click="item?.action.reset()"><icon icon="recycle" />Reset</button>
+        <button @click="item?.action.reset()" :disabled="item?.action.inStartState">
+          <icon icon="recycle" />
+          <span>Reset</span>
+        </button>
         <span class="spacer"></span>
         <ActionButton v-model="item.action" :params="inputParams(item)" />
       </div>

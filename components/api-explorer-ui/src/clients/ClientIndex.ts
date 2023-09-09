@@ -1,3 +1,7 @@
+import Ajv, { ValidateFunction } from 'ajv/dist/2020'
+import addFormats from 'ajv-formats'
+import draft7MetaSchema from 'ajv/dist/refs/json-schema-draft-07.json'
+
 import BoardGamesApiClient from './board-games-api/BoardGamesAPIClient'
 import SchemaApiDbClient from './schema-api-db/SchemaApiDbClient'
 
@@ -5,10 +9,10 @@ import BoardGamesAPISpec from './board-games-api/boardgames-api-services.json'
 import SchemaApiDbSpec from './schema-api-db/schema-api-db-services.json'
 
 
-async function callOperation (operationDetails: any, params: any, payload: any) {
+async function callOperation (baseURL: string, operationDetails: any, params: any, payload: any) {
   const { method, path } = operationDetails
-  const serviceUrl = `${this.selectedServer}${path}`.replace(/{([^}]+)}/g, (_, paramName) => {
-    return params[paramName]
+  const serviceUrl = `${baseURL}${path}`.replace(/{([^}]+)}/g, (_, paramName) => {
+    return params[paramName] ?? `${paramName}:undefined`
   })
   console.log('Activating operation', operationDetails?.operationId, 'with params', { params, serviceUrl })
   const response = await fetch(serviceUrl, {
@@ -26,15 +30,35 @@ export class OpenAPIClient {
   openApiDocument: any
   selectedServer: string
 
-  constructor(openApiDocument: any) {
-    this.openApiDocument = openApiDocument
-    this.selectedServer = openApiDocument.servers[0].url
+  constructor(openApiDocument?: any) {
+    if (openApiDocument !== undefined) {
+      this.openApiDocument = openApiDocument
+      const className = this.openApiDocument.info.title.replace(/[^a-zA-Z0-9]/g, '') + 'Client'
+      this.selectedServer = openApiDocument.servers[0].url
+      const customClient = class extends OpenAPIClient {
+        constructor() {
+          super()
+          this.openApiDocument = openApiDocument
+          this.selectedServer = openApiDocument.servers[0].url
+        }
 
-    const operations = this.operations
-    Object.entries(operations).forEach(([operationId, operationDetails]) => {
-      const params = operationDetails.parameters?.map((param: any) => param.name).join(', ') || ''
-      eval(`OpenAPIClient.prototype.${operationId} = async function (${params}) { return this.callOperation(operationDetails, params) }`)
-    })
+        get name(): string {
+          return className
+        }
+      }
+
+      const operations = this.operations
+      Object.entries(operations).forEach(([operationId, operationDetails]) => {
+        const payload = undefined
+        const params = operationDetails.parameters?.map((param: any) => param.name).join(', ') || ''
+        if (payload !== undefined) {
+          params.push('payload')
+        }
+        eval(`customClient.prototype.${operationId} = async function (${params}) { return callOperation(this.selectedServer, operationDetails, params, payload) }`)
+      })
+
+      return new customClient()
+    }
   }
 
   get operations(): { [key: string]: any } {

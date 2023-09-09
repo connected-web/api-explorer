@@ -54,7 +54,7 @@ export default function describeObject (obj: any): ObjectDescription[] {
     let value, type, signature, params, description
     try {
       value = obj[prop]
-      console.log('Value for:', { obj, prop, value: obj[prop] })
+      // console.log('Value for:', { obj, prop, value: obj[prop] })
       type = typeof value
       signature = (signatures[type] ?? signatures.default)(value)
       params = type === 'function' ? paramsForFunction(value) : null

@@ -101,6 +101,17 @@ i {
   font-style: italic;
 }
 
+pre {
+  background: #282c34;
+  font-size: .85em;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  line-height: 1.4;
+  color: white;
+  padding: 1em;
+  border-radius: 0.5em;
+  overflow-x: auto;
+}
+
 button, .button {
   display: inline-flex;
   border: none;
@@ -115,17 +126,6 @@ button, .button {
   font-size: 15px;
   text-transform: uppercase;
   letter-spacing: 1px;
-}
-
-pre {
-  background: #282c34;
-  font-size: .85em;
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-  line-height: 1.4;
-  color: white;
-  padding: 1em;
-  border-radius: 0.5em;
-  overflow-x: auto;
 }
 
 button *, .button * {
@@ -146,6 +146,16 @@ button.selected:hover, .button.selected:hover {
 
 button:active, .button:active {
   background: #85d;
+}
+
+button:disabled, .button:disabled,
+button:hover:disabled, .button:hover:disabled {
+  background: #ccc;
+  cursor: default;
+}
+
+button:disabled *, .button:disabled * {
+  cursor: default;
 }
 
 a {
