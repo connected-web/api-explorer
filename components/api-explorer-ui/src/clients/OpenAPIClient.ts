@@ -13,7 +13,7 @@ export default class OpenAPIClient {
 
       const title: string = openApiDocument?.info?.title ?? 'Untitled API'
       const className = title.replace(/[^a-zA-Z0-9]/g, '') + 'Client'
-      console.log('Creating client class', className, 'for API', title)
+      console.log('Creating client class', className, 'from', title, 'document')
 
       const CustomClient = class extends OpenAPIClient { }
 
@@ -26,7 +26,17 @@ export default class OpenAPIClient {
         }
         const paramNames = params.join(', ')
         /* eslint-disable no-eval */
-        eval(`CustomClient.prototype.${operationId} = async function (${paramNames}) { return makeRequest(baseURL, operationDetails, params, payload) }`)
+        eval([
+          `CustomClient.prototype.${operationId} = async function (${paramNames}) {`,
+          `  const payload = Array.from(arguments).pop()`,
+          `  const [...paramValues] = arguments`,
+          `  const params = paramValues.reduce((acc, paramValue, index) => {`,
+          `    acc[String(operations.${operationId}.parameters[index].name)] = paramValue`,
+          `    return acc`,
+          `  }, {})`,
+          `  return makeRequest(baseURL, operationDetails, params, payload)`,
+          `}`
+        ].join('\n'))
       })
 
       return new CustomClient()
