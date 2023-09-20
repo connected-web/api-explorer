@@ -7,8 +7,10 @@
 
     <label>Explore</label>
     <router-link to="/explore">Index</router-link>
-    <router-link to="/explore/board-games-api">Board Games API</router-link>
-    <router-link to="/explore/schema-api-db">Schema API DB</router-link>
+
+    <label>APIs</label>
+    <router-link v-for="document in documents" :key="document.id"
+     :to="`/explore/${document.id}`">{{ document.name }}</router-link>
 
     <label>Extras</label>
     <router-link to="/extras/icons">Icon Browser</router-link>
@@ -17,6 +19,10 @@
 
 <script>
 import { inject } from 'vue'
+
+import ClientIndex from '../clients/ClientIndex'
+
+const documents = new ClientIndex().documents
 
 export default {
   props: {
@@ -28,6 +34,16 @@ export default {
   data() {
     return {
       screenSize: null
+    }
+  },
+  computed: {
+    documents() {
+      return Object.entries(documents).map(([id, document]) => {
+        return {
+          id,
+          name: document?.info?.title
+        }
+      })
     }
   },
   setup() {

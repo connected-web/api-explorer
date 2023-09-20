@@ -5,7 +5,7 @@
   </label>
 </template>
 
-<script>
+<script lang="ts">
 import timeUntil from 'time-until'
 
 export default {
@@ -21,7 +21,7 @@ export default {
   },
   data () {
     return {
-      refreshTimeout: false,
+      refreshTimeout: 0,
       currentDate: new Date()
     }
   },
@@ -70,7 +70,7 @@ export default {
       const self = this
       if (self.refreshTimeout) {
         clearTimeout(self.refreshTimeout)
-        self.refreshTimeout = false
+        self.refreshTimeout = 0
       }
       setTimeout(() => {
         self.refresh()

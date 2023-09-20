@@ -15,7 +15,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   props: {
     modelValue: {
@@ -34,20 +34,20 @@ export default {
     }
   },
   methods: {
-    selectedClass(actual, current) {
+    selectedClass(actual: any, current: any) {
       if (JSON.stringify(actual) === JSON.stringify(current)) {
         return 'button selected'
       }
       return 'button'
     },
-    tabIcon(tab) {
+    tabIcon(tab: any) {
       return tab?.icon ?? 'star'
     },
-    tabId(tab) {
+    tabId(tab: any) {
       const entry = Array.isArray(tab) ? tab[1] : null
       return entry ?? tab?.id ?? tab?.key ?? tab?.label ?? tab?.name ?? tab?.value ?? tab
     },
-    tabLabel(tab) {
+    tabLabel(tab: any) {
       const entry = Array.isArray(tab) ? tab[1] : null
       return entry ?? tab?.label ?? tab?.name ?? tab?.value ?? tab?.name ?? tab
     }

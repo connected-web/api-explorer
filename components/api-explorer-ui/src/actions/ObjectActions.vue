@@ -5,7 +5,8 @@
       <div v-if="item.params" class="inputs">
         <div v-for="param in item.params" :key="`${item.description}_${param}_input`" class="input row">
           <label>{{ sentenceCase(param) }}</label>
-          <input v-model="item.inputs[param]" :placeholder="param" @input="$forceUpdate()" />
+          <textarea v-if="param === 'requestBody'" v-model="item.inputs[param]" :placeholder="param" @input="$forceUpdate()" />
+          <input v-else v-model="item.inputs[param]" :placeholder="param" @input="$forceUpdate()" />
         </div>
       </div>
       <div class="row p5">
@@ -13,11 +14,15 @@
           <icon icon="recycle" />
           <span>Reset</span>
         </button>
+        <button v-if="item?.action?.errored" @click="showStacktrace[item.prop] = !showStacktrace[item.prop]">
+          <icon icon="recycle" />
+          <span>Show Stack Trace</span>
+        </button>
         <span class="spacer"></span>
         <ActionButton v-model="item.action" :params="inputParams(item)" />
       </div>
       <pre v-if="item?.action?.loading">Loading...</pre>
-      <pre v-if="item?.action?.errored">Error: {{ item?.action?.error  }}</pre>
+      <pre v-if="item?.action?.errored">Error: {{ item?.action?.error }} {{ showStacktrace[item.prop] ? item?.action?.error?.stack : '' }}</pre>
       <SmartTable v-if="item?.action?.finished" :value="results[item.action?.id] ?? 'No result'" />
       <div v-if="item?.action?.spiedLogs?.length > 0">
         <h4>Console Logs</h4>
@@ -71,7 +76,8 @@ export default {
       iconSearch: new IconSearch(),
       actions: {} as { [key: string]: Action<unknown> },
       results: {} as { [key: string]: any },
-      resolved: {} as any
+      resolved: {} as any,
+      showStacktrace: {} as { [key: string]: boolean }
     }
   },
   props: {
@@ -173,6 +179,12 @@ export default {
   flex: 1 1;
   padding: 0.5em;
 }
+.input.row > textarea {
+  flex: 1 1;
+  padding: 0.5em;
+  min-height: 100px;
+}
+
 
 .object-action {
   border-radius: 0.5em;

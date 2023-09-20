@@ -20,7 +20,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 
 import TabSelector from './TabSelector.vue'
 import Tabulation from './Tabulation.vue'
@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     tabulate,
-    valueAsArray(value) {
+    valueAsArray(value:any): Array<any> {
       if (Array.isArray(value)) {
         return value
       }

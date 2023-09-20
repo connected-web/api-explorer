@@ -3,8 +3,7 @@ import OpenAPIClient from './OpenAPIClient'
 import Auth from '../login/Auth'
 
 export default class AuthenticatedOpenAPIClient extends OpenAPIClient {
-
-  constructor (openApiDocument?: any, callOperation?: (baseURL: string, operationDetails:any, params:any[], payload?:any) => Promise<any>) {
+  constructor (openApiDocument?: any, callOperation?: (baseURL: string, operationDetails: any, params: any[], payload?: any) => Promise<any>) {
     super(openApiDocument, callOperation ?? AuthenticatedOpenAPIClient.prototype.callOperation)
   }
 

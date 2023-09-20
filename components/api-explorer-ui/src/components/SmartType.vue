@@ -50,7 +50,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import flattenObject from './FlattenObject'
 import HiddenByDefault from './HiddenByDefault.vue'
 import RelativeDate from './RelativeDate.vue'

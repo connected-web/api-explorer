@@ -31,7 +31,7 @@
   </table>
 </template>
 
-<script>
+<script lang="ts">
 import flattenObject from './FlattenObject'
 import SmartType from './SmartType.vue'
 
