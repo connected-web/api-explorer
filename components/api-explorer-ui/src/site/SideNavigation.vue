@@ -13,11 +13,12 @@
      :to="`/explore/${document.id}`">{{ document.name }}</router-link>
 
     <label>Extras</label>
+    <router-link to="/playground">Playground</router-link>
     <router-link to="/extras/icons">Icon Browser</router-link>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { inject } from 'vue'
 
 import ClientIndex from '../clients/ClientIndex'
