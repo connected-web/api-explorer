@@ -7,7 +7,10 @@
         <span>{{ sentenceCase(clientId) }}</span>
       </div>
       <h1>{{ sentenceCase(clientId) }}</h1>
+      <p>{{ documents[clientId]?.info?.description }}</p>
       <ObjectActions :model-value="clients[clientId]" />
+
+      <h2>Open API Document</h2>
       <pre><code>{{ documents[clientId] }}</code></pre>
     </div>
     <div v-else>
