@@ -2,6 +2,21 @@
   <div class="playground">
     <div class="playground-area">
       <canvas width="2000" height="1000" id="playground"></canvas>
+      <div class="buttons row p10">
+        <button @click="save">
+          <Icon icon="download" />
+          <label>Save</label>
+        </button>
+        <button @click="load">
+          <Icon icon="upload" />
+          <label>Load</label>
+        </button>
+        <button @click="reset">
+          <Icon icon="recycle" />
+          <label>Reset</label>
+        </button>
+        <span class="spacer"></span>
+      </div>
     </div>
   </div>
 </template>
@@ -10,21 +25,28 @@
 import { LiteGraph, LGraphCanvas, LGraph } from 'litegraph.js'  
 import 'litegraph.js/css/litegraph.css'
 
+import ClientIndex from '../clients/ClientIndex'
+
+const clients = new ClientIndex()
+
+LiteGraph.clearRegisteredTypes()
+Object.entries(clients.liteGraphNodes).forEach(([key, value]) => {
+  console.log('Registering:', { key, value })
+  LiteGraph.registerNodeType(key, value)
+})
+
 let graph:LGraph
 let canvas:LGraphCanvas
 let saveInterval:number = 0
 
 function createDefault() {
-  const node_const = LiteGraph.createNode("basic/const");
-  node_const.pos = [200,200];
-  graph.add(node_const);
-  node_const.setValue(4.5);
+  const getStatus1 = LiteGraph.createNode("apis/schema-api-db/getStatus")
+  getStatus1.pos = [200,200]
+  graph.add(getStatus1)
 
-  const node_watch = LiteGraph.createNode("basic/watch");
-  node_watch.pos = [700,200];
-  graph.add(node_watch);
-
-  node_const.connect(0, node_watch, 0 );
+  const getStatus2 = LiteGraph.createNode("apis/boardgames-api/getStatus")
+  getStatus2.pos = [200,500]
+  graph.add(getStatus2)
 }
 
 export default {
@@ -42,7 +64,6 @@ export default {
       console.warn('Failed to load graph state', error.message)
       createDefault()
     }
-    graph.start()
 
     saveInterval = setInterval(() => {
       this.save()
@@ -65,6 +86,10 @@ export default {
       } else {
         throw new Error('No graph state found')
       }
+    },
+    reset() {
+      graph.clear()
+      createDefault()
     }
   }
 }
@@ -83,6 +108,15 @@ div.playground {
   display: flex;
   justify-content: stretch;
   align-items: stretch;
+}
+
+.buttons {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  z-index: 100;
+  justify-content: flex-start;
 }
 
 canvas.playground {
