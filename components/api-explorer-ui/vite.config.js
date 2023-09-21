@@ -9,6 +9,10 @@ export default defineConfig({
   },
   base: '/api-explorer/',
   build: {
-    minify: false
+    minify: false,
+    commonjsOptions: { include: [] },
+  },
+  optimizeDeps: {
+    disabled: false,
   }
 })
