@@ -1608,20 +1608,28 @@ cursor: pointer;
 }
   
 
-div.playground[data-v-cdee697d] {
+div.playground[data-v-877c309c] {
   display: block;
   position: relative;
   margin: 0;
   padding: 0;
 }
-.playground-area[data-v-cdee697d] {
+.playground-area[data-v-877c309c] {
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: stretch;
   align-items: stretch;
 }
-canvas.playground[data-v-cdee697d] {
+.buttons[data-v-877c309c] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  z-index: 100;
+  justify-content: flex-start;
+}
+canvas.playground[data-v-877c309c] {
   width: 100%;
   height: 100%;
 }

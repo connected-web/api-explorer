@@ -25097,6 +25097,65 @@ class AuthenticatedOpenAPIClient extends __OpenAPIClient {
     }
   }
 }
+class LiteGraphNode {
+  constructor(title2, operationId2, operationDetails2) {
+    __publicField(this, "_path", "");
+    __publicField(this, "_nodeClass");
+    var _a3, _b2;
+    const payloadRequired2 = (_a3 = operationDetails2.requestBody) == null ? void 0 : _a3.content;
+    const params2 = ((_b2 = operationDetails2.parameters) == null ? void 0 : _b2.map((param) => param.name)) ?? [];
+    if (payloadRequired2 !== void 0) {
+      params2.push("requestBody");
+    }
+    function CustomNode() {
+      params2.forEach((paramName) => {
+        this.addInput(paramName, "json");
+      });
+      this.addOutput("output", "json");
+    }
+    CustomNode.prototype.onExecute = async function() {
+      const paramValues = {};
+      params2.forEach((paramName, index2) => {
+        paramValues[paramName] = this.getInputData(index2, "string");
+      });
+      this.setOutputData(paramValues, "output");
+    };
+    CustomNode.title = operationId2;
+    this._path = `${title2}/${operationId2}`;
+    this._nodeClass = CustomNode;
+    console.log("Created lite graph node:", this.path, { nodeClass: CustomNode });
+  }
+  get path() {
+    return this._path;
+  }
+  get nodeClass() {
+    return this._nodeClass;
+  }
+  static fromOpenAPISpec(openApiDocument2) {
+    var _a3;
+    const operations2 = LiteGraphNode.operationsFor(openApiDocument2);
+    const title2 = ((_a3 = openApiDocument2 == null ? void 0 : openApiDocument2.info) == null ? void 0 : _a3.title) ?? "Untitled";
+    return Object.entries(operations2).map(([operationId2, operationDetails2]) => {
+      return new LiteGraphNode(title2, operationId2, operationDetails2);
+    });
+  }
+  static operationsFor(openApiDocument2) {
+    return Object.entries((openApiDocument2 == null ? void 0 : openApiDocument2.paths) ?? {}).reduce((acc, [path, pathItem]) => {
+      const operations2 = Object.entries(pathItem).reduce((acc2, [method, operationItem]) => {
+        const operationDetails2 = operationItem;
+        if ((operationDetails2 == null ? void 0 : operationDetails2.operationId) === void 0) {
+          return acc2;
+        }
+        operationDetails2.method = method;
+        operationDetails2.path = path;
+        acc2[String(operationDetails2 == null ? void 0 : operationDetails2.operationId)] = operationDetails2;
+        return acc2;
+      }, {});
+      acc = Object.assign({}, acc, operations2);
+      return acc;
+    }, {});
+  }
+}
 class ClientIndex {
   constructor() {
     __publicField(this, "boardGamesApi");
@@ -25115,6 +25174,15 @@ class ClientIndex {
       "board-games-api": BoardGamesAPISpec,
       "schema-api-db": SchemaApiDbSpec
     };
+  }
+  get liteGraphNodes() {
+    const allNodes = Object.values(this.documents).map((document2) => {
+      return LiteGraphNode.fromOpenAPISpec(document2);
+    });
+    return allNodes.flat().reduce((acc, val) => {
+      acc[val.path] = val.nodeClass;
+      return acc;
+    }, {});
   }
 }
 const documents = new ClientIndex().documents;
@@ -25159,7 +25227,7 @@ const _withScopeId$8 = (n) => (pushScopeId("data-v-c583eb01"), n = n(), popScope
 const _hoisted_1$m = /* @__PURE__ */ _withScopeId$8(() => /* @__PURE__ */ createBaseVNode("label", null, "User", -1));
 const _hoisted_2$j = /* @__PURE__ */ _withScopeId$8(() => /* @__PURE__ */ createBaseVNode("label", null, "Explore", -1));
 const _hoisted_3$f = /* @__PURE__ */ _withScopeId$8(() => /* @__PURE__ */ createBaseVNode("label", null, "APIs", -1));
-const _hoisted_4$a = /* @__PURE__ */ _withScopeId$8(() => /* @__PURE__ */ createBaseVNode("label", null, "Extras", -1));
+const _hoisted_4$b = /* @__PURE__ */ _withScopeId$8(() => /* @__PURE__ */ createBaseVNode("label", null, "Extras", -1));
 function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_router_link = resolveComponent("router-link");
   return openBlock(), createElementBlock("div", {
@@ -25197,7 +25265,7 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
         _: 2
       }, 1032, ["to"]);
     }), 128)),
-    _hoisted_4$a,
+    _hoisted_4$b,
     createVNode(_component_router_link, { to: "/playground" }, {
       default: withCtx(() => [
         createTextVNode("Playground")
@@ -25270,8 +25338,8 @@ const _hoisted_3$e = {
   class: "circle-icon",
   title: "View User Details"
 };
-const _hoisted_4$9 = /* @__PURE__ */ _withScopeId$7(() => /* @__PURE__ */ createBaseVNode("span", null, "Login", -1));
-const _hoisted_5$8 = {
+const _hoisted_4$a = /* @__PURE__ */ _withScopeId$7(() => /* @__PURE__ */ createBaseVNode("span", null, "Login", -1));
+const _hoisted_5$9 = {
   class: "circle-icon",
   title: "View User Details"
 };
@@ -25301,8 +25369,8 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
       onClick: _cache[0] || (_cache[0] = (...args) => $options.authorize && $options.authorize(...args)),
       class: "sso-login"
     }, [
-      _hoisted_4$9,
-      createBaseVNode("div", _hoisted_5$8, [
+      _hoisted_4$a,
+      createBaseVNode("div", _hoisted_5$9, [
         createVNode(_component_Icon, {
           icon: $options.loggedIn ? "user-shield" : "user-slash"
         }, null, 8, ["icon"])
@@ -25326,13 +25394,13 @@ const _withScopeId$6 = (n) => (pushScopeId("data-v-9a4a7987"), n = n(), popScope
 const _hoisted_1$k = { class: "header" };
 const _hoisted_2$h = /* @__PURE__ */ _withScopeId$6(() => /* @__PURE__ */ createBaseVNode("span", null, null, -1));
 const _hoisted_3$d = /* @__PURE__ */ _withScopeId$6(() => /* @__PURE__ */ createBaseVNode("span", null, null, -1));
-const _hoisted_4$8 = /* @__PURE__ */ _withScopeId$6(() => /* @__PURE__ */ createBaseVNode("span", null, null, -1));
-const _hoisted_5$7 = [
+const _hoisted_4$9 = /* @__PURE__ */ _withScopeId$6(() => /* @__PURE__ */ createBaseVNode("span", null, null, -1));
+const _hoisted_5$8 = [
   _hoisted_2$h,
   _hoisted_3$d,
-  _hoisted_4$8
+  _hoisted_4$9
 ];
-const _hoisted_6$7 = /* @__PURE__ */ createStaticVNode('<div class="site-logo" data-v-9a4a7987></div><label class="site-title" data-v-9a4a7987><span class="fulltext" data-v-9a4a7987>API Explorer</span><span class="initials" data-v-9a4a7987>APX</span></label><span class="spacer" data-v-9a4a7987></span>', 3);
+const _hoisted_6$8 = /* @__PURE__ */ createStaticVNode('<div class="site-logo" data-v-9a4a7987></div><label class="site-title" data-v-9a4a7987><span class="fulltext" data-v-9a4a7987>API Explorer</span><span class="initials" data-v-9a4a7987>APX</span></label><span class="spacer" data-v-9a4a7987></span>', 3);
 const _hoisted_9$6 = { class: "row p10" };
 function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
   var _a3;
@@ -25342,8 +25410,8 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
       key: 0,
       class: "burger",
       onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("toggleNav"))
-    }, _hoisted_5$7)) : createCommentVNode("", true),
-    _hoisted_6$7,
+    }, _hoisted_5$8)) : createCommentVNode("", true),
+    _hoisted_6$8,
     createBaseVNode("div", _hoisted_9$6, [
       createVNode(_component_AuthButton)
     ])
@@ -39655,17 +39723,17 @@ const _sfc_main$g = {
 const _hoisted_1$g = { class: "home page" };
 const _hoisted_2$f = /* @__PURE__ */ createBaseVNode("h1", null, "Home", -1);
 const _hoisted_3$c = /* @__PURE__ */ createBaseVNode("p", null, "Welcome to the Connected Web API Explorer!", -1);
-const _hoisted_4$7 = /* @__PURE__ */ createBaseVNode("h2", null, "About", -1);
-const _hoisted_5$6 = /* @__PURE__ */ createBaseVNode("p", null, [
+const _hoisted_4$8 = /* @__PURE__ */ createBaseVNode("h2", null, "About", -1);
+const _hoisted_5$7 = /* @__PURE__ */ createBaseVNode("p", null, [
   /* @__PURE__ */ createTextVNode("This is an API Explorer for Connected Web services hosted on "),
   /* @__PURE__ */ createBaseVNode("b", null, "connected-web.net"),
   /* @__PURE__ */ createTextVNode(" and "),
   /* @__PURE__ */ createBaseVNode("b", null, "connected-web.services"),
   /* @__PURE__ */ createTextVNode(".")
 ], -1);
-const _hoisted_6$6 = /* @__PURE__ */ createBaseVNode("h2", null, "Source code", -1);
-const _hoisted_7$5 = /* @__PURE__ */ createBaseVNode("a", { href: "https://github.com/connected-web/api-explorer" }, "connected-web/api-explorer →", -1);
-const _hoisted_8$5 = /* @__PURE__ */ createBaseVNode("h2", null, "Roadmap", -1);
+const _hoisted_6$7 = /* @__PURE__ */ createBaseVNode("h2", null, "Source code", -1);
+const _hoisted_7$6 = /* @__PURE__ */ createBaseVNode("a", { href: "https://github.com/connected-web/api-explorer" }, "connected-web/api-explorer →", -1);
+const _hoisted_8$6 = /* @__PURE__ */ createBaseVNode("h2", null, "Roadmap", -1);
 const _hoisted_9$5 = /* @__PURE__ */ createBaseVNode("h3", null, "2023 August", -1);
 const _hoisted_10$5 = /* @__PURE__ */ createBaseVNode("h3", null, "In development", -1);
 const _hoisted_11$4 = /* @__PURE__ */ createBaseVNode("h3", null, "Future Ideas", -1);
@@ -39681,17 +39749,17 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$g, [
     _hoisted_2$f,
     _hoisted_3$c,
-    _hoisted_4$7,
-    _hoisted_5$6,
-    _hoisted_6$6,
+    _hoisted_4$8,
+    _hoisted_5$7,
+    _hoisted_6$7,
     createBaseVNode("ul", null, [
       createBaseVNode("li", null, [
         createVNode(_component_Icon, { icon: "code-branch" }),
         createTextVNode(),
-        _hoisted_7$5
+        _hoisted_7$6
       ])
     ]),
-    _hoisted_8$5,
+    _hoisted_8$6,
     _hoisted_9$5,
     createBaseVNode("p", null, [
       createVNode(_component_StatValue, { label: "Setup public website hosted on Github Pages" }, {
@@ -39832,14 +39900,14 @@ const _hoisted_2$e = {
   class: "filter-row"
 };
 const _hoisted_3$b = { class: "hide-on-small-screen" };
-const _hoisted_4$6 = { key: 1 };
-const _hoisted_5$5 = {
+const _hoisted_4$7 = { key: 1 };
+const _hoisted_5$6 = {
   key: 0,
   class: "pagination-top"
 };
-const _hoisted_6$5 = { class: "pagination-size hide-on-small-screen" };
-const _hoisted_7$4 = { class: "buttons" };
-const _hoisted_8$4 = /* @__PURE__ */ _withScopeId$5(() => /* @__PURE__ */ createBaseVNode("label", { class: "right" }, "Prev Page", -1));
+const _hoisted_6$6 = { class: "pagination-size hide-on-small-screen" };
+const _hoisted_7$5 = { class: "buttons" };
+const _hoisted_8$5 = /* @__PURE__ */ _withScopeId$5(() => /* @__PURE__ */ createBaseVNode("label", { class: "right" }, "Prev Page", -1));
 const _hoisted_9$4 = { class: "pagination-numbers" };
 const _hoisted_10$4 = /* @__PURE__ */ _withScopeId$5(() => /* @__PURE__ */ createBaseVNode("label", { class: "left" }, "Next Page", -1));
 const _hoisted_11$3 = /* @__PURE__ */ _withScopeId$5(() => /* @__PURE__ */ createBaseVNode("pre", null, [
@@ -39873,15 +39941,15 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
       ]),
       createBaseVNode("span", _hoisted_3$b, "Found " + toDisplayString($options.filteredItems($props.items).length) + " " + toDisplayString($props.itemTypePlural) + " " + toDisplayString($data.filter ? `containing "${$data.filter}"` : ""), 1)
     ])) : createCommentVNode("", true),
-    $props.items && $options.filteredItems($props.items).length > 0 ? (openBlock(), createElementBlock("div", _hoisted_4$6, [
-      $options.isPaginated($props.items) ? (openBlock(), createElementBlock("div", _hoisted_5$5, [
-        createBaseVNode("span", _hoisted_6$5, toDisplayString($props.pageSize) + " " + toDisplayString($props.itemTypePlural) + " / page; " + toDisplayString($options.paginatedItems.length) + " in view of " + toDisplayString($props.items.length) + ":", 1),
-        createBaseVNode("span", _hoisted_7$4, [
+    $props.items && $options.filteredItems($props.items).length > 0 ? (openBlock(), createElementBlock("div", _hoisted_4$7, [
+      $options.isPaginated($props.items) ? (openBlock(), createElementBlock("div", _hoisted_5$6, [
+        createBaseVNode("span", _hoisted_6$6, toDisplayString($props.pageSize) + " " + toDisplayString($props.itemTypePlural) + " / page; " + toDisplayString($options.paginatedItems.length) + " in view of " + toDisplayString($props.items.length) + ":", 1),
+        createBaseVNode("span", _hoisted_7$5, [
           createBaseVNode("button", {
             onClick: _cache[3] || (_cache[3] = (...args) => $options.previousPage && $options.previousPage(...args))
           }, [
             createVNode(_component_Icon, { icon: "angle-left" }),
-            _hoisted_8$4
+            _hoisted_8$5
           ]),
           createBaseVNode("span", _hoisted_9$4, toDisplayString($data.pageNumber + 1) + " of " + toDisplayString($options.maxPages), 1),
           createBaseVNode("button", {
@@ -39932,9 +40000,9 @@ const _sfc_main$e = {
 const _hoisted_1$e = { class: "icon browser" };
 const _hoisted_2$d = { class: "row" };
 const _hoisted_3$a = { class: "column" };
-const _hoisted_4$5 = ["title"];
-const _hoisted_5$4 = { class: "column" };
-const _hoisted_6$4 = ["title"];
+const _hoisted_4$6 = ["title"];
+const _hoisted_5$5 = { class: "column" };
+const _hoisted_6$5 = ["title"];
 function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_icon = resolveComponent("icon");
   const _component_PaginatedItems = resolveComponent("PaginatedItems");
@@ -39953,10 +40021,10 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
                   class: "double-size"
                 }, null, 8, ["icon"]),
                 createBaseVNode("b", null, toDisplayString(icon3.iconName), 1)
-              ], 8, _hoisted_4$5);
+              ], 8, _hoisted_4$6);
             }), 128))
           ]),
-          createBaseVNode("div", _hoisted_5$4, [
+          createBaseVNode("div", _hoisted_5$5, [
             (openBlock(true), createElementBlock(Fragment, null, renderList(paginatedItems.slice(10, 20), ([iconKey, icon3]) => {
               return openBlock(), createElementBlock("p", {
                 key: iconKey,
@@ -39967,7 +40035,7 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
                   class: "double-size"
                 }, null, 8, ["icon"]),
                 createBaseVNode("b", null, toDisplayString(icon3.iconName), 1)
-              ], 8, _hoisted_6$4);
+              ], 8, _hoisted_6$5);
             }), 128))
           ])
         ])
@@ -40274,10 +40342,10 @@ const _withScopeId$4 = (n) => (pushScopeId("data-v-aec73286"), n = n(), popScope
 const _hoisted_1$a = { class: "user-details" };
 const _hoisted_2$9 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("h1", null, "User Details", -1));
 const _hoisted_3$7 = { key: 0 };
-const _hoisted_4$4 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("p", null, "Information about you!", -1));
-const _hoisted_6$3 = { class: "row right" };
-const _hoisted_7$3 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("span", null, "Logout", -1));
-const _hoisted_8$3 = { key: 1 };
+const _hoisted_4$5 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("p", null, "Information about you!", -1));
+const _hoisted_6$4 = { class: "row right" };
+const _hoisted_7$4 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("span", null, "Logout", -1));
+const _hoisted_8$4 = { key: 1 };
 const _hoisted_9$3 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("p", null, "You are not logged in!", -1));
 const _hoisted_10$3 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("p", null, "You could be anyone... that doesn't stop you from browsing the available API documentation - but you won't be able to interact with them!", -1));
 const _hoisted_11$2 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("p", null, "Have fun :)", -1));
@@ -40293,7 +40361,7 @@ function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$a, [
     _hoisted_2$9,
     $options.loggedIn ? (openBlock(), createElementBlock("div", _hoisted_3$7, [
-      _hoisted_4$4,
+      _hoisted_4$5,
       createVNode(_component_StatValue, {
         label: "Name",
         style: { "text-transform": "capitalize" }
@@ -40343,15 +40411,15 @@ function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
         _: 1
       }),
       createCommentVNode("", true),
-      createBaseVNode("div", _hoisted_6$3, [
+      createBaseVNode("div", _hoisted_6$4, [
         createBaseVNode("button", {
           onClick: _cache[0] || (_cache[0] = (...args) => $options.logout && $options.logout(...args))
         }, [
-          _hoisted_7$3,
+          _hoisted_7$4,
           createVNode(_component_Icon, { icon: "sign-out-alt" })
         ])
       ])
-    ])) : (openBlock(), createElementBlock("div", _hoisted_8$3, _hoisted_12$2))
+    ])) : (openBlock(), createElementBlock("div", _hoisted_8$4, _hoisted_12$2))
   ]);
 }
 const UserDetails = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a], ["__scopeId", "data-v-aec73286"]]);
@@ -42147,8 +42215,8 @@ const _hoisted_2$6 = {
   style: { "font-family": "monospace", "white-space": "nowrap" }
 };
 const _hoisted_3$4 = /* @__PURE__ */ _withScopeId$2(() => /* @__PURE__ */ createBaseVNode("span", { style: { "display": "none" } }, "Hide value", -1));
-const _hoisted_4$3 = { style: { "display": "none" } };
-const _hoisted_5$3 = {
+const _hoisted_4$4 = { style: { "display": "none" } };
+const _hoisted_5$4 = {
   ref: "dataslot",
   style: { "display": "none" }
 };
@@ -42180,10 +42248,10 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
       title: "Copy value to clipboard",
       onClick: _cache[2] || (_cache[2] = (...args) => $options.copy && $options.copy(...args))
     }, [
-      createBaseVNode("span", _hoisted_4$3, toDisplayString($data.copied ? "Copied" : "Copy") + " to clipboard", 1),
+      createBaseVNode("span", _hoisted_4$4, toDisplayString($data.copied ? "Copied" : "Copy") + " to clipboard", 1),
       createVNode(_component_Icon, { icon: $options.copyIcon }, null, 8, ["icon"])
     ]),
-    createBaseVNode("div", _hoisted_5$3, [
+    createBaseVNode("div", _hoisted_5$4, [
       renderSlot(_ctx.$slots, "default", {}, void 0, true)
     ], 512)
   ]);
@@ -42262,17 +42330,17 @@ const SmartType_vue_vue_type_style_index_0_scoped_d447fe3b_lang = "";
 const _hoisted_1$5 = { key: 0 };
 const _hoisted_2$5 = { key: 1 };
 const _hoisted_3$3 = { key: 2 };
-const _hoisted_4$2 = {
+const _hoisted_4$3 = {
   key: 3,
   style: { "text-transform": "uppercase", "font-family": "monospace" }
 };
-const _hoisted_5$2 = {
+const _hoisted_5$3 = {
   key: 4,
   style: { "font-family": "monospace", "white-space": "nowrap" }
 };
-const _hoisted_6$2 = ["href"];
-const _hoisted_7$2 = { key: 5 };
-const _hoisted_8$2 = { key: 1 };
+const _hoisted_6$3 = ["href"];
+const _hoisted_7$3 = { key: 5 };
+const _hoisted_8$3 = { key: 1 };
 const _hoisted_9$2 = { key: 6 };
 const _hoisted_10$2 = { key: 1 };
 const _hoisted_11$1 = { key: 7 };
@@ -42300,16 +42368,16 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
       }), 128))
     ])) : $options.smartType === "icon" ? (openBlock(), createElementBlock("span", _hoisted_3$3, [
       createVNode(_component_icon, { icon: $props.value }, null, 8, ["icon"])
-    ])) : $options.smartType === "color" ? (openBlock(), createElementBlock("div", _hoisted_4$2, [
+    ])) : $options.smartType === "color" ? (openBlock(), createElementBlock("div", _hoisted_4$3, [
       createBaseVNode("span", null, toDisplayString($props.value), 1),
       createVNode(_component_icon, {
         icon: "square",
         style: normalizeStyle(`color: ${$props.value}`)
       }, null, 8, ["style"])
-    ])) : $options.smartType === "url" ? (openBlock(), createElementBlock("div", _hoisted_5$2, [
+    ])) : $options.smartType === "url" ? (openBlock(), createElementBlock("div", _hoisted_5$3, [
       createVNode(_component_icon, { icon: "earth-americas" }),
-      createBaseVNode("a", { href: $props.value }, "/" + toDisplayString($props.value.split("/").pop().split("?")[0]), 9, _hoisted_6$2)
-    ])) : $options.smartType === "date" ? (openBlock(), createElementBlock("div", _hoisted_7$2, [
+      createBaseVNode("a", { href: $props.value }, "/" + toDisplayString($props.value.split("/").pop().split("?")[0]), 9, _hoisted_6$3)
+    ])) : $options.smartType === "date" ? (openBlock(), createElementBlock("div", _hoisted_7$3, [
       $options.parseDate($props.value) ? (openBlock(), createBlock(_component_RelativeDate, {
         key: 0,
         date: $options.parseDate($props.value)
@@ -42318,7 +42386,7 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
           createTextVNode(" (" + toDisplayString($props.value) + ") ", 1)
         ]),
         _: 1
-      }, 8, ["date"])) : (openBlock(), createElementBlock("b", _hoisted_8$2, toDisplayString($props.value), 1))
+      }, 8, ["date"])) : (openBlock(), createElementBlock("b", _hoisted_8$3, toDisplayString($props.value), 1))
     ])) : $options.smartType === "datetime" ? (openBlock(), createElementBlock("div", _hoisted_9$2, [
       $options.parseDate($props.value) ? (openBlock(), createBlock(_component_RelativeDate, {
         key: 0,
@@ -42777,11 +42845,11 @@ const _hoisted_2$2 = {
   class: "inputs"
 };
 const _hoisted_3$2 = ["onUpdate:modelValue", "placeholder"];
-const _hoisted_4$1 = ["onUpdate:modelValue", "placeholder"];
-const _hoisted_5$1 = { class: "row p5" };
-const _hoisted_6$1 = ["onClick", "disabled"];
-const _hoisted_7$1 = /* @__PURE__ */ _withScopeId$1(() => /* @__PURE__ */ createBaseVNode("span", null, "Reset", -1));
-const _hoisted_8$1 = ["onClick"];
+const _hoisted_4$2 = ["onUpdate:modelValue", "placeholder"];
+const _hoisted_5$2 = { class: "row p5" };
+const _hoisted_6$2 = ["onClick", "disabled"];
+const _hoisted_7$2 = /* @__PURE__ */ _withScopeId$1(() => /* @__PURE__ */ createBaseVNode("span", null, "Reset", -1));
+const _hoisted_8$2 = ["onClick"];
 const _hoisted_9$1 = /* @__PURE__ */ _withScopeId$1(() => /* @__PURE__ */ createBaseVNode("span", null, "Show Stack Trace", -1));
 const _hoisted_10$1 = /* @__PURE__ */ _withScopeId$1(() => /* @__PURE__ */ createBaseVNode("span", { class: "spacer" }, null, -1));
 const _hoisted_11 = { key: 1 };
@@ -42819,27 +42887,27 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
                 "onUpdate:modelValue": ($event) => item.inputs[param] = $event,
                 placeholder: param,
                 onInput: _cache[1] || (_cache[1] = ($event) => _ctx.$forceUpdate())
-              }, null, 40, _hoisted_4$1)), [
+              }, null, 40, _hoisted_4$2)), [
                 [vModelText, item.inputs[param]]
               ])
             ]);
           }), 128))
         ])) : createCommentVNode("", true),
-        createBaseVNode("div", _hoisted_5$1, [
+        createBaseVNode("div", _hoisted_5$2, [
           createBaseVNode("button", {
             onClick: ($event) => item == null ? void 0 : item.action.reset(),
             disabled: item == null ? void 0 : item.action.inStartState
           }, [
             createVNode(_component_icon, { icon: "recycle" }),
-            _hoisted_7$1
-          ], 8, _hoisted_6$1),
+            _hoisted_7$2
+          ], 8, _hoisted_6$2),
           ((_a3 = item == null ? void 0 : item.action) == null ? void 0 : _a3.errored) ? (openBlock(), createElementBlock("button", {
             key: 0,
             onClick: ($event) => $data.showStacktrace[item.prop] = !$data.showStacktrace[item.prop]
           }, [
             createVNode(_component_icon, { icon: "recycle" }),
             _hoisted_9$1
-          ], 8, _hoisted_8$1)) : createCommentVNode("", true),
+          ], 8, _hoisted_8$2)) : createCommentVNode("", true),
           _hoisted_10$1,
           createVNode(_component_ActionButton, {
             modelValue: item.action,
@@ -42892,13 +42960,13 @@ const ExplorerIndex_vue_vue_type_style_index_0_lang = "";
 const _hoisted_1$1 = { class: "api explorer page" };
 const _hoisted_2$1 = { key: 0 };
 const _hoisted_3$1 = { class: "breadcrumbs row p5 left" };
-const _hoisted_4 = /* @__PURE__ */ createBaseVNode("span", null, "/", -1);
-const _hoisted_5 = /* @__PURE__ */ createBaseVNode("h2", null, "Open API Document", -1);
-const _hoisted_6 = { key: 1 };
-const _hoisted_7 = /* @__PURE__ */ createBaseVNode("div", { class: "breadcrumbs row p5 left" }, [
+const _hoisted_4$1 = /* @__PURE__ */ createBaseVNode("span", null, "/", -1);
+const _hoisted_5$1 = /* @__PURE__ */ createBaseVNode("h2", null, "Open API Document", -1);
+const _hoisted_6$1 = { key: 1 };
+const _hoisted_7$1 = /* @__PURE__ */ createBaseVNode("div", { class: "breadcrumbs row p5 left" }, [
   /* @__PURE__ */ createBaseVNode("span", null, "Explorer Index")
 ], -1);
-const _hoisted_8 = /* @__PURE__ */ createBaseVNode("h1", null, "Explorer Index", -1);
+const _hoisted_8$1 = /* @__PURE__ */ createBaseVNode("h1", null, "Explorer Index", -1);
 const _hoisted_9 = { class: "clients" };
 const _hoisted_10 = /* @__PURE__ */ createBaseVNode("p", null, "The following API clients registered with the site:", -1);
 function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
@@ -42914,7 +42982,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
           ]),
           _: 1
         }),
-        _hoisted_4,
+        _hoisted_4$1,
         createBaseVNode("span", null, toDisplayString($options.sentenceCase($props.clientId)), 1)
       ]),
       createBaseVNode("h1", null, toDisplayString($options.sentenceCase($props.clientId)), 1),
@@ -42922,13 +42990,13 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
       createVNode(_component_ObjectActions, {
         "model-value": $options.clients[$props.clientId]
       }, null, 8, ["model-value"]),
-      _hoisted_5,
+      _hoisted_5$1,
       createBaseVNode("pre", null, [
         createBaseVNode("code", null, toDisplayString($options.documents[$props.clientId]), 1)
       ])
-    ])) : (openBlock(), createElementBlock("div", _hoisted_6, [
-      _hoisted_7,
-      _hoisted_8,
+    ])) : (openBlock(), createElementBlock("div", _hoisted_6$1, [
+      _hoisted_7$1,
+      _hoisted_8$1,
       createBaseVNode("div", _hoisted_9, [
         _hoisted_10,
         createBaseVNode("ul", null, [
@@ -67395,17 +67463,21 @@ const litegraph = "";
 const LiteGraph = __vite__cjsImport0_litegraph_js["LiteGraph"];
 const LGraphCanvas = __vite__cjsImport0_litegraph_js["LGraphCanvas"];
 const LGraph$1 = __vite__cjsImport0_litegraph_js["LGraph"];
+const clients = new ClientIndex();
+LiteGraph.clearRegisteredTypes();
+Object.entries(clients.liteGraphNodes).forEach(([key, value]) => {
+  console.log("Registering:", { key, value });
+  LiteGraph.registerNodeType(key, value);
+});
 let graph;
 let saveInterval = 0;
 function createDefault() {
-  const node_const = LiteGraph.createNode("basic/const");
-  node_const.pos = [200, 200];
-  graph.add(node_const);
-  node_const.setValue(4.5);
-  const node_watch = LiteGraph.createNode("basic/watch");
-  node_watch.pos = [700, 200];
-  graph.add(node_watch);
-  node_const.connect(0, node_watch, 0);
+  const getStatus1 = LiteGraph.createNode("apis/schema-api-db/getStatus");
+  getStatus1.pos = [200, 200];
+  graph.add(getStatus1);
+  const getStatus2 = LiteGraph.createNode("apis/boardgames-api/getStatus");
+  getStatus2.pos = [200, 500];
+  graph.add(getStatus2);
 }
 const _sfc_main = {
   data() {
@@ -67421,7 +67493,6 @@ const _sfc_main = {
       console.warn("Failed to load graph state", error.message);
       createDefault();
     }
-    graph.start();
     saveInterval = setInterval(() => {
       this.save();
     }, 1e3);
@@ -67443,26 +67514,57 @@ const _sfc_main = {
       } else {
         throw new Error("No graph state found");
       }
+    },
+    reset() {
+      graph.clear();
+      createDefault();
     }
   }
 };
-const Playground_vue_vue_type_style_index_0_scoped_cdee697d_lang = "";
-const _withScopeId = (n) => (pushScopeId("data-v-cdee697d"), n = n(), popScopeId(), n);
+const Playground_vue_vue_type_style_index_0_scoped_877c309c_lang = "";
+const _withScopeId = (n) => (pushScopeId("data-v-877c309c"), n = n(), popScopeId(), n);
 const _hoisted_1 = { class: "playground" };
-const _hoisted_2 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("div", { class: "playground-area" }, [
-  /* @__PURE__ */ createBaseVNode("canvas", {
-    width: "2000",
-    height: "1000",
-    id: "playground"
-  })
-], -1));
-const _hoisted_3 = [
-  _hoisted_2
-];
+const _hoisted_2 = { class: "playground-area" };
+const _hoisted_3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("canvas", {
+  width: "2000",
+  height: "1000",
+  id: "playground"
+}, null, -1));
+const _hoisted_4 = { class: "buttons row p10" };
+const _hoisted_5 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("label", null, "Save", -1));
+const _hoisted_6 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("label", null, "Load", -1));
+const _hoisted_7 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("label", null, "Reset", -1));
+const _hoisted_8 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", { class: "spacer" }, null, -1));
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1, _hoisted_3);
+  const _component_Icon = resolveComponent("Icon");
+  return openBlock(), createElementBlock("div", _hoisted_1, [
+    createBaseVNode("div", _hoisted_2, [
+      _hoisted_3,
+      createBaseVNode("div", _hoisted_4, [
+        createBaseVNode("button", {
+          onClick: _cache[0] || (_cache[0] = (...args) => $options.save && $options.save(...args))
+        }, [
+          createVNode(_component_Icon, { icon: "download" }),
+          _hoisted_5
+        ]),
+        createBaseVNode("button", {
+          onClick: _cache[1] || (_cache[1] = (...args) => $options.load && $options.load(...args))
+        }, [
+          createVNode(_component_Icon, { icon: "upload" }),
+          _hoisted_6
+        ]),
+        createBaseVNode("button", {
+          onClick: _cache[2] || (_cache[2] = (...args) => $options.reset && $options.reset(...args))
+        }, [
+          createVNode(_component_Icon, { icon: "recycle" }),
+          _hoisted_7
+        ]),
+        _hoisted_8
+      ])
+    ])
+  ]);
 }
-const Playground = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-cdee697d"]]);
+const Playground = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-877c309c"]]);
 const routes = [
   { path: "/", component: Home },
   { path: "/extras/icons", component: Icons },
