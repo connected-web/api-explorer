@@ -10,12 +10,11 @@ export default class LiteGraphNode {
     }
 
     function CustomNode (): void {
-      const self: any = this as any
       params.forEach(paramName => {
-        self.addInput(paramName, 'json')
+        this.addInput(paramName, 'json')
       })
 
-      self.addOutput('output', 'json')
+      this.addOutput('output', 'json')
     }
 
     CustomNode.prototype.onExecute = async function () {
