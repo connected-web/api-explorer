@@ -25097,8 +25097,8 @@ class AuthenticatedOpenAPIClient extends __OpenAPIClient {
     }
   }
 }
-class LiteGraphNode {
-  constructor(title2, operationId2, operationDetails2) {
+class OpenAPIGraphNode {
+  constructor(title2, operationId2, operationDetails2, client) {
     __publicField(this, "_path", "");
     __publicField(this, "_nodeClass");
     var _a3, _b2;
@@ -25108,17 +25108,54 @@ class LiteGraphNode {
       params2.push("requestBody");
     }
     function CustomNode() {
+      this.properties = {
+        response: null,
+        error: null
+      };
       params2.forEach((paramName) => {
         this.addInput(paramName, "json");
       });
       this.addOutput("output", "json");
+      this.addOutput("error", "json");
     }
+    CustomNode.prototype.onDrawForeground = function(ctx, graphCanvas) {
+      var _a4, _b3;
+      const [width2, height] = this.size;
+      const inputCount = ((_a4 = this.inputs) == null ? void 0 : _a4.length) ?? 0;
+      ctx.save();
+      ctx.font = "10px Arial";
+      const bottom = height;
+      const x2 = 5;
+      const lh = 12;
+      const lines = ((_b3 = this.properties.response) == null ? void 0 : _b3.split("\n")) ?? [];
+      const th = lines.length * lh;
+      const cutoff = (1 + inputCount) * lh;
+      lines.forEach((line, index2) => {
+        const liney = bottom - th + lh * index2;
+        if (liney > cutoff) {
+          ctx.fillText(line, x2, liney, width2 - 10, height - 10);
+        }
+      });
+      ctx.restore();
+    };
     CustomNode.prototype.onExecute = async function() {
       const paramValues = {};
       params2.forEach((paramName, index2) => {
-        paramValues[paramName] = this.getInputData(index2, "string");
+        paramValues[paramName] = this.getInputData(index2, false);
       });
-      this.setOutputData(paramValues, "output");
+      try {
+        const response = await client[operationId2](...Object.values(paramValues));
+        const data = response;
+        this.properties.response = JSON.stringify(data, null, 2);
+        this.setOutputData(0, data);
+        this.setOutputData(1, null);
+      } catch (ex) {
+        const error = ex;
+        this.properties.error = JSON.stringify(error, null, 2);
+        this.setOutputData(0, {});
+        this.setOutputData(1, error);
+      }
+      console.log("Executed:", this.title, { paramValues }, { response: this.properties.response, error: this.properties.error });
     };
     CustomNode.title = operationId2;
     this._path = `${title2}/${operationId2}`;
@@ -25133,10 +25170,11 @@ class LiteGraphNode {
   }
   static fromOpenAPISpec(openApiDocument2) {
     var _a3;
-    const operations2 = LiteGraphNode.operationsFor(openApiDocument2);
+    const operations2 = OpenAPIGraphNode.operationsFor(openApiDocument2);
     const title2 = ((_a3 = openApiDocument2 == null ? void 0 : openApiDocument2.info) == null ? void 0 : _a3.title) ?? "Untitled";
+    const client = new AuthenticatedOpenAPIClient(openApiDocument2);
     return Object.entries(operations2).map(([operationId2, operationDetails2]) => {
-      return new LiteGraphNode(title2, operationId2, operationDetails2);
+      return new OpenAPIGraphNode(title2, operationId2, operationDetails2, client);
     });
   }
   static operationsFor(openApiDocument2) {
@@ -25177,7 +25215,7 @@ class ClientIndex {
   }
   get liteGraphNodes() {
     const allNodes = Object.values(this.documents).map((document2) => {
-      return LiteGraphNode.fromOpenAPISpec(document2);
+      return OpenAPIGraphNode.fromOpenAPISpec(document2);
     });
     return allNodes.flat().reduce((acc, val) => {
       acc[val.path] = val.nodeClass;
@@ -25401,7 +25439,7 @@ const _hoisted_5$8 = [
   _hoisted_4$9
 ];
 const _hoisted_6$8 = /* @__PURE__ */ createStaticVNode('<div class="site-logo" data-v-9a4a7987></div><label class="site-title" data-v-9a4a7987><span class="fulltext" data-v-9a4a7987>API Explorer</span><span class="initials" data-v-9a4a7987>APX</span></label><span class="spacer" data-v-9a4a7987></span>', 3);
-const _hoisted_9$6 = { class: "row p10" };
+const _hoisted_9$7 = { class: "row p10" };
 function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
   var _a3;
   const _component_AuthButton = resolveComponent("AuthButton");
@@ -25412,7 +25450,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
       onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("toggleNav"))
     }, _hoisted_5$8)) : createCommentVNode("", true),
     _hoisted_6$8,
-    createBaseVNode("div", _hoisted_9$6, [
+    createBaseVNode("div", _hoisted_9$7, [
       createVNode(_component_AuthButton)
     ])
   ]);
@@ -39734,7 +39772,7 @@ const _hoisted_5$7 = /* @__PURE__ */ createBaseVNode("p", null, [
 const _hoisted_6$7 = /* @__PURE__ */ createBaseVNode("h2", null, "Source code", -1);
 const _hoisted_7$6 = /* @__PURE__ */ createBaseVNode("a", { href: "https://github.com/connected-web/api-explorer" }, "connected-web/api-explorer →", -1);
 const _hoisted_8$6 = /* @__PURE__ */ createBaseVNode("h2", null, "Roadmap", -1);
-const _hoisted_9$5 = /* @__PURE__ */ createBaseVNode("h3", null, "2023 August", -1);
+const _hoisted_9$6 = /* @__PURE__ */ createBaseVNode("h3", null, "2023 August", -1);
 const _hoisted_10$5 = /* @__PURE__ */ createBaseVNode("h3", null, "In development", -1);
 const _hoisted_11$4 = /* @__PURE__ */ createBaseVNode("h3", null, "Future Ideas", -1);
 const _hoisted_13$3 = /* @__PURE__ */ createBaseVNode("div", { style: { "text-align": "center", "filter": "drop-shadow(15px 7px 7px rgb(0 0 0 / 0.3))", "margin-top": "4em" } }, [
@@ -39760,7 +39798,7 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
       ])
     ]),
     _hoisted_8$6,
-    _hoisted_9$5,
+    _hoisted_9$6,
     createBaseVNode("p", null, [
       createVNode(_component_StatValue, { label: "Setup public website hosted on Github Pages" }, {
         default: withCtx(() => [
@@ -39908,7 +39946,7 @@ const _hoisted_5$6 = {
 const _hoisted_6$6 = { class: "pagination-size hide-on-small-screen" };
 const _hoisted_7$5 = { class: "buttons" };
 const _hoisted_8$5 = /* @__PURE__ */ _withScopeId$5(() => /* @__PURE__ */ createBaseVNode("label", { class: "right" }, "Prev Page", -1));
-const _hoisted_9$4 = { class: "pagination-numbers" };
+const _hoisted_9$5 = { class: "pagination-numbers" };
 const _hoisted_10$4 = /* @__PURE__ */ _withScopeId$5(() => /* @__PURE__ */ createBaseVNode("label", { class: "left" }, "Next Page", -1));
 const _hoisted_11$3 = /* @__PURE__ */ _withScopeId$5(() => /* @__PURE__ */ createBaseVNode("pre", null, [
   /* @__PURE__ */ createTextVNode("Please provide a template to render "),
@@ -39951,7 +39989,7 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
             createVNode(_component_Icon, { icon: "angle-left" }),
             _hoisted_8$5
           ]),
-          createBaseVNode("span", _hoisted_9$4, toDisplayString($data.pageNumber + 1) + " of " + toDisplayString($options.maxPages), 1),
+          createBaseVNode("span", _hoisted_9$5, toDisplayString($data.pageNumber + 1) + " of " + toDisplayString($options.maxPages), 1),
           createBaseVNode("button", {
             onClick: _cache[4] || (_cache[4] = (...args) => $options.nextPage && $options.nextPage(...args))
           }, [
@@ -40346,11 +40384,11 @@ const _hoisted_4$5 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ create
 const _hoisted_6$4 = { class: "row right" };
 const _hoisted_7$4 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("span", null, "Logout", -1));
 const _hoisted_8$4 = { key: 1 };
-const _hoisted_9$3 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("p", null, "You are not logged in!", -1));
+const _hoisted_9$4 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("p", null, "You are not logged in!", -1));
 const _hoisted_10$3 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("p", null, "You could be anyone... that doesn't stop you from browsing the available API documentation - but you won't be able to interact with them!", -1));
 const _hoisted_11$2 = /* @__PURE__ */ _withScopeId$4(() => /* @__PURE__ */ createBaseVNode("p", null, "Have fun :)", -1));
 const _hoisted_12$2 = [
-  _hoisted_9$3,
+  _hoisted_9$4,
   _hoisted_10$3,
   _hoisted_11$2
 ];
@@ -42341,7 +42379,7 @@ const _hoisted_5$3 = {
 const _hoisted_6$3 = ["href"];
 const _hoisted_7$3 = { key: 5 };
 const _hoisted_8$3 = { key: 1 };
-const _hoisted_9$2 = { key: 6 };
+const _hoisted_9$3 = { key: 6 };
 const _hoisted_10$2 = { key: 1 };
 const _hoisted_11$1 = { key: 7 };
 const _hoisted_12$1 = { key: 8 };
@@ -42387,7 +42425,7 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
         ]),
         _: 1
       }, 8, ["date"])) : (openBlock(), createElementBlock("b", _hoisted_8$3, toDisplayString($props.value), 1))
-    ])) : $options.smartType === "datetime" ? (openBlock(), createElementBlock("div", _hoisted_9$2, [
+    ])) : $options.smartType === "datetime" ? (openBlock(), createElementBlock("div", _hoisted_9$3, [
       $options.parseDate($props.value) ? (openBlock(), createBlock(_component_RelativeDate, {
         key: 0,
         date: $options.parseDate($props.value)
@@ -42850,7 +42888,7 @@ const _hoisted_5$2 = { class: "row p5" };
 const _hoisted_6$2 = ["onClick", "disabled"];
 const _hoisted_7$2 = /* @__PURE__ */ _withScopeId$1(() => /* @__PURE__ */ createBaseVNode("span", null, "Reset", -1));
 const _hoisted_8$2 = ["onClick"];
-const _hoisted_9$1 = /* @__PURE__ */ _withScopeId$1(() => /* @__PURE__ */ createBaseVNode("span", null, "Show Stack Trace", -1));
+const _hoisted_9$2 = /* @__PURE__ */ _withScopeId$1(() => /* @__PURE__ */ createBaseVNode("span", null, "Show Stack Trace", -1));
 const _hoisted_10$1 = /* @__PURE__ */ _withScopeId$1(() => /* @__PURE__ */ createBaseVNode("span", { class: "spacer" }, null, -1));
 const _hoisted_11 = { key: 1 };
 const _hoisted_12 = { key: 2 };
@@ -42906,7 +42944,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
             onClick: ($event) => $data.showStacktrace[item.prop] = !$data.showStacktrace[item.prop]
           }, [
             createVNode(_component_icon, { icon: "recycle" }),
-            _hoisted_9$1
+            _hoisted_9$2
           ], 8, _hoisted_8$2)) : createCommentVNode("", true),
           _hoisted_10$1,
           createVNode(_component_ActionButton, {
@@ -42967,7 +43005,7 @@ const _hoisted_7$1 = /* @__PURE__ */ createBaseVNode("div", { class: "breadcrumb
   /* @__PURE__ */ createBaseVNode("span", null, "Explorer Index")
 ], -1);
 const _hoisted_8$1 = /* @__PURE__ */ createBaseVNode("h1", null, "Explorer Index", -1);
-const _hoisted_9 = { class: "clients" };
+const _hoisted_9$1 = { class: "clients" };
 const _hoisted_10 = /* @__PURE__ */ createBaseVNode("p", null, "The following API clients registered with the site:", -1);
 function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
   var _a3, _b2;
@@ -42997,7 +43035,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : (openBlock(), createElementBlock("div", _hoisted_6$1, [
       _hoisted_7$1,
       _hoisted_8$1,
-      createBaseVNode("div", _hoisted_9, [
+      createBaseVNode("div", _hoisted_9$1, [
         _hoisted_10,
         createBaseVNode("ul", null, [
           (openBlock(true), createElementBlock(Fragment, null, renderList($options.clients, (client, key) => {
@@ -67515,14 +67553,19 @@ const _sfc_main = {
         throw new Error("No graph state found");
       }
     },
-    reset() {
+    clearGraph() {
       graph.clear();
       createDefault();
+    },
+    run() {
+      console.log("Running graph");
+      graph.runStep();
+      graph.stop();
     }
   }
 };
-const Playground_vue_vue_type_style_index_0_scoped_877c309c_lang = "";
-const _withScopeId = (n) => (pushScopeId("data-v-877c309c"), n = n(), popScopeId(), n);
+const Playground_vue_vue_type_style_index_0_scoped_545ad499_lang = "";
+const _withScopeId = (n) => (pushScopeId("data-v-545ad499"), n = n(), popScopeId(), n);
 const _hoisted_1 = { class: "playground" };
 const _hoisted_2 = { class: "playground-area" };
 const _hoisted_3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("canvas", {
@@ -67533,8 +67576,9 @@ const _hoisted_3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBase
 const _hoisted_4 = { class: "buttons row p10" };
 const _hoisted_5 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("label", null, "Save", -1));
 const _hoisted_6 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("label", null, "Load", -1));
-const _hoisted_7 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("label", null, "Reset", -1));
-const _hoisted_8 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", { class: "spacer" }, null, -1));
+const _hoisted_7 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("label", null, "Clear", -1));
+const _hoisted_8 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("label", null, "Run", -1));
+const _hoisted_9 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", { class: "spacer" }, null, -1));
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_Icon = resolveComponent("Icon");
   return openBlock(), createElementBlock("div", _hoisted_1, [
@@ -67554,17 +67598,23 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
           _hoisted_6
         ]),
         createBaseVNode("button", {
-          onClick: _cache[2] || (_cache[2] = (...args) => $options.reset && $options.reset(...args))
+          onClick: _cache[2] || (_cache[2] = (...args) => $options.clearGraph && $options.clearGraph(...args))
         }, [
           createVNode(_component_Icon, { icon: "recycle" }),
           _hoisted_7
         ]),
-        _hoisted_8
+        createBaseVNode("button", {
+          onClick: _cache[3] || (_cache[3] = (...args) => $options.run && $options.run(...args))
+        }, [
+          createVNode(_component_Icon, { icon: "play" }),
+          _hoisted_8
+        ]),
+        _hoisted_9
       ])
     ])
   ]);
 }
-const Playground = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-877c309c"]]);
+const Playground = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-545ad499"]]);
 const routes = [
   { path: "/", component: Home },
   { path: "/extras/icons", component: Icons },
