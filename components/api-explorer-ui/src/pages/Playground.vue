@@ -11,9 +11,13 @@
           <Icon icon="upload" />
           <label>Load</label>
         </button>
-        <button @click="reset">
+        <button @click="clearGraph">
           <Icon icon="recycle" />
-          <label>Reset</label>
+          <label>Clear</label>
+        </button>
+        <button @click="run">
+          <Icon icon="play" />
+          <label>Run</label>
         </button>
         <span class="spacer"></span>
       </div>
@@ -87,9 +91,14 @@ export default {
         throw new Error('No graph state found')
       }
     },
-    reset() {
+    clearGraph() {
       graph.clear()
       createDefault()
+    },
+    run() {
+      console.log('Running graph')
+      graph.runStep()
+      graph.stop()
     }
   }
 }

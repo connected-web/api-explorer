@@ -5,7 +5,7 @@ import BoardGamesAPISpec from './board-games-api/boardgames-api-services.json'
 import SchemaApiDbSpec from './schema-api-db/schema-api-db-services.json'
 
 import AuthenticatedOpenAPIClient from './AuthenticatedOpenAPIClient'
-import LiteGraphNode from './LiteGraphNode'
+import OpenAPIGraphNode from './OpenAPIGraphNode'
 
 export default class ClientIndex {
   boardGamesApi: BoardGamesApiClient
@@ -32,10 +32,10 @@ export default class ClientIndex {
 
   get liteGraphNodes (): { [key: string]: any } {
     const allNodes = Object.values(this.documents).map((document: any) => {
-      return LiteGraphNode.fromOpenAPISpec(document)
+      return OpenAPIGraphNode.fromOpenAPISpec(document)
     })
 
-    return allNodes.flat().reduce<{ [key: string]: any }>((acc: any, val: LiteGraphNode) => {
+    return allNodes.flat().reduce<{ [key: string]: any }>((acc: any, val: OpenAPIGraphNode) => {
       acc[val.path] = val.nodeClass
       return acc
     }, {})
