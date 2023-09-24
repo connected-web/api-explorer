@@ -25,10 +25,17 @@ export default class OpenAPIGraphNode {
       this.addOutput('error', 'json')
     }
 
-    CustomNode.prototype.onDrawForeground = function (ctx: any, graphCanvas: any) {
+    CustomNode.prototype.onDrawForeground = function (ctx: CanvasRenderingContext2D, graphCanvas: any) {
       const [width, height] = this.size
       const inputCount: number = this.inputs?.length ?? 0
       ctx.save()
+      if (this.executing === true) {
+        ctx.strokeStyle = '#FFF'
+        ctx.strokeRect(0, 0, width, height)
+      } else if (this.properties.error?.length > 0) {
+        ctx.strokeStyle = '#900'
+        ctx.strokeRect(0, 0, width, height)
+      }
       ctx.font = '10px Arial'
       const bottom = height
       const x = 5
@@ -39,13 +46,15 @@ export default class OpenAPIGraphNode {
       lines.forEach((line, index) => {
         const liney = bottom - th + (lh * index)
         if (liney > cutoff) {
-          ctx.fillText(line, x, liney, width - 10, height - 10)
+          ctx.fillText(line, x, liney, width - 10)
         }
       })
       ctx.restore()
     }
 
     CustomNode.prototype.onExecute = async function () {
+      console.log('Executing:', this.title)
+      this.executing = true
       const paramValues: { [key: string]: any } = {}
       params.forEach((paramName, index) => {
         paramValues[paramName] = this.getInputData(index, false)
@@ -63,6 +72,7 @@ export default class OpenAPIGraphNode {
         this.setOutputData(0, {})
         this.setOutputData(1, error)
       }
+      this.executing = false
 
       console.log('Executed:', this.title, { paramValues }, { response: this.properties.response, error: this.properties.error })
     }

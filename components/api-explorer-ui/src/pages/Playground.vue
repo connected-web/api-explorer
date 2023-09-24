@@ -30,6 +30,7 @@ import { LiteGraph, LGraphCanvas, LGraph } from 'litegraph.js'
 import 'litegraph.js/css/litegraph.css'
 
 import ClientIndex from '../clients/ClientIndex'
+import JsonPathGraphNode from '../clients/JsonPathGraphNode'
 
 const clients = new ClientIndex()
 
@@ -37,6 +38,11 @@ LiteGraph.clearRegisteredTypes()
 Object.entries(clients.liteGraphNodes).forEach(([key, value]) => {
   console.log('Registering:', { key, value })
   LiteGraph.registerNodeType(key, value)
+})
+
+JsonPathGraphNode.create().forEach(node => {
+  console.log('Registering:', { key: node.path, value: node.nodeClass })
+  LiteGraph.registerNodeType(node.path, node.nodeClass)
 })
 
 let graph:LGraph
@@ -53,12 +59,84 @@ function createDefault() {
   graph.add(getStatus2)
 }
 
+class LGraphAsync extends LGraph {
+  /**
+    * Run N steps (cycles) of the graph
+    * @method runStep
+    * @param {number} num number of steps to run, default is 1
+    * @param {Boolean} do_not_catch_errors [optional] if you want to try/catch errors 
+    * @param {number} limit max number of nodes to execute (used to execute from start to a node)
+    */
+    async runStepAsync (num:number, limit:number) {
+    num = num || 1
+
+    var start = LiteGraph.getTime();
+    this.globaltime = 0.001 * (start - this.starttime)
+
+    var nodes = this._nodes_executable
+        ? this._nodes_executable
+        : this._nodes
+    if (!nodes) {
+      return
+    }
+
+    limit = limit || nodes.length
+
+    try {
+      //iterations
+      for (var i = 0; i < num; i++) {
+        for (var j = 0; j < limit; ++j) {
+          var node = nodes[j];
+          if (node.mode == LiteGraph.ALWAYS && node.onExecute) {
+            await node.onExecute()
+          }
+        }
+
+        this.fixedtime += this.fixedtime_lapse;
+        if (this.onExecuteStep) {
+          this.onExecuteStep()
+        }
+      }
+
+      if (this.onAfterExecute) {
+          this.onAfterExecute()
+      }
+      this.errors_in_execution = false;
+    } catch (err) {
+      this.errors_in_execution = true;
+      if (LiteGraph.throw_errors) {
+        throw err;
+      }
+      if (LiteGraph.debug) {
+        console.log("Error during execution: " + err)
+      }
+      this.stop()
+    }
+
+    var now = LiteGraph.getTime()
+    var elapsed = now - start
+    if (elapsed == 0) {
+      elapsed = 1
+    }
+    this.execution_time = 0.001 * elapsed
+    this.globaltime += 0.001 * elapsed
+    this.iteration += 1
+    this.elapsed_time = (now - this.last_update_time) * 0.001
+    this.last_update_time = now
+    this.nodes_executing = []
+    this.nodes_actioning = []
+    this.nodes_executedAction = []
+  }
+}
+
 export default {
   data() {
-    return {}
+    return {
+      graphInfo: {}
+    }
   },
   mounted() {
-    graph = new LGraph()
+    graph = new LGraphAsync()
     canvas = new LGraphCanvas('#playground', graph)
 
     try {
@@ -97,8 +175,15 @@ export default {
     },
     run() {
       console.log('Running graph')
-      graph.runStep()
+      graph.runStepAsync(1)
       graph.stop()
+      
+
+      this.graphInfo = {
+        keys: Object.keys(graph),
+        serialized: graph.serialize()
+      }
+
     }
   }
 }
