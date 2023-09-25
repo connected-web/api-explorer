@@ -72895,10 +72895,12 @@ jsonpath/jsonpath.js:
 const jsonpath = __vite__cjsImport0_jsonpath.__esModule ? __vite__cjsImport0_jsonpath.default : __vite__cjsImport0_jsonpath;
 function JsonPathSelector() {
   this.properties = {
-    jsonpath: "$"
+    jsonpath: "$",
+    single: true
   };
   this.addInput("data", "json");
-  this.addWidget("text", "path", "$", { property: "jsonpath" });
+  this.addWidget("text", "Path", "$", { property: "jsonpath" });
+  this.addWidget("toggle", "Single result", true, { property: "single" });
   this.serialize_widgets = true;
   this.addOutput("output", "json");
   this.addOutput("error", "json");
@@ -72909,7 +72911,10 @@ JsonPathSelector.prototype.onExecute = async function() {
   console.log("SelectNode.onExecute (A)", { data, selector });
   if (data !== void 0 && selector !== void 0) {
     try {
-      const result = jsonpath.query(data, selector);
+      let result = jsonpath.query(data, selector);
+      if (Array.isArray(result) && result.length === 1 && this.properties.single === true) {
+        result = result[0];
+      }
       console.log("SelectNode.onExecute (B)", { data, selector, result });
       this.result = JSON.stringify(result, null, 2);
       this.setOutputData(0, result);
