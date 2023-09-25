@@ -1,5 +1,5 @@
-import AuthenticatedOpenAPIClient from './AuthenticatedOpenAPIClient'
-import OpenAPIClient from './OpenAPIClient'
+import AuthenticatedOpenAPIClient from '../clients/AuthenticatedOpenAPIClient'
+import OpenAPIClient from '../clients/OpenAPIClient'
 
 export default class OpenAPIGraphNode {
   private readonly _path: string = ''

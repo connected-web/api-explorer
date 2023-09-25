@@ -5,7 +5,7 @@ import BoardGamesAPISpec from './board-games-api/boardgames-api-services.json'
 import SchemaApiDbSpec from './schema-api-db/schema-api-db-services.json'
 
 import AuthenticatedOpenAPIClient from './AuthenticatedOpenAPIClient'
-import OpenAPIGraphNode from './OpenAPIGraphNode'
+import OpenAPIGraphNode from '../graphnodes/OpenAPIGraphNode'
 
 export default class ClientIndex {
   boardGamesApi: BoardGamesApiClient

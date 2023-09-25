@@ -30,7 +30,7 @@ import { LiteGraph, LGraphCanvas, LGraph } from 'litegraph.js'
 import 'litegraph.js/css/litegraph.css'
 
 import ClientIndex from '../clients/ClientIndex'
-import JsonPathGraphNode from '../clients/JsonPathGraphNode'
+import JsonGraphNode from '../graphnodes/JsonGraphNode'
 
 const clients = new ClientIndex()
 
@@ -40,7 +40,7 @@ Object.entries(clients.liteGraphNodes).forEach(([key, value]) => {
   LiteGraph.registerNodeType(key, value)
 })
 
-JsonPathGraphNode.create().forEach(node => {
+JsonGraphNode.create().forEach(node => {
   console.log('Registering:', { key: node.path, value: node.nodeClass })
   LiteGraph.registerNodeType(node.path, node.nodeClass)
 })
