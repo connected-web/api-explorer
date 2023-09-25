@@ -2,10 +2,12 @@ import jsonpath from 'jsonpath'
 
 function JsonPathSelector (): void {
   this.properties = {
-    jsonpath: '$'
+    jsonpath: '$',
+    single: true
   }
   this.addInput('data', 'json')
-  this.addWidget('text', 'path', '$', { property: 'jsonpath' })
+  this.addWidget('text', 'Path', '$', { property: 'jsonpath' })
+  this.addWidget('toggle', 'Single result', true, { property: 'single' })
   this.serialize_widgets = true
 
   this.addOutput('output', 'json')
@@ -18,7 +20,10 @@ JsonPathSelector.prototype.onExecute = async function () {
   console.log('SelectNode.onExecute (A)', { data, selector })
   if (data !== undefined && selector !== undefined) {
     try {
-      const result = jsonpath.query(data, selector)
+      let result = jsonpath.query(data, selector)
+      if (Array.isArray(result) && result.length === 1 && this.properties.single === true) {
+        result = result[0]
+      }
       console.log('SelectNode.onExecute (B)', { data, selector, result })
       this.result = JSON.stringify(result, null, 2)
       this.setOutputData(0, result)
