@@ -72895,36 +72895,60 @@ jsonpath/jsonpath.js:
 const jsonpath = __vite__cjsImport0_jsonpath.__esModule ? __vite__cjsImport0_jsonpath.default : __vite__cjsImport0_jsonpath;
 function JsonPathSelector() {
   this.properties = {
-    jsonPath: void 0,
-    response: null,
-    error: null
+    jsonpath: "$"
   };
   this.addInput("data", "json");
-  this.addWidget("text", "path", "", { property: "jsonPath" });
+  this.addWidget("text", "path", "$", { property: "jsonpath" });
   this.serialize_widgets = true;
   this.addOutput("output", "json");
   this.addOutput("error", "json");
 }
 JsonPathSelector.prototype.onExecute = async function() {
   const data = this.getInputData(0);
-  const jsonPath = this.properties.jsonPath;
-  console.log("SelectNode.onExecute (A)", { data, jsonPath });
-  if (data !== void 0 && jsonPath !== void 0) {
+  const selector = this.properties.jsonpath;
+  console.log("SelectNode.onExecute (A)", { data, selector });
+  if (data !== void 0 && selector !== void 0) {
     try {
-      const result = jsonpath.query(data, jsonPath);
-      console.log("SelectNode.onExecute (B)", { data, jsonPath, result });
-      this.properties.result = JSON.stringify(result, null, 2);
+      const result = jsonpath.query(data, selector);
+      console.log("SelectNode.onExecute (B)", { data, selector, result });
+      this.result = JSON.stringify(result, null, 2);
       this.setOutputData(0, result);
       this.setOutputData(1, null);
     } catch (ex) {
       const error = ex;
-      this.properties.error = JSON.stringify(error, null, 2);
+      this.error = JSON.stringify(error, null, 2);
       this.setOutputData(0, {});
       this.setOutputData(1, error);
     }
   }
 };
-class JsonPathGraphNode {
+JsonPathSelector.title = "Json Path Selector";
+function JsonViewer() {
+  this.properties = {};
+  this.addInput("data", "json");
+}
+JsonViewer.prototype.onDrawForeground = function(ctx, graphCanvas) {
+  const data = this.getInputData(0) ?? "";
+  const format2 = JSON.stringify(data, null, 2) ?? "";
+  const [width2, height] = this.size;
+  ctx.save();
+  ctx.font = "10px Arial";
+  const bottom = height;
+  const x2 = 5;
+  const lh = 12;
+  const lines = format2.split("\n") ?? [];
+  const th = lines.length * lh;
+  const cutoff = lh;
+  lines.forEach((line, index2) => {
+    const liney = bottom - th + lh * index2;
+    if (liney > cutoff) {
+      ctx.fillText(line, x2, liney, width2 - 10);
+    }
+  });
+  ctx.restore();
+};
+JsonViewer.title = "Json Viewer";
+class JsonGraphNode {
   constructor(path, nodeClass) {
     __publicField(this, "_path", "");
     __publicField(this, "_nodeClass");
@@ -72939,7 +72963,8 @@ class JsonPathGraphNode {
   }
   static create() {
     const nodes = [];
-    nodes.push(new JsonPathGraphNode("Json Path/select", JsonPathSelector));
+    nodes.push(new JsonGraphNode("Json/select", JsonPathSelector));
+    nodes.push(new JsonGraphNode("Json/viewer", JsonViewer));
     return nodes;
   }
 }
@@ -72952,7 +72977,7 @@ Object.entries(clients.liteGraphNodes).forEach(([key, value]) => {
   console.log("Registering:", { key, value });
   LiteGraph.registerNodeType(key, value);
 });
-JsonPathGraphNode.create().forEach((node2) => {
+JsonGraphNode.create().forEach((node2) => {
   console.log("Registering:", { key: node2.path, value: node2.nodeClass });
   LiteGraph.registerNodeType(node2.path, node2.nodeClass);
 });
@@ -73078,8 +73103,8 @@ const _sfc_main = {
     }
   }
 };
-const Playground_vue_vue_type_style_index_0_scoped_6a9e800d_lang = "";
-const _withScopeId = (n) => (pushScopeId("data-v-6a9e800d"), n = n(), popScopeId(), n);
+const Playground_vue_vue_type_style_index_0_scoped_2a5dcf5f_lang = "";
+const _withScopeId = (n) => (pushScopeId("data-v-2a5dcf5f"), n = n(), popScopeId(), n);
 const _hoisted_1 = { class: "playground" };
 const _hoisted_2 = { class: "playground-area" };
 const _hoisted_3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("canvas", {
@@ -73128,7 +73153,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const Playground = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-6a9e800d"]]);
+const Playground = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-2a5dcf5f"]]);
 const routes = [
   { path: "/", component: Home },
   { path: "/extras/icons", component: Icons },
