@@ -23805,26 +23805,35 @@ const openapi = "3.0.1";
 const info = {
   title: "Schema API DB",
   description: "Schema API DB - https://github.com/connected-web/schema-api-db",
-  version: "2023-08-27T23:42:53Z"
+  version: "2023-09-30T16:05:56Z"
 };
 const servers = [
   {
     url: "https://schema-api-db.prod.connected-web.services"
+  },
+  {
+    url: "https://schema-api-db.dev.connected-web.services"
   }
 ];
 const paths = {
-  "/items": {
-    options: {
+  "/data/{schemaId}": {
+    get: {
+      operationId: "listDataItems",
+      parameters: [
+        {
+          name: "schemaId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        }
+      ],
       responses: {
-        "204": {
-          description: "204 response",
+        "200": {
+          description: "200 response",
           headers: {
             "Access-Control-Allow-Origin": {
-              schema: {
-                type: "string"
-              }
-            },
-            "Access-Control-Allow-Methods": {
               schema: {
                 type: "string"
               }
@@ -23834,18 +23843,54 @@ const paths = {
                 type: "string"
               }
             },
-            "Access-Control-Allow-Headers": {
+            "Content-Type": {
               schema: {
                 type: "string"
               }
             }
           },
-          content: {}
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/DataItemListModel"
+              }
+            }
+          }
+        },
+        "404": {
+          description: "404 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/SchemaNotFoundModel"
+              }
+            }
+          }
         }
-      }
-    }
-  },
-  "/data/{schemaId}": {
+      },
+      security: [
+        {
+          SchemaAPIDBSchemaAPIDBPrivateApiRequestAuthorizer7B3FD292: []
+        }
+      ]
+    },
     options: {
       parameters: [
         {
@@ -23974,16 +24019,6 @@ const paths = {
           }
         }
       ],
-      requestBody: {
-        content: {
-          "application/json": {
-            schema: {
-              $ref: "#/components/schemas/StorableSchemaModel"
-            }
-          }
-        },
-        required: true
-      },
       responses: {
         "200": {
           description: "200 response",
@@ -24107,6 +24142,159 @@ const paths = {
       }
     }
   },
+  "/data/{schemaId}/{itemId}/versions": {
+    get: {
+      operationId: "listDataItemVersions",
+      parameters: [
+        {
+          name: "maxKeys",
+          "in": "query",
+          schema: {
+            type: "string"
+          }
+        },
+        {
+          name: "keyMarker",
+          "in": "query",
+          schema: {
+            type: "string"
+          }
+        },
+        {
+          name: "versionIdMarker",
+          "in": "query",
+          schema: {
+            type: "string"
+          }
+        },
+        {
+          name: "schemaId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        },
+        {
+          name: "itemId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        }
+      ],
+      responses: {
+        "200": {
+          description: "200 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/DataItemVersionsModel"
+              }
+            }
+          }
+        },
+        "404": {
+          description: "404 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/DataItemNotFoundModel"
+              }
+            }
+          }
+        }
+      },
+      security: [
+        {
+          SchemaAPIDBSchemaAPIDBPrivateApiRequestAuthorizer7B3FD292: []
+        }
+      ]
+    },
+    options: {
+      parameters: [
+        {
+          name: "schemaId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        },
+        {
+          name: "itemId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        }
+      ],
+      responses: {
+        "204": {
+          description: "204 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Methods": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Headers": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {}
+        }
+      }
+    }
+  },
   "/status": {
     get: {
       operationId: "getStatus",
@@ -24178,7 +24366,7 @@ const paths = {
   },
   "/data/{schemaId}/{itemId}": {
     get: {
-      operationId: "getData",
+      operationId: "getDataItem",
       parameters: [
         {
           name: "schemaId",
@@ -24260,7 +24448,7 @@ const paths = {
       ]
     },
     put: {
-      operationId: "putData",
+      operationId: "putDataItem",
       parameters: [
         {
           name: "schemaId",
@@ -24279,16 +24467,6 @@ const paths = {
           }
         }
       ],
-      requestBody: {
-        content: {
-          "application/json": {
-            schema: {
-              $ref: "#/components/schemas/DataItemModel"
-            }
-          }
-        },
-        required: true
-      },
       responses: {
         "200": {
           description: "200 response",
@@ -24316,6 +24494,33 @@ const paths = {
               }
             }
           }
+        },
+        "404": {
+          description: "404 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/SchemaNotFoundModel"
+              }
+            }
+          }
         }
       },
       security: [
@@ -24325,7 +24530,7 @@ const paths = {
       ]
     },
     "delete": {
-      operationId: "deleteData",
+      operationId: "deleteDataItem",
       parameters: [
         {
           name: "schemaId",
@@ -24368,6 +24573,33 @@ const paths = {
             "application/json": {
               schema: {
                 $ref: "#/components/schemas/DataItemDeletedModel"
+              }
+            }
+          }
+        },
+        "404": {
+          description: "404 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/DataItemNotFoundModel"
               }
             }
           }
@@ -24460,12 +24692,28 @@ const paths = {
       }
     }
   },
-  "/items/{schemaId}": {
+  "/data/{schemaId}/{itemId}/versions/{versionId}": {
     get: {
-      operationId: "listItems",
+      operationId: "getDataItemVersion",
       parameters: [
         {
           name: "schemaId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        },
+        {
+          name: "itemId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        },
+        {
+          name: "versionId",
           "in": "path",
           required: true,
           schema: {
@@ -24496,7 +24744,34 @@ const paths = {
           content: {
             "application/json": {
               schema: {
-                $ref: "#/components/schemas/DataItemListModel"
+                $ref: "#/components/schemas/DataItemModel"
+              }
+            }
+          }
+        },
+        "404": {
+          description: "404 response",
+          headers: {
+            "Access-Control-Allow-Origin": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Access-Control-Allow-Credentials": {
+              schema: {
+                type: "string"
+              }
+            },
+            "Content-Type": {
+              schema: {
+                type: "string"
+              }
+            }
+          },
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/DataItemNotFoundModel"
               }
             }
           }
@@ -24512,6 +24787,22 @@ const paths = {
       parameters: [
         {
           name: "schemaId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        },
+        {
+          name: "itemId",
+          "in": "path",
+          required: true,
+          schema: {
+            type: "string"
+          }
+        },
+        {
+          name: "versionId",
           "in": "path",
           required: true,
           schema: {
@@ -24770,19 +25061,6 @@ const components = {
         }
       }
     },
-    StatusResponseModel: {
-      title: "Status",
-      required: [
-        "deploymentTime"
-      ],
-      type: "object",
-      properties: {
-        deploymentTime: {
-          type: "string",
-          description: "The UTC timestamp representing the last time the server was updated"
-        }
-      }
-    },
     SchemaListModel: {
       title: "List Schemas",
       type: "object",
@@ -24792,18 +25070,6 @@ const components = {
           items: {
             type: "string"
           }
-        }
-      }
-    },
-    SchemaNotFoundModel: {
-      title: "Schema Not Found",
-      required: [
-        "message"
-      ],
-      type: "object",
-      properties: {
-        message: {
-          type: "string"
         }
       }
     },
@@ -24850,6 +25116,53 @@ const components = {
         }
       }
     },
+    DataItemVersionsModel: {
+      title: "Data Item Versions",
+      type: "object",
+      properties: {
+        isTruncated: {
+          type: "boolean",
+          description: "A flag that indicates whether Amazon S3 returned all of the results that satisfied the search criteria. If your results were truncated, you can make a follow-up paginated request by using the nextKeyMarker nextVersionIdMarker response parameters as a starting place in another request to return the rest of the results."
+        },
+        versionIdMarker: {
+          type: "string",
+          description: "Marks the last version of the key returned in a truncated response."
+        },
+        nextKeyMarker: {
+          type: "string",
+          description: "When the number of responses exceeds the value of maxKeys, nextKeyMarker specifies the first key not returned that satisfies the search criteria. Use this value for the ?keyMarker request parameter in a subsequent request."
+        },
+        maxKeys: {
+          type: "integer",
+          description: "The maximum number of results returned in a single response."
+        },
+        versions: {
+          type: "array",
+          description: "The list of versions for the data item",
+          items: {
+            type: "object",
+            properties: {
+              versionId: {
+                type: "string",
+                description: "The version of the data item"
+              },
+              isLatest: {
+                type: "boolean",
+                description: "Whether or not this is the latest version of the data item"
+              },
+              lastModified: {
+                type: "string",
+                description: "The UTC timestamp representing the last time the data item was updated"
+              }
+            }
+          }
+        },
+        nextVersionIdMarker: {
+          type: "string",
+          description: "When the number of responses exceeds the value of maxKeys, nextVersionIdMarker specifies the first object version not returned that satisfies the search criteria. Use this value for the ?versionIdMarker request parameter in a subsequent request."
+        }
+      }
+    },
     DataItemModel: {
       title: "Data Item",
       type: "object",
@@ -24858,6 +25171,31 @@ const components = {
     },
     SchemaDeletedModel: {
       title: "Schema Deleted",
+      required: [
+        "message"
+      ],
+      type: "object",
+      properties: {
+        message: {
+          type: "string"
+        }
+      }
+    },
+    StatusResponseModel: {
+      title: "Status",
+      required: [
+        "deploymentTime"
+      ],
+      type: "object",
+      properties: {
+        deploymentTime: {
+          type: "string",
+          description: "The UTC timestamp representing the last time the server was updated"
+        }
+      }
+    },
+    SchemaNotFoundModel: {
+      title: "Schema Not Found",
       required: [
         "message"
       ],
