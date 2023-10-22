@@ -1,7 +1,7 @@
 import AuthenticatedOpenAPIClient from '../clients/AuthenticatedOpenAPIClient'
 import OpenAPIClient from '../clients/OpenAPIClient'
 
-function formatParameters(params: { [key: string]: any }, condensed=true): string {
+function formatParameters (params: { [key: string]: any }, condensed = true): string {
   return Object.entries(params).map(([key, value]) => {
     if (typeof value === 'object') {
       value = JSON.stringify(value)
@@ -9,10 +9,10 @@ function formatParameters(params: { [key: string]: any }, condensed=true): strin
     if (value === undefined) {
       return null
     }
-    if (condensed === true) {
-      return `${value}`
+    if (condensed) {
+      return String(value)
     } else {
-      return `${key}: ${value}`
+      return `${key}: ${String(value)}`
     }
   }).filter(n => n).join(', ')
 }
@@ -57,7 +57,7 @@ export default class OpenAPIGraphNode {
       const bottom = height
       const x = 5
       const lh = 12
-      const lines: string[] = errorState ?this.properties.error.split('\n') : this.properties.response?.split('\n') ?? []
+      const lines: string[] = errorState !== undefined ? this.properties.error.split('\n') : this.properties.response?.split('\n') ?? []
       const th = lines.length * lh
       const cutoff = (1 + inputCount) * lh
       lines.forEach((line, index) => {
@@ -74,15 +74,12 @@ export default class OpenAPIGraphNode {
       this.executing = true
       this.properties.error = null
       const paramValues: { [key: string]: any } = {}
-    
+
       params.forEach((paramName, index) => {
         paramValues[paramName] = this.getInputData(index, false)
       })
 
-      if (!this.defaultTitle) {
-        this.defaultTitle = this.title
-      }
-      const titleParts = this.title.split(' ')
+      const titleParts: string[] = String(this.title).split(' ')
       const newTitle = `${titleParts[0]} (${formatParameters(paramValues)})`
       this.title = newTitle
 

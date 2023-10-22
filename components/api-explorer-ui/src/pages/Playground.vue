@@ -1,8 +1,20 @@
 <template>
   <div class="playground">
+    <div :class="{ showDialog, dialog: true, column: true }">
+      <div class="dialog-header row p10">
+        <h3>Dialog Title</h3>
+        <button @click="showDialog = false">
+          <Icon icon="recycle" />
+          <label>Close</label>
+        </button>
+      </div>
+      <div class="dialog-body column p5">
+        <p>Dialog content here</p>
+      </div>
+    </div>
     <div class="playground-area">
       <canvas width="2000" height="1000" id="playground"></canvas>
-      <div class="buttons row p10">
+      <div :class="{ buttons: true, row: true, p10: true, showButtons }">
         <button @click="save">
           <Icon icon="download" />
           <label>Save</label>
@@ -29,6 +41,7 @@
 <script lang="ts">
 import { LiteGraph, LGraphCanvas, LGraph } from 'litegraph.js'
 import 'litegraph.js/css/litegraph.css'
+import { singleton as NodeEventBus } from '../graphnodes/NodeEventBus'
 
 import ClientIndex from '../clients/ClientIndex'
 import JsonGraphNode from '../graphnodes/JsonGraphNode'
@@ -135,27 +148,40 @@ export default {
   data() {
     return {
       graphInfo: {},
-      running: false
+      running: false,
+      showDialog: false
+    }
+  },
+  computed: {
+    showButtons() {
+      return !this.running && !this.showDialog
     }
   },
   mounted() {
     graph = new LGraphAsync();
-    canvas = new LGraphCanvas('#playground', graph);
+    canvas = new LGraphCanvas('#playground', graph)
     try {
-      this.load();
+      this.load()
     }
     catch (ex) {
       const error = ex as Error;
-      console.warn('Failed to load graph state', error.message);
-      createDefault();
+      console.warn('Failed to load graph state', error.message)
+      createDefault()
     }
     saveInterval = setInterval(() => {
       this.save();
-    }, 1000);
+    }, 1000)
+
+    NodeEventBus.on('edit-json', (event: Event) => {
+      const node:JsonGraphNode = (event as CustomEvent)?.detail
+      console.log('Display dialog to edit JSON:', node)
+      this.showDialog = true
+    })
   },
   unmounted() {
-    graph.stop();
-    clearInterval(saveInterval);
+    graph.stop()
+    clearInterval(saveInterval)
+    NodeEventBus.off('edit-json')
   },
   methods: {
     save() {
@@ -209,6 +235,7 @@ div.playground {
 }
 
 .buttons {
+  display: none;
   position: absolute;
   top: 0;
   left: 0;
@@ -220,5 +247,56 @@ div.playground {
 canvas.playground {
   width: 100%;
   height: 100%;
+}
+
+.dialog {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: rgba(0,0,0,0.5);
+  justify-content: space-between;
+}
+
+.showDialog {
+  display: flex;
+}
+
+.showButtons {
+  display: flex;
+}
+
+.dialog-header {
+  position: relative;
+  background: #111;
+  color: #fff;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin: 20px 20px 0 20px;
+  border-radius: 10px 10px 0 0;
+  border: 2px solid #222;
+  border-bottom: none;
+}
+.dialog-header h3 {
+  margin: 0;
+  padding: 0;
+}
+
+.dialog-body {
+  position: relative;
+  background: rgba(100,100,100,0.9);
+  color: #fff;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin: 0 20px 20px 20px;
+  flex: 1 10;
+  border-radius: 0 0 10px 10px;
+  border: 2px solid #333;
+  border-top: none;
 }
 </style>

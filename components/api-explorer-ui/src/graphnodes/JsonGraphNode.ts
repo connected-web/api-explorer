@@ -1,5 +1,7 @@
 import jsonpath from 'jsonpath'
 
+import { singleton as NodeEventBus } from './NodeEventBus'
+
 function JsonPathSelector (): void {
   this.properties = {
     jsonpath: '$',
@@ -73,7 +75,10 @@ function JsonInput (): void {
     content: '{}'
   }
   this.addWidget('text', 'Value', '{}', { property: 'content' })
-  this.addWidget('button', 'Edit Value', '????', function (node: any) { console.log('Hello world!', node) })
+  this.addWidget('button', 'Edit Value', '????', function (node: any) {
+    console.log('Request to edit value of:', node)
+    NodeEventBus.emit('edit-json', node)
+  })
   this.serialize_widgets = true
 
   this.addOutput('as json', 'json')
@@ -117,7 +122,6 @@ JsonInput.prototype.onDrawForeground = function (ctx: CanvasRenderingContext2D, 
   })
   ctx.restore()
 }
-
 
 export default class JsonGraphNode {
   private readonly _path: string = ''

@@ -5,12 +5,15 @@ type Listener = EventListenerOrEventListenerObject
 export default class EventEmitter<T> {
   target: EventTarget
 
+  listeners: Map<string, Listener[]> = new Map()
+
   constructor () {
     this.target = new EventTarget()
   }
 
   on (eventName: string, listener: Listener): EventEmitter<T> {
     this.target.addEventListener(eventName, listener)
+    this.listeners.set(eventName, [listener])
     return this
   }
 
@@ -19,8 +22,12 @@ export default class EventEmitter<T> {
     return this
   }
 
-  off (eventName: string, listener: Listener): EventEmitter<T> {
-    this.target.removeEventListener(eventName, listener)
+  off (eventName: string, listener?: Listener): EventEmitter<T> {
+    if (listener === undefined) {
+      this.listeners.get(eventName)?.forEach(l => this.target.removeEventListener(eventName, l))
+    } else {
+      this.target.removeEventListener(eventName, listener)
+    }
     return this
   }
 
