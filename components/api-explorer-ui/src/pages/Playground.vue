@@ -15,9 +15,10 @@
           <Icon icon="recycle" />
           <label>Clear</label>
         </button>
-        <button @click="run">
-          <Icon icon="play" />
-          <label>Run</label>
+        <button @click="run" :disabled="running">
+          <LoadingSpinner v-if="running" />
+          <Icon v-else icon="play" />
+          <label>{{ running ? 'Running' : 'Run' }}</label>
         </button>
         <span class="spacer"></span>
       </div>
@@ -26,11 +27,12 @@
 </template>
 
 <script lang="ts">
-import { LiteGraph, LGraphCanvas, LGraph } from 'litegraph.js'  
+import { LiteGraph, LGraphCanvas, LGraph } from 'litegraph.js'
 import 'litegraph.js/css/litegraph.css'
 
 import ClientIndex from '../clients/ClientIndex'
 import JsonGraphNode from '../graphnodes/JsonGraphNode'
+import LoadingSpinner from '../components/LoadingSpinner.vue'
 
 const clients = new ClientIndex()
 
@@ -45,17 +47,17 @@ JsonGraphNode.create().forEach(node => {
   LiteGraph.registerNodeType(node.path, node.nodeClass)
 })
 
-let graph:LGraph
-let canvas:LGraphCanvas
-let saveInterval:number = 0
+let graph: LGraph
+let canvas: LGraphCanvas
+let saveInterval: number = 0
 
 function createDefault() {
   const getStatus1 = LiteGraph.createNode("apis/schema-api-db/getStatus")
-  getStatus1.pos = [200,200]
+  getStatus1.pos = [200, 200]
   graph.add(getStatus1)
 
   const getStatus2 = LiteGraph.createNode("apis/boardgames-api/getStatus")
-  getStatus2.pos = [200,500]
+  getStatus2.pos = [200, 500]
   graph.add(getStatus2)
 }
 
@@ -67,15 +69,15 @@ class LGraphAsync extends LGraph {
     * @param {Boolean} do_not_catch_errors [optional] if you want to try/catch errors 
     * @param {number} limit max number of nodes to execute (used to execute from start to a node)
     */
-    async runStepAsync (num:number, limit:number) {
+  async runStepAsync(num: number, limit: number) {
     num = num || 1
 
     var start = LiteGraph.getTime();
     this.globaltime = 0.001 * (start - this.starttime)
 
     var nodes = this._nodes_executable
-        ? this._nodes_executable
-        : this._nodes
+      ? this._nodes_executable
+      : this._nodes
     if (!nodes) {
       return
     }
@@ -99,7 +101,7 @@ class LGraphAsync extends LGraph {
       }
 
       if (this.onAfterExecute) {
-          this.onAfterExecute()
+        this.onAfterExecute()
       }
       this.errors_in_execution = false;
     } catch (err) {
@@ -132,60 +134,61 @@ class LGraphAsync extends LGraph {
 export default {
   data() {
     return {
-      graphInfo: {}
+      graphInfo: {},
+      running: false
     }
   },
   mounted() {
-    graph = new LGraphAsync()
-    canvas = new LGraphCanvas('#playground', graph)
-
+    graph = new LGraphAsync();
+    canvas = new LGraphCanvas('#playground', graph);
     try {
-      this.load()
-    } catch (ex) {
-      const error = ex as Error
-      console.warn('Failed to load graph state', error.message)
-      createDefault()
+      this.load();
     }
-
+    catch (ex) {
+      const error = ex as Error;
+      console.warn('Failed to load graph state', error.message);
+      createDefault();
+    }
     saveInterval = setInterval(() => {
-      this.save()
-    }, 1000)
+      this.save();
+    }, 1000);
   },
   unmounted() {
-    graph.stop()
-    clearInterval(saveInterval)
+    graph.stop();
+    clearInterval(saveInterval);
   },
   methods: {
     save() {
-      const data = graph.serialize()
-      localStorage.setItem('playground', JSON.stringify(data))
+      const data = graph.serialize();
+      localStorage.setItem('playground', JSON.stringify(data));
     },
     load() {
-      const data = localStorage.getItem('playground')
+      const data = localStorage.getItem('playground');
       if (data) {
-        console.log('Found existing graph state:', data)
-        graph.configure(JSON.parse(data))
-      } else {
-        throw new Error('No graph state found')
+        console.log('Found existing graph state:', data);
+        graph.configure(JSON.parse(data));
+      }
+      else {
+        throw new Error('No graph state found');
       }
     },
     clearGraph() {
-      graph.clear()
-      createDefault()
+      graph.clear();
+      createDefault();
     },
-    run() {
-      console.log('Running graph')
-      graph.runStepAsync(1)
-      graph.stop()
-      
-
+    async run() {
+      this.running = true
+      console.log('Running graph');
+      await graph.runStepAsync(1)
+      graph.stop();
       this.graphInfo = {
         keys: Object.keys(graph),
         serialized: graph.serialize()
-      }
-
+      };
+      this.running = false
     }
-  }
+  },
+  components: { LoadingSpinner }
 }
 </script>
 
@@ -196,6 +199,7 @@ div.playground {
   margin: 0;
   padding: 0;
 }
+
 .playground-area {
   width: 100%;
   height: 100%;

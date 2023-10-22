@@ -1,6 +1,22 @@
 import AuthenticatedOpenAPIClient from '../clients/AuthenticatedOpenAPIClient'
 import OpenAPIClient from '../clients/OpenAPIClient'
 
+function formatParameters(params: { [key: string]: any }, condensed=true): string {
+  return Object.entries(params).map(([key, value]) => {
+    if (typeof value === 'object') {
+      value = JSON.stringify(value)
+    }
+    if (value === undefined) {
+      return null
+    }
+    if (condensed === true) {
+      return `${value}`
+    } else {
+      return `${key}: ${value}`
+    }
+  }).filter(n => n).join(', ')
+}
+
 export default class OpenAPIGraphNode {
   private readonly _path: string = ''
   private readonly _nodeClass: any
@@ -18,7 +34,7 @@ export default class OpenAPIGraphNode {
         error: null
       }
       params.forEach(paramName => {
-        this.addInput(paramName, 'json')
+        this.addInput(paramName, ['string', 'json'])
       })
 
       this.addOutput('output', 'json')
@@ -29,10 +45,11 @@ export default class OpenAPIGraphNode {
       const [width, height] = this.size
       const inputCount: number = this.inputs?.length ?? 0
       ctx.save()
+      const errorState = this.properties.error?.length
       if (this.executing === true) {
         ctx.strokeStyle = '#FFF'
         ctx.strokeRect(0, 0, width, height)
-      } else if (this.properties.error?.length > 0) {
+      } else if (errorState > 0) {
         ctx.strokeStyle = '#900'
         ctx.strokeRect(0, 0, width, height)
       }
@@ -40,7 +57,7 @@ export default class OpenAPIGraphNode {
       const bottom = height
       const x = 5
       const lh = 12
-      const lines = this.properties.response?.split('\n') ?? []
+      const lines: string[] = errorState ?this.properties.error.split('\n') : this.properties.response?.split('\n') ?? []
       const th = lines.length * lh
       const cutoff = (1 + inputCount) * lh
       lines.forEach((line, index) => {
@@ -55,20 +72,29 @@ export default class OpenAPIGraphNode {
     CustomNode.prototype.onExecute = async function () {
       console.log('Executing:', this.title)
       this.executing = true
+      this.properties.error = null
       const paramValues: { [key: string]: any } = {}
+    
       params.forEach((paramName, index) => {
         paramValues[paramName] = this.getInputData(index, false)
       })
 
+      if (!this.defaultTitle) {
+        this.defaultTitle = this.title
+      }
+      const titleParts = this.title.split(' ')
+      const newTitle = `${titleParts[0]} (${formatParameters(paramValues)})`
+      this.title = newTitle
+
       try {
-        const response = await client[operationId](...Object.values(paramValues))
+        const response = await (client as any)[operationId](...Object.values(paramValues))
         const data = response
         this.properties.response = JSON.stringify(data, null, 2)
         this.setOutputData(0, data)
         this.setOutputData(1, null)
       } catch (ex) {
         const error = ex as Error
-        this.properties.error = JSON.stringify(error, null, 2)
+        this.properties.error = JSON.stringify({ error: error.message, params: paramValues }, null, 2)
         this.setOutputData(0, {})
         this.setOutputData(1, error)
       }

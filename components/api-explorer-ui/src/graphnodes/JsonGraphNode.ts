@@ -26,6 +26,7 @@ JsonPathSelector.prototype.onExecute = async function () {
       }
       console.log('SelectNode.onExecute (B)', { data, selector, result })
       this.result = JSON.stringify(result, null, 2)
+      this.error = null
       this.setOutputData(0, result)
       this.setOutputData(1, null)
     } catch (ex) {
@@ -46,7 +47,7 @@ function JsonViewer (): void {
 
 JsonViewer.prototype.onDrawForeground = function (ctx: CanvasRenderingContext2D, graphCanvas: any) {
   const data = this.getInputData(0) ?? ''
-  const format = JSON.stringify(data, null, 2) ?? ''
+  const format = JSON.stringify(data, null, 2) ?? this.properties.parseError ?? ''
   const [width, height] = this.size
   ctx.save()
   ctx.font = '10px Arial'
@@ -66,6 +67,57 @@ JsonViewer.prototype.onDrawForeground = function (ctx: CanvasRenderingContext2D,
 }
 
 JsonViewer.title = 'Json Viewer'
+
+function JsonInput (): void {
+  this.properties = {
+    content: '{}'
+  }
+  this.addWidget('text', 'Value', '{}', { property: 'content' })
+  this.addWidget('button', 'Edit Value', '????', function (node: any) { console.log('Hello world!', node) })
+  this.serialize_widgets = true
+
+  this.addOutput('as json', 'json')
+  this.addOutput('as string', 'string')
+}
+
+JsonInput.prototype.onExecute = async function () {
+  const json = this.properties.content
+  let data = {}
+  try {
+    data = JSON.parse(json)
+    this.properties.parseError = null
+  } catch (ex) {
+    const error = ex as Error
+    this.properties.parseError = error.message
+  }
+
+  this.setOutputData(0, data)
+  this.setOutputData(1, json)
+}
+
+JsonInput.title = 'Json Input'
+
+JsonInput.prototype.onDrawForeground = function (ctx: CanvasRenderingContext2D, graphCanvas: any) {
+  const data = this.getInputData(0) ?? ''
+  const format = this.properties.parseError ?? JSON.stringify(data ?? '', null, 2)
+  const [width, height] = this.size
+  ctx.save()
+  ctx.font = '10px Arial'
+  const bottom = height
+  const x = 5
+  const lh = 12
+  const lines = format.split('\n') ?? []
+  const th = lines.length * lh
+  const cutoff = lh
+  lines.forEach((line, index) => {
+    const liney = bottom - th + (lh * index)
+    if (liney > cutoff) {
+      ctx.fillText(line, x, liney, width - 10)
+    }
+  })
+  ctx.restore()
+}
+
 
 export default class JsonGraphNode {
   private readonly _path: string = ''
@@ -88,6 +140,7 @@ export default class JsonGraphNode {
     const nodes: JsonGraphNode[] = []
     nodes.push(new JsonGraphNode('Json/select', JsonPathSelector))
     nodes.push(new JsonGraphNode('Json/viewer', JsonViewer))
+    nodes.push(new JsonGraphNode('Json/input', JsonInput))
     return nodes
   }
 }
