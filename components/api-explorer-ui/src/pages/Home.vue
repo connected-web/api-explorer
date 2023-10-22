@@ -12,25 +12,43 @@
     </ul>
 
     <h2>Roadmap</h2>
+
+    <h3>✔️ 2023 September</h3>
+    <p>
+      <StatValue label="Code reflection on JavaScript / TypeScript Classes">✔️</StatValue>
+      <StatValue label="Add Board Games API Open API Spec">✔️</StatValue>
+      <StatValue label="Add Schema API DB Open API Spec">✔️</StatValue>
+      <StatValue label="Generate API Explorer based on Open API Specs">✔️</StatValue>
+    </p>
     
-    <h3>2023 August</h3>
+    <h3>✔️ 2023 August</h3>
     <p>
       <StatValue label="Setup public website hosted on Github Pages">✔️</StatValue>
     </p>
 
-    <h3>In development</h3>
+    <h3>🚧 In development</h3>
     <p>
-      <StatValue label="Code reflection on JavaScript / TypeScript Classes">🚧</StatValue>
-      <StatValue label="Add Board Games API Open API Spec">🚧</StatValue>
-      <StatValue label="Add Schema API DB Open API Spec">❌</StatValue>
-      <StatValue label="Generate API Explorer based on Open API Specs">🚧</StatValue>
+      <StatValue label="Use litegraph.js to create visual applications">🚧</StatValue>
+      <StatValue label="Support Open API nodes via code reflection">🚧</StatValue>
+      <StatValue label="Support JSON Input / Viewer nodes">🚧</StatValue>
     </p>
 
-    <h3>Future Ideas</h3>
+    <h3>💡 Future Ideas</h3>
     <p>
-      <StatValue label="Use litegraph.js to create visual applications">💡</StatValue>
       <StatValue label="Build more APIs">💡</StatValue>
       <StatValue label="Setup service discovery and status endpoints">💡</StatValue>
+      <StatValue label="Generate site dynamically based on service discovery">💡</StatValue>
+      <StatValue label="Add descriptions to fields from Open API spec">💡</StatValue>
+      <StatValue label="Add descriptions to endpoints from Open API spec">💡</StatValue>
+      <StatValue label="Support complex schema objects and validation for payloads">💡</StatValue>
+    </p>
+
+    <h3><Icon icon="envelopes-bulk" />API Ideas</h3>
+    <p>
+      <StatValue label="User profile management API">💡</StatValue>
+      <StatValue label="User group management API">💡</StatValue>
+      <StatValue label="Usage and metrics API">💡</StatValue>
+      <StatValue label="Billing and Account API">💡</StatValue>
     </p>
 
     <p class="key" v-if="false">
