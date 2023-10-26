@@ -432,19 +432,21 @@ export class OAuthClient {
     )
     // console.log('Refresh token response:', response)
     if (oauth.isOAuth2Error(result)) {
-      throw new Error('OAuth 2.0 response body error')
-    }
-    // console.log('Refresh token result:', { result })
-    this._accessToken = result.access_token
-    if (result.refresh_token !== undefined) {
-      this._refreshToken = result.refresh_token
-    }
-    this._idToken = result.id_token ?? null
+      console.error('OAuth 2.0 response body error:', result)
+      this.logout()
+    } else {
+      // console.log('Refresh token result:', { result })
+      this._accessToken = result.access_token
+      if (result.refresh_token !== undefined) {
+        this._refreshToken = result.refresh_token
+      }
+      this._idToken = result.id_token ?? null
 
-    // console.log('Update expiry time:')
-    const now = new Date()
-    const expiresIn = result.expires_in ?? 3600
-    this._expiryTime = new Date(now.getTime() + (expiresIn * 1000))
+      // console.log('Update expiry time:')
+      const now = new Date()
+      const expiresIn = result.expires_in ?? 3600
+      this._expiryTime = new Date(now.getTime() + (expiresIn * 1000))
+    }
 
     return this.accessToken ?? false
   }
@@ -505,15 +507,15 @@ export class OAuthClient {
    * ```
    */
   public logout (logoutHint?: string, local: boolean = false): void {
-    if (this._authorizationServer == null) {
-      throw new Error('OAuthClient not initialized')
-    }
+    this._accessToken = null
     this._refreshToken = null
     this._idToken = null
     this._expiryTime = null
     console.log('Logged in:', { loggedIn: this.loggedIn })
     if (this.loggedIn) {
-      this._accessToken = null
+      if (this._authorizationServer == null) {
+        throw new Error('OAuthClient not initialized')
+      }
       const logoutUrl = new URL(
         this._authorizationServer?.end_session_endpoint ??
         `${this._issuer.toString()}/oauth2/logout`
