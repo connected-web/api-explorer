@@ -12,8 +12,8 @@
         <p>Dialog content here</p>
       </div>
     </div>
-    <div class="playground-area">
-      <canvas width="2000" height="1000" id="playground"></canvas>
+    <div :class="{ 'playground-area': true, litegraph: true, fullscreen }" ref="litegraph-area">
+      <canvas width="800" height="600" id="playground" ref="litegraph-canvas"></canvas>
       <div :class="{ buttons: true, row: true, p10: true, showButtons }">
         <button @click="save">
           <Icon icon="download" />
@@ -31,6 +31,10 @@
           <LoadingSpinner v-if="running" />
           <Icon v-else icon="play" />
           <label>{{ running ? 'Running' : 'Run' }}</label>
+        </button>
+        <button @click="toggleFullscreen">
+          <Icon :icon="fullscreen ? 'compress' : 'expand'" />
+          <span>{{ fullscreen ? 'Shrink' : 'Expand' }}</span>
         </button>
         <span class="spacer"></span>
       </div>
@@ -149,7 +153,8 @@ export default {
     return {
       graphInfo: {},
       running: false,
-      showDialog: false
+      showDialog: false,
+      fullscreen: false
     }
   },
   computed: {
@@ -177,6 +182,11 @@ export default {
       console.log('Display dialog to edit JSON:', node)
       this.showDialog = true
     })
+
+    this.fitCanvasToContainer()
+    window.onresize = () => {
+      this.fitCanvasToContainer()
+    }
   },
   unmounted() {
     graph.stop()
@@ -201,6 +211,29 @@ export default {
     clearGraph() {
       graph.clear();
       createDefault();
+    },
+    toggleFullscreen() {
+      this.fullscreen = !this.fullscreen
+      const $canvas:HTMLCanvasElement = this.$refs['litegraph-canvas'] as HTMLCanvasElement
+      if (this.fullscreen) {
+        $canvas.width =  window.innerWidth
+        $canvas.height = window.innerHeight
+        document.body.style.overflow = 'hidden'
+        document.body.scrollTop = document.documentElement.scrollTop = 0
+        graph.change()
+      } else {
+        document.body.style.overflow = 'auto'
+        this.fitCanvasToContainer()
+      }
+    },
+    fitCanvasToContainer() {
+      const $canvas:HTMLCanvasElement = this.$refs['litegraph-canvas'] as HTMLCanvasElement
+      const $area:HTMLDivElement = this.$refs['litegraph-area'] as HTMLDivElement
+
+      $canvas.width = $area.clientWidth
+      $canvas.height = $area.clientHeight
+
+      graph.change()
     },
     async run() {
       this.running = true
@@ -233,6 +266,25 @@ div.playground {
   justify-content: stretch;
   align-items: stretch;
 }
+.litegraph {
+  position: relative;
+  overflow: hidden;
+}
+
+.litegraph.fullscreen {
+  display: block;
+  position: absolute;
+  border: none;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.litegraph.fullscreen > canvas {
+  width: 100vw;
+  height: 100vh;
+}
+
 
 .buttons {
   display: none;
