@@ -70,7 +70,6 @@ export default {
   min-height: 100vh;
 }
 .middle {
-  position: relative;
   display: flex;
   flex-direction: row;
   align-items: stretch;

@@ -1,6 +1,6 @@
 <template>
-  <div class="playground">
-    <div :class="{ showDialog, dialog: true, column: true }">
+  <div :class="{ playground: true, fullscreen }">
+    <div :class="{ showDialog, 'json-dialog': true, column: true }">
       <div class="dialog-header row p10">
         <h3>Dialog Title</h3>
         <button @click="showDialog = false">
@@ -12,7 +12,7 @@
         <p>Dialog content here</p>
       </div>
     </div>
-    <div :class="{ 'playground-area': true, litegraph: true, fullscreen }" ref="litegraph-area">
+    <div :class="{ 'playground-area': true, litegraph: true }" ref="litegraph-area">
       <canvas width="800" height="600" id="playground" ref="litegraph-canvas"></canvas>
       <div :class="{ buttons: true, row: true, p10: true, showButtons }">
         <button @click="save">
@@ -67,16 +67,6 @@ JsonGraphNode.create().forEach(node => {
 let graph: LGraph
 let canvas: LGraphCanvas
 let saveInterval: number = 0
-
-function createDefault() {
-  const getStatus1 = LiteGraph.createNode("apis/schema-api-db/getStatus")
-  getStatus1.pos = [200, 200]
-  graph.add(getStatus1)
-
-  const getStatus2 = LiteGraph.createNode("apis/boardgames-api/getStatus")
-  getStatus2.pos = [200, 500]
-  graph.add(getStatus2)
-}
 
 class LGraphAsync extends LGraph {
   /**
@@ -171,7 +161,6 @@ export default {
     catch (ex) {
       const error = ex as Error;
       console.warn('Failed to load graph state', error.message)
-      createDefault()
     }
     saveInterval = setInterval(() => {
       this.save();
@@ -195,22 +184,21 @@ export default {
   },
   methods: {
     save() {
-      const data = graph.serialize();
-      localStorage.setItem('playground', JSON.stringify(data));
+      const data = graph.serialize()
+      localStorage.setItem('playground', JSON.stringify(data))
     },
     load() {
-      const data = localStorage.getItem('playground');
+      const data = localStorage.getItem('playground')
       if (data) {
-        console.log('Found existing graph state:', data);
-        graph.configure(JSON.parse(data));
+        console.log('Found existing graph state:', data)
+        graph.configure(JSON.parse(data))
       }
       else {
-        throw new Error('No graph state found');
+        throw new Error('No graph state found')
       }
     },
     clearGraph() {
-      graph.clear();
-      createDefault();
+      graph.clear()
     },
     toggleFullscreen() {
       this.fullscreen = !this.fullscreen
@@ -251,12 +239,21 @@ export default {
 }
 </script>
 
-<style scoped>
-div.playground {
+<style>
+div.playground.page {
   display: block;
   position: relative;
   margin: 0;
   padding: 0;
+}
+
+div.playground.fullscreen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
 }
 
 .playground-area {
@@ -271,16 +268,13 @@ div.playground {
   overflow: hidden;
 }
 
-.litegraph.fullscreen {
+.fullscreen .litegraph {
   display: block;
-  position: absolute;
   border: none;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
 }
-.litegraph.fullscreen > canvas {
+.fullscreen .litegraph > canvas {
   width: 100vw;
   height: 100vh;
 }
@@ -290,7 +284,7 @@ div.playground {
   display: none;
   position: absolute;
   top: 0;
-  left: 0;
+  right: 0;
   padding: 10px;
   z-index: 100;
   justify-content: flex-start;
@@ -301,7 +295,7 @@ canvas.playground {
   height: 100%;
 }
 
-.dialog {
+.json-dialog {
   display: none;
   position: absolute;
   top: 0;
@@ -311,6 +305,7 @@ canvas.playground {
   overflow: hidden;
   background: rgba(0,0,0,0.5);
   justify-content: space-between;
+  z-index: 20;
 }
 
 .showDialog {
@@ -350,5 +345,10 @@ canvas.playground {
   border-radius: 0 0 10px 10px;
   border: 2px solid #333;
   border-top: none;
+}
+
+.litegraph .dialog .property_value {
+  text-align: left;
+  white-space: pre;
 }
 </style>

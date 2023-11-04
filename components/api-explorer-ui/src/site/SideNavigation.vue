@@ -68,7 +68,7 @@ export default {
     overflow-y: auto;
     border-right: 2px solid #ddd;
     transition: min-width 200ms ease-in-out, max-width 200ms ease-in-out, width 200ms ease-in-out, background-color 200ms ease-in-out;
-    z-index: 100;
+    z-index: 5;
   }
   .sidenav > * {
     white-space: nowrap;
