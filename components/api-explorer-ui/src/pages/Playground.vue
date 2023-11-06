@@ -10,6 +10,13 @@
       </div>
       <div class="dialog-body column p5">
         <p>Dialog content here</p>
+        <div class="buttons row">
+          <span class="spacer"></span>
+          <button @click="showDialog = false">
+            <Icon icon="recycle" />
+            <label>Close</label>
+          </button>
+        </div>
       </div>
     </div>
     <div :class="{ 'playground-area': true, litegraph: true }" ref="litegraph-area">
@@ -211,6 +218,9 @@ export default {
         graph.change()
       } else {
         document.body.style.overflow = 'auto'
+        $canvas.width = 800
+        $canvas.height = 600
+        graph.change()
         this.fitCanvasToContainer()
       }
     },
@@ -316,7 +326,7 @@ canvas.playground {
   display: flex;
 }
 
-.dialog-header {
+.json-dialog .dialog-header {
   position: relative;
   background: #111;
   color: #fff;
@@ -328,12 +338,13 @@ canvas.playground {
   border: 2px solid #222;
   border-bottom: none;
 }
-.dialog-header h3 {
+.json-dialog .dialog-header h3 {
+  color: white;
   margin: 0;
   padding: 0;
 }
 
-.dialog-body {
+.json-dialog .dialog-body {
   position: relative;
   background: rgba(100,100,100,0.9);
   color: #fff;

@@ -75,7 +75,7 @@ function JsonInput (): void {
     content: '{}'
   }
   this.addWidget('text', 'Value', '{}', { property: 'content' })
-  this.addWidget('button', 'Edit Value', '????', function (node: any) {
+  this.addWidget('button', 'Edit Text', '????', function (node: any) {
     console.log('Request to edit value of:', node)
     NodeEventBus.emit('edit-json', node)
   })
